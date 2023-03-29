@@ -34,10 +34,6 @@ exports.onPostBuild = async ({ graphql, pathPrefix }) => {
     path.join(publicFolder, 'sitemap-index.xml'),
     newSitemapIndex
   );
-
-  // This happens after all the assets get moved, because we don't want the
-  // json to be considered an asset.
-  await writePolicyJsonApi(graphql);
 };
 
 exports.onCreateNode = ({ node, actions, getNode, createNodeId }) => {
@@ -64,21 +60,6 @@ exports.onCreateNode = ({ node, actions, getNode, createNodeId }) => {
       node,
       value: node.frontmatter && node.frontmatter.unlisted ? true : false,
     });
-
-    if (/www\/src\/content\/legal/.test(node.fileAbsolutePath)) {
-      const name = contentDir.split(path.posix.sep).pop();
-      createNodeField({
-        name: 'version',
-        node,
-        value: basename,
-      });
-
-      createNodeField({
-        name: 'policyName',
-        node,
-        value: name,
-      });
-    }
 
     if (matchers && matchers[1]) {
       createNodeField({
@@ -173,28 +154,6 @@ exports.sourceNodes = ({
       },
     };
 
-    nodeCreationQueue.push({ content, meta });
-  });
-
-  const policyContent = jsFrontmatterNodes.filter(
-    ({ frontmatter }) => frontmatter.type === 'policy'
-  );
-
-  policyContent.map(node => {
-    const content = {
-      ...node.frontmatter,
-      jsxFrontmatter___NODE: node.id,
-      slug: createFilePath({ node, getNode, basePath: 'pages' }),
-    };
-    const meta = {
-      id: createNodeId(`policy-${content.name}`),
-      parent: null,
-      children: [],
-      internal: {
-        type: 'Policy',
-        mediaType: `text/json`,
-      },
-    };
     nodeCreationQueue.push({ content, meta });
   });
 
