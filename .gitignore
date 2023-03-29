@@ -3,3 +3,5 @@ packages/www/.cache
 packages/www/public
 packages/www/node_modules
 packages/shared/node_modules
+yarn.lock
+packages/www/yarn.lock
