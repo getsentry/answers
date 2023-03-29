@@ -1,0 +1,68 @@
+---
+title: 'Detecting the host platform in Flutter'
+platforms:
+  - sentry.flutter
+people:
+  - Lazar Nikolov
+---
+
+## The problem
+
+Flutter is a cross-platform framework, which means it can run on multiple
+platforms. Most of the time we want our app to look consistent on all
+platforms, but there are use cases where we&apos;d like to run different
+code on different platforms, or render different widgets.
+
+## The solution
+
+### The mobile-only approach
+
+The `dart:io` package exports a `Platform` class that we can use to check
+the platform our app is running on. Let’s import the `Platform` class:
+
+```dart
+import 'dart:io' show Platform;
+```
+
+The `Platform` class has boolean properties like `isAndroid` and `isIOS`
+that we can use to branch our platform-specific logic:
+
+```dart
+if (Platform.isAndroid) {
+	// Run Android specific code
+} else if (Platform.isIOS) {
+	// Run iOS specific code
+} else if (Platform.isMacOS) {
+	// Run MacOS specific code
+} else if (Platform.isWindows) {
+	// Run Windows specific code
+} else if (Platform.isLinux) {
+	// Run Linux specific code
+} else if (Platform.isFuchsia) {
+	// Run Fuschia specific code
+} else {
+	// Unknown platform
+}
+```
+
+### The Flutter web approach
+
+As we know, Flutter also runs on the web, but the previous solution
+won&apos;t let us branch web-only logic in our app. There&apos;s a
+different package that we can use to figure out if we&apos;re running
+in web:
+
+```dart
+import 'package:flutter/foundation.dart' show kIsWeb;
+```
+
+The `flutter/foundation.dart` package exports a `kIsWeb` boolean, so we
+can use it similarly to the previous example:
+
+```dart
+if (kIsWeb) {
+	// Run Web specific code
+} else {
+	// Must be some of the other platforms
+}
+```

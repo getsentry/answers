@@ -1,0 +1,81 @@
+---
+title: 'Semicolon usage in JavaScript'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The problem
+
+Are semicolons required in JavaScript? How should I use them?
+
+## The solution
+
+In JavaScript, [statements](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements) are separated by semicolons. Statements include variable assignments and function calls, as well as control flows (e.g. `if ... else`) and iterations (e.g. `for`). The code below provides some example usage:
+
+```javascript
+const name = "John Doe";
+const age = 35;
+
+function oldEnoughToBePresident(name, age) {
+  if (age >= 35) {
+    console.log(`${name} is old enough to run for president of the United States.`);
+    return true;
+  } else {
+    console.log(`${name} is too young run for president of the United States.`);
+    return false;
+  }
+}
+
+oldEnoughToBePresident(name, age);
+```
+
+Note that while semicolons are used to separate statements inside the [blocks](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/block) provided to the `if` and `else` clauses of our `if ... else` statement, we do not place them after the `if` condition or the `else` itself. Doing this would cause JavaScript to interpret the `if` statement and our block as two separate statements, as below:
+
+```javascript
+if (age >= 35); // if age >= 35, execute an empty statement (i.e. do nothing)
+{ // this block is seen as separate from the if and will run regardless of the value of age
+  console.log(name + " is old enough to run for president of the United States.");
+  return true;
+}
+```
+
+An interesting feature of JavaScript is that its semicolons do not always need to be provided by the programmer – the JavaScript interpreter has a process called [automatic semicolon insertion (ASI)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#automatic_semicolon_insertion) which it uses to insert semicolons where needed, according to other heuristics such as line endings.
+
+As a result, different JavaScript developers, teams and projects have different conventions about semicolon usage – some explicitly include them at the end of all statements, whereas others only include them in places where ASI does not act correctly.
+
+For most code, ASI will behave in predictable ways, usually adding semicolons at the end of lines.
+
+```javascript
+const name = "John Doe" // ; inserted here by ASI
+const age = 35 // ; inserted here by ASI
+
+if (age >= 35) {
+  console.log(`${name} is old enough to run for president of the United States.`) // ; inserted here by ASI
+}
+```
+
+However, ASI considers only syntactical correctness, and may thus produce the wrong results in ambiguous situations. For example, lines starting with `()` will be interpreted as arguments for a function called on the previous line:
+
+```javascript
+const age = 35
+(age).toString() //; inserted here by ASI
+
+// the code becomes:
+const age = 35(age).toString(); // will invoke an error as 35 is not a function.
+```
+
+Similarly, lines starting with `[]` will be interpreted as accessing members of a variable in the previous line.
+
+```javascript
+const name = "John Doe"
+[1, 2, 3].forEach(console.log) //; inserted here by ASI
+
+// the code becomes:
+const name = "John Doe"[1, 2, 3].forEach(console.log); // will throw an error
+```
+
+The MDN web docs provide a [comprehensive overview of ASI's behavior](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#automatic_semicolon_insertion). Developers wishing to avoid semicolons should keep these rules in mind.

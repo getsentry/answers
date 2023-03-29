@@ -1,0 +1,63 @@
+---
+title: "How can I change an element's class with JavaScript?"
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+You want to change an element's class using JavaScript. For example, you may want to add a CSS class that animates an element when a "click" event occurs.
+
+## The Solution
+
+The [`Element.classList`](https://developer.mozilla.org/en-US/docs/Web/API/Element/classList) read-only property returns a list representing the contents of an element's `class` attribute. It has methods that can be used to manipulate the class list of an element. You can use the [`classList.add()`](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/add) method to add a CSS class to an HTML element once the element has been selected using one of the methods on the [`document`](https://developer.mozilla.org/en-US/docs/Web/API/Document) interface that returns a DOM [`Element`](https://developer.mozilla.org/en-US/docs/Web/API/Element), such as `getElementById`:
+
+```javascript
+const btnEl = document.getElementById("submitBtn");
+btnEl.classList.add("animate");
+```
+
+You can also add multiple classes at once:
+
+```javascript
+btnEl.classList.add("animate", "hide");
+```
+
+You can remove a class or multiple classes using the [`classList.remove()`](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/remove) method:
+
+```javascript
+btnEl.classList.remove("animate");
+btnEl.classList.remove("animate", "hide");
+```
+
+There's also a [`classList.toggle()`](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/toggle) method that will add a class if it's not present or remove it if it is.
+
+The `classList.toggle()` method also has an optional second argument called `force` that can be used to make the toggle only occur once. If set to `false`, the class will only be removed. If set to `true`, the class will only be added.
+
+You can check if a class is present on an element using the [`classList.contains()`](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/contains) method:
+
+```javascript
+btnEl.classList.contains("animate");
+```
+
+This method will return `true` if the element has the class and `false` if it does not. You do not need to worry about checking if a class is present before adding it to an element as the list returned by `classList` is a [`DOMTokenList`](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList) [set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set), which means it can't contain any duplicates.
+
+Alternatively, the [`className`](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) property and [`setAttribute`](https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute) method can be used to set an element's class attribute or add a class to an element:
+
+```javascript
+// set the class attribute
+btnEl.setAttribute("class", "animate");
+// set the class attribute with multiple classes
+btnEl.setAttribute("class", "animate hide");
+
+// set the class attribute
+btnEl.className = "animate";
+// set the class attribute with multiple classes
+btnEl.className = "animate hide";
+// add a class
+btnEl.className += " hide";
+```

@@ -1,0 +1,91 @@
+---
+title: 'How do I check whether a checkbox is checked in jQuery?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+You have a checkbox with an `id` property. How can you find out if it's checked using jQuery?
+
+## The Solution
+
+jQuery selectors allow you to find and select HTML elements by their attributes such as name, ID, class, or type. The selectors all start with a dollar sign and parentheses: `$()`.
+
+To check if a checkbox is checked, get the checkbox by its `id` using the jQuery selector. Then use the [`is()`](https://api.jquery.com/is/) method:
+
+```javascript
+const isChecked = $("#" + id).is(":checked");
+```
+
+The `is()` method checks for a [`:checked`](https://developer.mozilla.org/en-US/docs/Web/CSS/:checked) CSS [pseudo-class](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes), which would be added to a checkbox if it's checked. It returns `true` if the checkbox is checked.
+
+You can do the same check using vanilla JavaScript:
+
+```javascript
+const isChecked = document.getElementById(id).checked;
+```
+
+The `getElementById` element selector is used to find an element by `id`. The boolean `checked` property exists on checkbox inputs.
+
+To check if a checkbox is checked dynamically, you can use an `id` input and add a button to run a function to check if the checkbox is checked. For example, the following code example has two checkboxes, an `id` input, and a button to check if the input is checked:
+
+```html
+    <fieldset>
+      <legend>Choose food your items</legend>
+
+      <input type="checkbox" id="salad" name="salad" />
+      <label for="salad">Salad</label>
+
+      <input type="checkbox" id="chips" name="chips" />
+      <label for="chips">Chips</label>
+    </fieldset>
+
+    <input id="checkboxIdInput" placeholder="Add checkbox id to check" />
+    <button id="checkBtn">Check if checked</button>
+```
+
+The `isCheckedJQuery` function in the code below gets the element by `id` using the jQuery selector. If the element exists, is a checkbox, and is checked, then the function returns `true`, else it returns `false`.
+
+```html
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+<script>
+const checkboxIdInput = document.getElementById("checkboxIdInput");
+const checkBtn = document.getElementById("checkBtn");
+
+function isCheckedJQuery() {
+  const el = $(`#${checkboxIdInput.value}`)[0];
+  if (
+    el
+    && el.type === "checkbox"
+    && $(`#${checkboxIdInput.value}`).is(":checked")
+  ) {
+    console.log("is checked");
+    return true;
+  }
+  console.log("is not checked");
+  return false;
+}
+
+checkBtn.addEventListener("click", isCheckedJQuery);
+</script>
+```
+
+Using vanilla JavaScript, the check function would be slightly different:
+
+```javascript
+function isCheckedVanillaJS() {
+  const el = document.getElementById(checkboxIdInput.value);
+  if (el && el.type === "checkbox" && el.checked) {
+    console.log("is checked");
+    return true;
+  }
+  console.log("is not checked");
+  return false;
+}
+```

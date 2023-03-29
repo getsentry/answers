@@ -1,0 +1,154 @@
+---
+title: 'Understanding unique keys for array children in React.js'
+platforms: 
+  - sentry.react
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The problem
+
+When you render an array of objects, you need to provide a unique [`key`](https://reactjs.org/docs/lists-and-keys.html#keys) property for each element rendered for the array item. This tells React which array item each rendered element corresponds to. If you render an array of items as a list, the keys allow React to determine how elements have changed. This is important if the list can be changed by sorting, adding, or deleting. Keys allow React to update the DOM correctly.
+
+React will use the index of the list items as the key if a key is not provided. If the array items can be changed by adding, deleting or re-ordering, the key for each item will not be unique if the key is the array index, which will lead to incorrect DOM updates. A basic example showing this is a list of items without keys, each with a delete button. Suppose you have the following array of food items:
+
+```javascript
+const foodItems = [
+  { id: "1", value: "milk" },
+  { id: "2", value: "bread" },
+  { id: "3", value: "sugar" }
+];
+```
+
+These food items are then rendered in an unordered list:
+
+```javascript
+export default function App() {
+  const [items, setItems] = useState(foodItems);
+
+  function removeItem(item) {
+    setItems(items.filter((i) => i.id !== item.id));
+  }
+
+  return (
+    <div className="keys">
+      <ul>
+        {items.map((item) => (
+          <li>
+            <label htmlFor={`${item.id}-input`}>{item.value}</label>{" "}
+            <input id={`${item.id}-input`} defaultValue={item.value} />
+            <button onClick={() => removeItem(item)}>X</button>{" "}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+When each item in the list is rendered, an input element showing the value of each food item and a delete button for each list item is added. This will render:
+
+- milk [milk] [x]
+- bread [bread] [x]
+- sugar [sugar] [x]
+
+Where [milk] is an input with a value of "milk" and [x] is a delete item button. If you delete the second item, the rendered list will be:
+
+- milk [milk] [x]
+- sugar [bread] [x]
+
+There is a mismatch between the list item value and the input value of the second item. Why does this happen? When state changes in a component, React runs a ["diffing" algorithm](https://reactjs.org/docs/reconciliation.html#the-diffing-algorithm) that identifies what has changed in the [virtual DOM](https://reactjs.org/docs/faq-internals.html#what-is-the-virtual-dom). It then updates the DOM with the results of diff, which is called [reconciliation](https://reactjs.org/docs/reconciliation.html). When the `items` state updates after the second item is deleted, React compares the previous state with the new state to determine how to update the DOM. It only sees the end result of the state change, not how it happened. On the first render, the component will render the following `<ul>` element (simplified):
+
+```javascript
+const element = {
+  type: 'ul',
+  key: null,
+  props: {
+    children: [
+      {type: 'li', key: null, props: {children: 'milk'}},
+      {type: 'li', key: null, props: {children: 'bread'}},
+      {type: 'li', key: null, props: {children: 'sugar'}},
+    ],
+  },
+}
+```
+
+After deleting the second item, the following `<ul>` element will be rendered:
+
+```javascript
+const element = {
+  type: 'ul',
+  key: null,
+  props: {
+    children: [
+      {type: 'li', key: null, props: {children: 'milk'}},
+      {type: 'li', key: null, props: {children: 'sugar'}},
+    ],
+  },
+}
+```
+
+React does not know how the new element state was reached when it does a diff to see what has changed. It does not know where the item was removed from.
+
+- Was the second item deleted?
+- Was the third item deleted and the second item re-named?
+
+What React does is assume that the index is the key if `key` is not provided. So it assumes that the third item was removed and the second item was re-named. This would not be a problem if the `<li>` elements had no components that have state. In this example the `<input>` values of each `<li>` item maintain state. So the second item's `<input>` maintains its original state, and it does not match the list item name any more:
+
+- milk [milk] [x]
+- sugar [bread] [x]
+
+This also shows that using an index for a key may remove the following warning in the console:
+
+```
+Warning: Each child in a list should have a unique "key" prop.
+```
+
+However, it does not fix the problem.
+
+This issue also occurs if the list items are re-arranged or if items are added.
+
+In this simple example, the issue is visual. If the list renders components that have side effects such as data fetching, it can cause all sorts of other issues.
+
+## The solution
+
+Add a unique `key` prop to each list item. This gives React more information, which helps it update the UI correctly. Keys must be unique. In the example code used, the food item `id` would make a good key.
+
+On first render the component will render the following React `<ul>` element (simplified) if the food item `id` is used as the key:
+
+```javascript
+const element = {
+  type: 'ul',
+  key: null,
+  props: {
+    children: [
+      {type: 'li', key: 1, props: {children: 'milk'}},
+      {type: 'li', key: 2, props: {children: 'bread'}},
+      {type: 'li', key: 3, props: {children: 'sugar'}},
+    ],
+  },
+}
+```
+
+After deleting the second item, the following `<ul>` element will be rendered:
+
+```javascript
+const element = {
+  type: 'ul',
+  key: null,
+  props: {
+    children: [
+      {type: 'li', key: 1, props: {children: 'milk'}},
+      {type: 'li', key: 3, props: {children: 'sugar'}},
+    ],
+  },
+}
+```
+
+Now when React does its diff to see what has changed, it can tell that the second item was removed and update the DOM correctly.
+
+### Further reading
+
+- [Warning: Each Child in a List Should Have a Unique 'key' Prop](https://sentry.io/answers/unique-key-prop/)

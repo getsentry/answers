@@ -1,0 +1,117 @@
+---
+title: 'How to Read a File in Java'
+platforms: 
+  - sentry.java
+people: 
+  - Lewis D.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You need to read a file into a Java application. How can you do this?
+
+## The Solution
+
+If you read the Sentry answer to [How to Write to a File in Java](https://sentry.io/answers/write-to-file-java/), you'll know there are many solutions to writing to files in Java. Similarly, there are many ways you can read from a file into a Java application, and each method has unique properties that make it more or less useful for your file-reading circumstances. We'll take a look at three ways you can read a file in Java.
+
+- If you need to perform some ad-hoc reading of a whole file at once, use the `Files` class.
+- If you need to read in a large file line by line, use a `BufferedReader`.
+- If you need to read a file with contents separated by some delimiter, use a `Scanner`.
+
+### The `Files` Class
+
+The [`Files`](https://docs.oracle.com/javase/10/docs/api/java/nio/file/Files.html) utility class has a very useful [`readAllLines()`](https://docs.oracle.com/javase/10/docs/api/java/nio/file/Files.html#readAllLines(java.nio.file.Path)) method that will read all the lines of a file. The method signature denotes that the lines will be read into a simple `List` of `String` elements. If decoding the contents of the file into the standard UTF-8 charset is unsuitable, an overloaded method allows you to provide your own `Charset`. According to the Java documentation, `readAllLines()` is meant for simple ad-hoc file reading, so avoid using it for reading in large files.
+
+Here's an example showing how to read in a file using this method:
+
+```java
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+public class ReadFile {
+
+    public static void main(String[] args) {
+        Path path = Paths.get("example.txt");
+        try {
+            List<String> lines = Files.readAllLines(path);
+        } catch (IOException ex) {
+            // handle exception...
+        }
+    }
+}
+```
+
+If you need to read bytes from a file (rather than lines), the `readAllBytes()` method can be used to read the file into a byte array:
+
+```java
+ byte[] fileBytes = Files.readAllBytes(path);
+```
+
+### The `BufferedReader` Class
+
+The [`BufferedReader`](https://docs.oracle.com/javase/10/docs/api/java/io/BufferedReader.html) class is an intuitive and performant approach that you can use to read character-oriented files into your Java applications. Buffering is efficient, so `BufferedReader` is a good choice for reading larger text files line by line.
+
+Writing the code for a `BufferedReader` is a little bit more lengthy than the `Files` method. It is good practice to close resources once we have finished using them, or as in the example below, use the [*try-with-resources*](https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html) construct where the reader is closed for us:
+
+```java
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class ReadFile {
+
+    public static void main(String[] args) {
+        try (BufferedReader br = new BufferedReader(new FileReader("example.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                // process the line (e.g. add to a List)
+            }
+        } catch (IOException e) {
+            // handle exception...
+        }
+    }
+}
+```
+
+### The `Scanner` Class
+
+The methods we've looked at so far indiscriminately read line by line from a file. The `Scanner` class provides us with a way to read from files piece by piece. The `Scanner` works by separating the contents of a file into pieces using a delimiter, so it's best for reading files with content that is separated by some constant value. This could be a common comma separated file, for example, but the `Scanner` supports any value for the delimiter.
+
+Let's take a look at a more unusual delimited file to illustrate this point. You have a file with the following contents that you would like to read into a `List`:
+
+```
+lion&& tiger&& leopard&& lynx
+```
+
+Using a `Scanner`, we can read the contents of the file into a `List` as follows:
+
+```java
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class ReadFile {
+
+    public static void main(String[] args) throws IOException {
+        List<String> animals = new ArrayList<>();
+        Scanner scanner = new Scanner(new File("example.txt"));
+        scanner.useDelimiter("&& ");
+
+        while (scanner.hasNext()) {
+            String next = scanner.next();
+            animals.add(next);
+        }
+        scanner.close();
+    }
+}
+```
+
+## Further Reading
+- [How to Write to a File in Java](https://sentry.io/answers/write-to-file-java/)

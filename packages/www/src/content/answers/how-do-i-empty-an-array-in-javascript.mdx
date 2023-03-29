@@ -1,0 +1,78 @@
+---
+title: 'How do I Empty an Array in JavaScript?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+---
+
+## The Problem
+
+You want to empty an array in JavaScript. What are the different ways of doing this?
+
+## The Solution
+
+There are several ways to clear an array. We'll look at four methods.
+
+### Assign the Array to an Empty Array
+
+The fastest and most straightforward way of emptying an array is by reassigning it to an empty array:
+
+```javascript
+let arr = [1, 2, 3, 4, 5];
+arr = [];
+console.log(arr); // []
+```
+
+The array `[1, 2, 3, 4, 5]` is marked for [garbage collection](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_Management) to free up memory as there is no reference to it after `arr` is reassigned. The array is not reachable anymore.
+
+This method only works if the array is not a [`const` variable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const), which can't be changed by reassignment. If you change the above `arr` variable to a `const` variable, you'll get the following error message:
+
+```
+Assignment to constant variable.
+```
+
+If you use this method to empty an array, bear in mind that the empty array is newly created. If another variable or property references the array, that variable or property will still point to the original array, as can be seen in the code example below:
+
+```javascript
+let arr = [1, 2, 3, 4, 5];
+const arr2 = arr;
+arr = [];
+
+console.log(arr); // []
+console.log(arr2); // [1, 2, 3, 4, 5]
+```
+
+In JavaScript, objects are assigned and copied by reference, not by value. The variable `arr2` does not copy the value of `arr` when it's assigned to it. It stores the reference to the array, which is its address in memory.
+
+### Set the `length` property to 0
+
+You can set the [`length`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length) property of an array to 0 to empty an array:
+
+```javascript
+arr.length = 0;
+```
+
+The array `length` property is readable and writable, so you can use it to get or set the length of an array.
+
+### Using the `splice()` Method
+
+You can use the [`splice()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice) method to change an array by modifying the array itself. You can use it to remove all elements in an array:
+
+```javascript
+arr.splice(0, arr.length);
+```
+
+The first argument, the `start`, is the index position at which to start changing the array. The second argument, the `deleteCount`, indicates the number of elements to remove in the array, starting from the `start` index position. The code above removes all elements in the array.
+
+### Using the `pop()` Method
+
+You can also loop through an array and remove each element using the [`pop()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop) or [`shift()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/shift) methods, which remove the last element of an array and the first element of an array, respectively.
+
+```javascript
+while (arr.length > 0) {
+  arr.pop();
+}
+```
+
+This is the slowest of the methods described here.

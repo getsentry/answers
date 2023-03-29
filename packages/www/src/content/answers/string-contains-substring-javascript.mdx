@@ -1,0 +1,68 @@
+---
+title: 'How to Check Whether a String Contains a Substring in JavaScript?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Valerie M.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You want to check whether a string contains a substring in JavaScript. What are the different ways to do this?
+
+## The Solution
+
+There are a number of ways you could approach this problem. We'll take a look at two methods: `includes()` and `indexOf()`.
+
+### The `includes()` method
+
+You can use JavaScript's [`includes()` method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes) to check whether a string contains a substring. This will return `true` if the substring is found, or `false` if not.
+
+Consider the code example below:
+
+```javascript
+const str = 'This is my example string!';
+const substr = 'my';
+
+console.log(str.includes(substr));
+```
+
+The above code would output `true`.
+
+Note that `includes()` performs a case-sensitive search. To work around this, you can convert the string to lower case using `toLowerCase()` as follows:
+
+```javascript
+console.log(str.toLowerCase().includes(substr));
+```
+
+Furthermore, a `position` can also be passed as an argument to specify the position at which to begin searching the string for the substring. The default position is `0`. If you want to begin searching at position `2`, you would write:
+
+```javascript
+console.log(str.includes(substr, 2));
+```
+
+### The `indexOf()` method
+
+The `indexOf()` method is also case sensitive, and returns the index position of the first occurrence of the substring within the string. If the substring is not found, it returns `-1`.
+
+```javascript
+const str = 'This is my example string!';
+const substr = 'my';
+
+console.log(str.indexOf(substr));
+```
+
+The code above returns `8`.
+
+You can also include the `position` at which to begin searching the string for the substring. The default position is `0`.
+
+Other search methods you can consider include:
+
+- [`search(regExp)`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/search) – Returns the index of the first match between `regExp` and the string. If no match is found, `-1` is returned.
+- [`lastIndexOf(searchValue)`](https://www.w3schools.com/jsref/jsref_lastindexof.asp) – Returns the index position of the last occurrence of `searchValue` inside a string.
+- [`match(searchValue)`](https://www.w3schools.com/jsref/jsref_match.asp) – Finds the `searchValue`, a regular expression, within a given string and returns an array containing the matches.
+- [`charAt(index)`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/charAt) – Returns a string representing the character at the specified index. If the index is out of range, it returns an empty string.
+- [`startsWith(searchValue)`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith) – Returns `true` or `false` if `searchValue` is found at the beginning of a string.
+- [`endsWith(searchValue)`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith) – Returns `true` or `false` if a string ends with the `searchValue`.

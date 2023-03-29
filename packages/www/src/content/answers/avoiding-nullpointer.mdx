@@ -1,0 +1,86 @@
+---
+title: 'Avoiding `NullPointerException` in Java'
+platforms:
+  - sentry.java
+people:
+  - Lewis D.
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+In Java, a `NullPointerException` occurs when a variable that is being accessed has not yet been assigned to an object, in other words, the variable is assigned as `null`.
+
+If you have read the Sentry answer to [Is Java Pass-By-Reference or Pass-By-Value?](https://sentry.io/answers/java-pass-by-reference-or-value), you might know that in Java, variables are simply pointers to objects in memory. Therefore, a null pointer exception will occur when the code is pointing to something in memory that does not exist.
+
+The Java API documentation on [`NullPointerException`](https://docs.oracle.com/javase/7/docs/api/java/lang/NullPointerException.html) lists a couple of scenarios where this exception could be invoked:
+
+* Calling the instance method of a `null` object.
+* Accessing or modifying the field of a `null` object.
+* Taking the length of `null` as if it were an array.
+* Accessing or modifying the slots of `null` as if it were an array.
+* Throwing `null` as if it were a Throwable value.
+
+## The Solution
+
+Let's take a look at a concrete example of where a `NullPointerException` might be thrown.
+
+Consider the following code example:
+
+```java
+class NullPointerExample {
+    private static void printFirstElement(String[] array) {
+        System.out.println(array[0]);
+    }
+
+    public static void main(String[] args) {
+        String[] myStringArray = null;
+        printFirstElement(myStringArray);
+    }
+}
+```
+Executing this code will result in the following stack trace:
+
+```java
+Exception in thread "main" java.lang.NullPointerException
+	at NullPointerExample.printFirstElement(NullPointerExample.java:6)
+	at NullPointerExample.main(NullPointerExample.java:11)
+```
+
+This happens because in our `printFirstElement()` method, we attempted to access the first element of an array which does not exist. Similarly, taking the length of this given array would yield the same result. We could make this code null-safe by adding a check for null before attempting to access the first element:
+
+```java
+class NullPointerExample {
+    private static void printFirstElement(String[] array) {
+        if (null != array){
+            System.out.println(array[0]);
+        }
+        else{
+             System.out.println("The array was null!");
+        }
+    }
+
+    public static void main(String[] args) {
+        String[] myStringArray = null;
+        printFirstElement(myStringArray);
+    }
+}
+```
+Executing this code now will yield the following output:
+
+```java
+The array was null!
+```
+
+This is one important technique we can use to avoid tumbling into a `NullPointerException` during code execution. Some tips for avoiding a `NullPointerException` include:
+
+* Perform null checks to ensure that objects are correctly initialized  before accessing any of the object's methods.
+* Use primitives (where it makes sense) such as `int`, `boolean` and `char`, as these cannot be assigned as null and therefore cannot cause a `NullPointerException`.
+* When first initializing objects, attempt to assign default or temporary values to them.
+* Use a tool like [FindBugs](http://findbugs.sourceforge.net/bugDescriptions.html), which performs static analysis of code and can detect `NullPointerException` issues before you actually execute any of your code.
+* Use a tool like [NullAway](https://github.com/uber/NullAway) which acts on `@NotNull` and `@Nullable` annotations.
+
+
+### Further Reading
+[Is Java Pass-By-Reference or Pass-By-Value?](https://sentry.io/answers/java-pass-by-reference-or-value)

@@ -1,0 +1,27 @@
+---
+title: 'Upgrade specific `pip` packages in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The problem
+
+How can I upgrade specific Python packages using `pip`?
+
+## The solution
+
+To upgrade an installed package, call `pip install` with the [`--upgrade`](https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-U) flag.
+
+```sh
+pip install --upgrade Django
+```
+
+This will upgrade the package to the latest available versions. It will also [upgrade-dependent packages where needed](https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-upgrade-strategy) to satisfy the requirements of the new version. To upgrade to a specific version instead, specify it with `==`, as below:
+
+```sh
+pip install --upgrade Django==3.2.16
+```

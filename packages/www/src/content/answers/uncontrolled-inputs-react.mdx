@@ -1,0 +1,50 @@
+---
+title: 'Avoid re-rendering by using uncontrolled inputs'
+platforms:
+  - sentry.react
+people:
+  - Lazar Nikolov
+date: 2023-01-23T19:28:34-07:00
+---
+
+## The Problem
+
+When handling form input, the first thing that comes to your mind is using the `useState`
+hook to hold the form values. The `useState` hook is a great way to handle form input, but
+it comes with a downside. Every time the state changes, the component re-renders. This is
+not a problem when you have a small form, but when you have a large form with many input fields,
+or you don't neccessarily need to re-render the UI, this can be a performance issue.
+
+## The Solution
+
+The solution is to use the `useRef` hook instead of `useState`. The `useRef` hook is a
+great way to store a mutable value that doesn't trigger a re-render. The `useRef` hook
+returns an object with a `current` property, which is mutable and can hold any value.
+
+```jsx
+const inputRef = useRef();
+```
+
+With this we've created a ref that we can assign to an input field.
+
+```jsx
+<input type="text" ref={inputRef} placeholder="Enter your name" />
+```
+
+If you notice, the `value` and `onChange` props are missing from the input field. These
+inputs are called **uncontrolled inputs**.
+
+To obtain the values from the input field, we can use the `current` property of the ref
+whenever we need it, for example in the form handler method:
+
+```jsx
+const handleSubmit = () => {
+  const name = inputRef.current.value;
+
+  console.log(name); // the value of the input field
+};
+```
+
+We can do the same for all of the input fields in the form. This way we can avoid re-rendering
+the component when the state changes, and we can also avoid using the `onChange` event handler
+for each input field.

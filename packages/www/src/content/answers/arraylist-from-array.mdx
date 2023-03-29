@@ -1,0 +1,42 @@
+---
+title: 'Create ArrayList from array in Java'
+platforms: 
+  - sentry.java
+people: 
+  - Lewis D.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You want to convert your standard Java array, such as the one below, to an ArrayList to take advantage of the dynamically allocated memory.
+
+```java
+String[] array = {"new", "String", "array"};
+```
+
+## The Solution
+
+The easiest way to convert to an `ArrayList` is to use the built-in method in the Java [`Arrays`](https://docs.oracle.com/javase/7/docs/api/java/util/Arrays.html) library: `Arrays.asList(array)`. This method will take in a standard array and wrap it in the [`AbstractList`](https://docs.oracle.com/javase/7/docs/api/java/util/AbstractList.html) class, exposing all the methods available to objects that implement the [`List`](https://docs.oracle.com/javase/8/docs/api/java/util/List.html) interface.
+
+```java
+List<String> list = Arrays.asList(array);
+```
+
+It is important to note, however, that this has no effect on the actual data structure or data from the original code. This can catch some programmers out, as they may expect the new `list` object to behave like a true `List`. The example below will cause an `UnsupportedOperationException`:
+
+```java
+List<String> list = Arrays.asList(array);
+list.remove(1);
+```
+
+This is because the underlying data structure is still a static array, therefore the size cannot be changed. To create a true ArrayList data structure, we need to instantiate a new instance of the `ArrayList` object:
+
+```java
+List<String> list = new ArrayList<>(Arrays.asList(array));
+```
+
+The code above will create a new `ArrayList` instance and use the data from our original array to populate its initial values. The memory for our `list` object will now be dynamically allocated, so method calls such as `list.remove` or `list.add` will work as expected.
+
+In conclusion, we can create an `ArrayList` from a standard array quite easily using methods from core Java libraries as long as we are careful to instantiate the object correctly.  

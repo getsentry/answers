@@ -1,0 +1,86 @@
+---
+title: 'How do you access the query string in Flask routes?'
+platforms: 
+  - sentry.flask
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+How do you access the query string in Flask routes?
+
+## The Solution
+
+Query strings are usually made of query parameters. Flask provides an out-of-the-box solution to access parsed query parameters. In most cases, accessing query parameters is enough. But if you want to access the query string itself, you can do so by accessing the `query_string` property of the request object.
+
+### Difference Between Query String and Query Parameters
+
+Adding a query string to the URL is a common way to pass data to a web app. The query string is made up of arbitrary keys and values that are added to the URL after a question mark (`?`) character.
+
+For example, in the following URL:
+
+`http://example.com?language=python`
+
+The query string is `language=python`. Inside our app, we refer to 'language' as a query parameter and 'python' as its value.
+
+Query parameters can be separated by an ampersand (`&`) character, like so:
+
+`http://example.com/?language=python&framework=flask`
+
+### Request Object
+
+Flask provides a request object that contains all sorts of information about the current HTTP request.
+
+For example, you can access the complete URL with the query string by accessing the `url` property. Like so:
+
+```python
+# import main Flask class and request object
+from flask import Flask, request
+
+# create the Flask app
+app = Flask(__name__)
+
+
+@app.route('/')
+def query_example():
+    print(request.url)  # request.url property
+    return 'Query String Example'
+
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
+
+```
+
+If you run the above code, and send a request to
+
+`http://127.0.0.1:5000/?language=python&framework=flask`
+
+You will get the following output on your terminal:
+
+```powershell
+http://127.0.0.1:5000/?language=python&framework=flask
+```
+
+### Accessing Query String
+
+If you want just the query string, you can access it like so:
+
+```python
+print(request.query_string)
+```
+
+You will get the following output:
+
+```powershell
+b'language=python&framework=flask'
+```
+
+This is the raw value of the query string. The preferred way to access the query parameters is to use the `args` property:
+
+```python
+print(request.args.get('framework'))
+```

@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/(at|themonitor)(/.*)",
+      "status": 302,
+      "headers": {
+        "Location": "/customers$2"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "headers": {
+        "Content-Security-Policy-Report-Only": "upgrade-insecure-requests; default-src 'none'; script-src 'report-sample' 'self' 'unsafe-inline' 'unsafe-eval' *.sentry.dev www.googletagmanager.com www.google-analytics.com www.googleadservices.com www.google.com www.gstatic.com snap.licdn.com js.driftt.com connect.facebook.net assets.calendly.com player.vimeo.com www.redditstatic.com m.servedby-buysellads.com static.zdassets.com googleads.g.doubleclick.net bat.bing.com munchkin.marketo.net cdn.bizible.com cdn.amplitude.com; connect-src 'self' sentry.io *.sentry.io *.sentry.dev reload.getsentry.net api.amplitude.com api2.amplitude.com ekr.zdassets.com sentry.zendesk.com www.google-analytics.com stats.g.doubleclick.net 776-mjn-501.mktoresp.com vimeo.com bat.bing.com cdn.linkedin.oribi.io adservice.google.com region1.google-analytics.com www.google.com www.facebook.com; img-src 'self' data: *.sentry.dev sentry-blog.storage.googleapis.com images.ctfassets.net www.google-analytics.com stats.g.doubleclick.net assets.calendly.com q.quora.com alb.reddit.com www.facebook.com www.googletagmanager.com bat.bing.com www.google.com i.vimeocdn.com i.ytimg.com cdn.bizible.com cdn.bizibly.com px.ads.linkedin.com; style-src 'self' 'unsafe-inline' *.sentry.dev assets.calendly.com fonts.googleapis.com; media-src 'self' videos.ctfassets.net; font-src 'self' *.sentry.dev fonts.gstatic.com; frame-src player.vimeo.com www.youtube-nocookie.com js.driftt.com calendly.com bid.g.doubleclick.net www.google.com demo.arcade.software www.facebook.com; manifest-src 'self' *.sentry.dev; report-uri https://o1.ingest.sentry.io/api/1297627/security/?sentry_key=e811b9077ef64dcf8a279ec18a61b222"
+      },
+      "continue": true
+    },
+    {
+      "handle": "filesystem"
+    },
+    { "src": "/(.*)", "status": 404, "dest": "/404.html" }
+  ]
+}

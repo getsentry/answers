@@ -1,0 +1,81 @@
+---
+title: 'Extensions in Dart'
+platforms:
+  - sentry.flutter
+people:
+  - Lazar Nikolov
+---
+
+## The Problem
+
+It&apos;s not much of a solution to a problem, but a nice convenience.
+Extensions in Dart allow you to develop custom functionalities on
+any library or data structure, including your own. So how do we go
+about them?
+
+## The Solution
+
+There&aspo;s a specific keyword in Dart used to create extensions:
+`extension`. When creating an extension we also need to specify on
+which data type it should apply. Let&apos;s say we want to make a few
+useful `DateTime` extension methods. We should create a separate
+file and create our date extensions inside:
+
+```dart
+// date_extensions.dart
+
+extension DateExtensions on DateTime {
+	// ...
+}
+```
+
+Let&apos;s create an extension method that checks whether one date
+is at the same day as another:
+
+```dart
+extension DateExtensions on DateTime {
+	bool isSameDay(DateTime other) {
+    return this.year == other.year &&
+        this.month == other.month &&
+        this.day == other.day;
+  }
+}
+```
+
+Note: I&apos;ve put `this` so you can see how the comparison happens.
+The IDE will most likely warn you: `Don't access members with this unless avoiding shadowing.`
+
+We can use our new extension method like so (don&apos;t forget
+to import your dart extension file):
+
+```dart
+date1.isSameDate(date2)
+```
+
+The `this` in our extension method refers to the `date1` variable.
+
+Aside from methods, we can also create getters, setters and operators
+as well. Here&apos;s a getter method that returns a date in a specific
+format:
+
+```dart
+extension DateExtensions on DateTime {
+	// ...
+	get formattedDate {
+		DateFormat format;
+		if (year != DateTime.now().year) {
+		  format = DateFormat("E, d MMM yyyy");
+		// we can also use other extension methods inside
+		} else if (isToday()) {
+		  return "Today";
+		// we can also use other extension methods inside
+		} else if (isYesterday()) {
+		  return "Yesterday";
+		} else {
+		  format = DateFormat("E, d MMM");
+		}
+
+		return format.format(this);
+	}
+}
+```

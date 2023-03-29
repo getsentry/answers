@@ -1,0 +1,64 @@
+---
+title: 'Dismissing the keyboard in SwiftUI'
+platforms:
+  - sentry.swift
+people:
+  - Lazar Nikolov
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+There are cases where we want to manually dismiss the iOS keyboard, either by tapping on a certain button, or after submitting a form. Tapping away from the focused element will not dismiss the keyboard by default.
+
+## The Solution
+
+To achieve that, there is a nifty utility function that you can create in your project. Create a `KeyboardUtils.swift` file within your project and paste the following code:
+
+```swift
+import UIKit
+
+func hideKeyboard() {
+    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+}
+```
+
+The function sends a `resignFirstResponder` action to the shared `UIApplication`, which makes any selected element let go of the focus and dismiss the keyboard.
+
+We can use this function in a form handler:
+
+```swift
+func handleCreate() {
+    // ...
+    // send create API call
+    // ...
+
+    // clear the form fields
+    self.amount = ""
+    self.date = Date()
+    self.note = ""
+
+    // dismiss the keyboard
+    hideKeyboard()
+}
+```
+
+Or we can even create a toolbar with a keyboard dismiss button that&apos;ll be present on top of our keyboard:
+
+```swift
+// create a toolbar at the root of our form
+.toolbar {
+    // set the placement of the toolbard to the keyboard
+    ToolbarItemGroup(placement: .keyboard) {
+        Spacer()
+        // create a keyboard dismiss button
+        Button {
+            // dismiss the keyboard on press
+            hideKeyboard()
+        } label: {
+            Label("Dismiss", systemImage: "keyboard.chevron.compact.down")
+        }
+    }
+}
+```

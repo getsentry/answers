@@ -1,0 +1,135 @@
+---
+title: 'How to sort a List in Java?'
+platforms: 
+  - sentry.java
+people: 
+  - Lewis D.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You've created a `List` object in your Java project, but some functionality requires the values to be sorted in a specific order. How can you do this?
+
+## The Solution
+
+There are several solutions to this problem. Let's take a look at some of the more common ones.
+
+### Using the `Collections` Class
+
+The [`java.utils.Collections`](https://docs.oracle.com/javase/7/docs/api/java/util/Collections.html) library provides the method `sort(List<T>)`, which will take an implemented `List` object and sort it based on the natural order of the value type:
+
+```java
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+public class Example {
+    public static void main(String[] args) {
+        List<Integer> test = new ArrayList<>(Arrays.asList(8, 6, 3, 7, 2));
+        Collections.sort(test);
+        for (Integer i : test) {
+            System.out.print(i);
+        }
+    }
+}
+```
+
+**Output:**
+
+```
+23678
+```
+
+If you want to change the ordering of your sort, use the overloaded `sort(List<T> list, Comparator<? super T> c)` method and provide a [comparator](https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html):
+
+```java
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+public class Example {
+    public static void main(String[] args) {
+        List<Integer> test = new ArrayList<>(Arrays.asList(8, 6, 3, 7, 2));
+        Collections.sort(test, Comparator.reverseOrder());
+        for (Integer i : test) {
+            System.out.print(i);
+        }
+    }
+}
+```
+
+**Output:**
+
+```
+87632
+```
+
+### Using Comparator with `List.sort()`
+
+The comparator interface provides the framework to compare different [comparable](https://docs.oracle.com/javase/8/docs/api/java/lang/Comparable.html) objects. 
+
+The `List.sort(Comparator<? super T> c)` method takes a comparator as an argument, and will return a sorted array based on the comparator order specified:
+
+```java
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
+public class Example {
+    public static void main(String[] args) {
+        List<Integer> test = new ArrayList<>(Arrays.asList(8, 6, 3, 7, 2));
+        test.sort(Comparator.naturalOrder());
+        for (Integer i : test) {
+            System.out.print(i);
+        }
+    }
+}
+```
+
+**Output:**
+
+```
+23678
+```
+
+This method in the `List` class is practically identical to the `Collections` class implementation, and so the order can be changed with whatever comparator it receives as an argument.
+
+### Using a `Stream` Object
+
+You can also use the `List.stream()` method to sort your list. This method will return a sequential `Stream` object containing the values from the list. You can then use the `Stream.sorted(Comparator<? super T> c)` method to order your list based on a provided comparator. You will then need to convert the `Stream` object back into a `List`.
+
+```java
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class Example {
+    public static void main(String[] args) {
+        List<Integer> test = new ArrayList<>(Arrays.asList(8, 6, 3, 7, 2));
+        test = test.stream()
+                .sorted(Comparator.naturalOrder())
+                .collect(Collectors.toList());
+        for (Integer i : test) {
+            System.out.print(i);
+        }
+    }
+}
+```
+
+**Output:**
+
+```
+23678
+```
+
+These methods all behave in a similar way, and they are mostly interchangeable. 
+
+All three implement a version of a [merge sort](https://en.wikipedia.org/wiki/Merge_sort) and have an average time complexity of `O(n*Log n)`.

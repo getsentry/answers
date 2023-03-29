@@ -1,0 +1,43 @@
+---
+title: 'How Do I Exclude Values in Django QuerySet Filtering?'
+platforms:
+  - sentry.django
+people:
+  - James W.
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+With the Django QuerySet class, you can apply filters that return QuerySets defined by your filters. The `filter()` method returns all objects that match the keyword arguments given to the method.
+
+The following method returns all objects with the year 2005:
+
+```
+Entry.objects.filter(year=2005)
+```
+
+However, say you want to return all objects that are not equal to a keyword argument. The `filter()` method cannot make use of comparison operators, like `!` or `!=` to define a “not equal to” comparison.
+
+So is it possible to exclude information using a filter? Or is there another method you could use?
+
+## The Solution
+
+The `exclude()` method from the QuerySet class returns all objects that do not match the given keyword arguments. So whatever data matches the parameter that is passed into the `exclude()` method will be excluded from the returned QuerySet.
+
+Below is an example of the use of the [`exclude()` method](https://docs.djangoproject.com/en/4.0/ref/models/querysets/#exclude):
+
+```
+Entry.objects.filter(year=2005).exclude(color=blue)
+```
+
+The QuerySet created above will contain all objects associated with the year 2005, except those associated with the color blue.
+
+### Further Reading
+
+For more tips on working with Django on Sentry, have a look at these articles:
+
+ - [Monitoring Performance and Errors in a Django Application with Sentry](https://blog.sentry.io/2022/05/19/monitoring-performance-and-errors-in-a-django-application-with-sentry#create-a-django-project)
+ - [Finding and Fixing Django N+1 Problems](https://blog.sentry.io/2020/09/14/finding-and-fixing-django-n-1-problems)
+ - [Debug Issues Faster with Breadcrumbs](https://blog.sentry.io/2016/05/04/breadcrumbs#python)

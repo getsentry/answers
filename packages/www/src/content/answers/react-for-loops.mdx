@@ -1,0 +1,85 @@
+---
+title: 'How do you loop inside React JSX?'
+platforms: 
+  - sentry.react
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You have a set of elements, and you'd like to loop over them to generate a JSX partial.
+
+In templating languages, you can write a `for` loop directly inside the template. For example, you can use the following code to loop over a list in [Jinja](https://jinja.palletsprojects.com/en/3.1.x/):
+
+```jinja
+{% for i in range(11) %}
+    <li>{{ i }}</li>
+{% endfor %}
+```
+
+How can you do the same thing using JSX?
+
+## The Solution
+
+Two ways you can loop inside JSX are using traditional loops or using the `map()` method.
+
+### Using Traditional Loops
+
+If you have a set of elements, you can use normal JavaScript `for`, `for of`, and `for in` loops outside the `return` block.
+
+Inside the `return` block, you can use the resulting array.
+
+You can loop over an array and create JSX partials like so:
+
+```jsx
+import React from "react";
+
+function App() {
+  const seasons = ["Spring", "Summer", "Autumn", "Winter"];
+
+  let seasonsList = [];
+
+  seasons.forEach((season, index) => {
+    seasonsList.push(<li key={index}>{season}</li>);
+  });
+
+  return (
+    <div>
+      <h2>Seasons of the year</h2>
+      <ul>{seasonsList}</ul>
+    </div>
+  );
+}
+
+export default App;
+```
+
+### Using the `map()` Method
+
+You can use the [`map()` method](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map) on an array to loop through the elements and create components, or generate JSX, inside the `return` block.
+
+```jsx
+import React from "react";
+
+function App() {
+  const seasons = ["Spring", "Summer", "Autumn", "Winter"];
+
+  return (
+    <div>
+      <h2>Seasons of the year</h2>
+      <ul>
+        {seasons.map((season) => (
+          <li key={season.id}>{season}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+```
+
+Many developers prefer using `map()` to loop over arrays.

@@ -1,0 +1,39 @@
+---
+title: 'How do you get the Data Received in a Flask Request?'
+platforms:
+  - sentry.flask
+people:
+  - James W.
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## Problem
+
+You want to access the data passed into your Flask application, but when attempting to access the data using `request.data`, you found that sometimes the data returned is an empty string that does not represent the data you are trying to access.
+
+## Solution
+
+The `request` module allows you to access the data passed into your Flask application through an HTTP request.
+The data within a request can be accessed through the `request` module’s properties.
+These properties allow for data to be stored in the many different forms that data can be received through HTTP requests, like: query strings, form data, cookies, and [more](https://tedboy.github.io/flask/generated/generated/flask.Request.html).
+
+The `.data` property should only be used in circumstances where the data passed into your Flask application comes with a mimetype that Flask does not handle.
+Otherwise you should use the `request` property that reflects the type of the data you are trying to access.
+
+### Access the right property
+
+Make sure to use the `request` property that best suits your data.
+
+Here are some `request` properties for common data types:
+
+ - `request.arg` accesses the query string (the URL parameters) and returns the key/value pairs.
+
+ - `request.form` accesses form data and returns the form parameters (if the form uploads a file however, use `request.files` to access the file data).
+
+ - `request.cookies` returns a dictionary with the cookies associated with the request.
+
+ - `request.json` returns parsed JSON data if the `mimetype` is JSON.
+
+
+[Here is a more comprehensive list of request properties.](https://tedboy.github.io/flask/generated/generated/flask.Request.html)

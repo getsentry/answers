@@ -1,0 +1,78 @@
+---
+title: 'How to Iterate Over a HashMap in Java'
+platforms: 
+  - sentry.java
+people: 
+  - Lewis D.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+If you have a [`HashMap`](https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html), what is the best way to iterate over all the elements in the [`Map`](https://docs.oracle.com/javase/8/docs/api/java/util/Map.html)?
+
+## The Solution
+
+Java has a couple of solutions we can use to iterate over just the map keys, the values, or each key-value entry. In the approaches below, we will only consider iterating over map entries that will allow you to access both the map keys and map values during the iteration.
+
+### Using a For-Each Loop
+
+Perhaps the most straightforward approach to iterating over a HashMap is to use a for-each loop to iterate over each entry. Using the [`HashMap.entrySet()`](https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html#entrySet--) will return a set view of the mappings or [`entries`](https://docs.oracle.com/javase/8/docs/api/java/util/Map.Entry.html) in the HashMap.
+
+```java
+import java.util.HashMap;
+import java.util.Map;
+
+public class Example {
+
+    public static void main(String[] args) {
+        Map<String, String> myMap = new HashMap<>() {{
+            put("a", "b");
+            put("c", "d");
+        }};
+        iterateUsingForEach(myMap);
+    }
+
+    public static void iterateUsingForEach(Map<String, String> map) {
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            System.out.println("Key=" + key + ", Value=" + value);
+        }
+    }
+}
+```
+
+### Using a While Loop and Iterator
+
+This next approach uses the same for-each syntax as before, but this time we can make use of an [`Iterator`](https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html). Since the `HashMap.entrySet()` method returns a [`Set`](https://docs.oracle.com/javase/8/docs/api/java/util/Set.html), which extends the [`Collection`](https://docs.oracle.com/javase/8/docs/api/java/util/Collection.html) interface, we can use the `Iterator` instance returned by `Map.entrySet().iterator`.
+
+```java
+public void iterateUsingForEachIterator(Map<String, String> map) {
+    Iterator<Map.Entry<String, String>> iterator = map.entrySet().iterator();
+
+    while (iterator.hasNext()) {
+        Map.Entry<String, String> entry = iterator.next();
+        String key = entry.getKey();
+        String value = entry.getValue();
+        System.out.println("Key=" + key + ", Value=" + value);
+    }
+}
+```
+
+### Using For-Each and Lambda
+
+In this approach, we make use of lambda expressions, which have been available in Java since version 8. A lambda expression operates on input parameters and returns a value. The lambda expression solution to this problem does not need each key-value entry to be converted into an entry set.
+
+```java
+public void iterateUsingLambda(Map<String, String> map) {
+    map.forEach((key, value) -> {
+        System.out.println("Key=" + key + ", Value=" + value);
+    });
+}
+```
+
+### Concluding Thoughts
+
+In conclusion, we have looked at three approaches to iterating over a HashMap. Each approach is useful for retrieving both the map keys and the map values. We also looked at using lambdas, which use fewer lines of code to achieve the same iteration as non-lambda approaches.

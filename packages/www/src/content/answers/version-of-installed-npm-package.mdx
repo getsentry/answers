@@ -1,0 +1,89 @@
+---
+title: 'Find the version of an installed npm package'
+platforms: 
+  - sentry.nodejs
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+Most modern JavaScript apps use a bunch of third party packages. Many packages are installed globally too.
+
+How do you find the installed versions of the various `npm` packages?
+
+## The Solution
+
+All locally installed `npm` packages are listed in the `package-lock.json` file. For a smaller project, you can take a quick look at this file.
+
+An easier way to find the installed versions of `npm` packages that doesn't require so much visual scanning is to use the built-in command `list`:
+
+```bash
+$ npm list
+```
+
+This command will print all the versions of packages that are installed in the current directory to `stdout`, like so:
+
+```bash
+$ npm list
+projectName@projectVersion /path/to/project/folder
+├── futil@1.69.0
+└── lodash@4.17.21
+```
+
+If you want to see all the dependencies of manually installed packages and their versions, you can use `--all` :
+
+```bash
+$ npm list --all
+projectName@projectVersion /path/to/project/folder
+├─┬ futil@1.69.0
+│ ├─┬ babel-polyfill@6.26.0
+│ │ ├─┬ babel-runtime@6.26.0
+│ │ │ ├── core-js@2.6.12 deduped
+│ │ │ └── regenerator-runtime@0.11.1
+│ │ ├── core-js@2.6.12
+│ │ └── regenerator-runtime@0.10.5
+│ └── lodash@4.17.21 deduped
+└── lodash@4.17.21
+```
+
+You can also control the depth of level to show by using `--depth`. For example, using `--depth=1` will show the following:
+
+```bash
+$ npm list --depth=1
+projectName@projectVersion /path/to/project/folder
+├─┬ futil@1.69.0
+│ ├── babel-polyfill@6.26.0
+│ └── lodash@4.17.21 deduped
+└── lodash@4.17.21
+```
+
+Notice that any dependencies that are more than two levels deep are removed from the tree.
+
+If you want to take a look at globally installed packages, you can use `-g`, like so:
+
+```bash
+$ npm list -g
+/path/to/node/v16.15.1/lib
+├── corepack@0.10.0
+└── npm@8.12.1
+```
+
+To find the version of a specific package, specify its name:
+
+```bash
+$ npm list futil
+projectName@projectVersion /path/to/project/folder
+└── futil@1.69.0
+```
+
+To check the latest available version of the package **on the npm repository**, use the `view` option:
+
+```bash
+$ npm view futil --version
+8.12.1
+```
+
+Besides these, there are a few other options that can be used with `list`. You can take a look at all available options in the [official documentation](https://docs.npmjs.com/cli/v8/commands/npm-ls).

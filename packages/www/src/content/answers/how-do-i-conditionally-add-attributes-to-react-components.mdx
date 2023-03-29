@@ -1,0 +1,109 @@
+---
+title: 'How do I Conditionally add Attributes to React Components?'
+platforms: 
+  - sentry.react
+people: 
+  - Matthew C.
+---
+
+## The Problem
+
+You have an attribute or property that you would like to conditionally add to your component or element. How do you do this? 
+
+Let's say that we have a submit button that we would like to disable if a particular checkbox, such as a checkbox asking the user if they've read the terms of service, has not been checked.
+
+## The Solution
+
+There are different ways to conditionally add attributes to components. The method you choose to use depends on personal or team preferences and how many attributes you want to conditionally render. The methods used, apart from the spread operator, can also be used for conditionally rendering components.
+
+A React component tree is made up of host and non-host components. Host components are platform-specific. In a browser, a [React element](https://overreacted.io/react-as-a-ui-runtime/#react-elements) that renders an `<input>` DOM element is a host component. If a React host component attribute is set to `null`, `undefined`, or `false`, React will not pass the attribute to the DOM element. This is not true for non-host React components, such as a custom component that you define. In the example code below, if the `checked` state is `false`, the button will be disabled:
+
+```javascript
+  <label>
+    <input type="checkbox" checked={checked} onChange={handleChange} />
+    I have read the terms of service
+  </label>
+  <button type="submit" disabled={!checked}>
+    Submit
+  </button>
+```
+
+### Using a Boolean Value
+
+You can use a Boolean value to conditionally add an attribute to an element:
+
+```javascript
+      <button type="submit" disabled={!checked}>
+        Submit
+      </button>
+```
+
+You can also cast values to a Boolean using the [`Boolean()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean/Boolean) function or the [double NOT (!!)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_NOT#double_not_!!) operator.
+
+### Using the Logical AND (&&) Operator
+
+You can use the [logical AND (&&) operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_AND) to conditionally add an attribute to an element based on the output of a logical AND expression:
+
+```javascript
+      <button type="submit" disabled={state.type === 'guest' && !checked}>
+        Submit
+      </button>
+```
+
+### Using the Conditional (Ternary) Operator
+
+You can use a [ternary operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) to conditionally add an attribute to an element based on the output of a ternary expression:
+
+```javascript
+      <button type="submit" disabled={!checked} className={checked ? 'btn-enabled' : 'btn-disabled'}>
+        Submit
+      </button>
+```
+
+This is similar to using the logical AND (&&) operator. It takes a little longer to type but some programmers may find it more readable.
+
+### Using an If Statement
+
+You can use an if statement to alter attributes if certain conditions are met, such as in the example code below:
+
+```javascript
+
+  let disabled = false;
+
+  if (state.type === "guest" && !checked) {
+  	disabled = true;
+  }
+
+  return (
+  	
+  	...
+  	
+    <button type="submit" disabled={disabled}>
+        Submit
+    </button>
+  );
+```
+
+### Using Spread Syntax
+
+You can use [spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax) to add multiple attributes at once. This is useful if you have many attributes that you want to add to an element or component. In the example code below, the `<input>` attributes are in an object. These are then conditionally changed using an if statement before spreading in the attributes to an element during rendering.
+
+```javascript
+  const attributes = {
+    type: "checkbox",
+    name: "terms",
+    id: "terms"
+  };
+
+  if (state.type === "guest") {
+    attributes.required = false;
+    attributes.disabled = true;
+  }
+
+  return (
+  	...
+
+    <input {...attributes} />
+
+  );
+```

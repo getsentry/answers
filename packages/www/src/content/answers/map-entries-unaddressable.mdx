@@ -1,0 +1,68 @@
+---
+title: 'Map Entries are Unaddressable'
+platforms:
+  - sentry.go
+people:
+  - Evan Hicks
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+The error:
+./prog.go:15:10: cannot call pointer method on m["bar"] <br />
+./prog.go:15:10: cannot take the address of m["bar"]
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+type Bar struct {}
+
+func (b *Bar) Fizz() {
+	fmt.Println("buzz")
+}
+
+func main() {
+	m := map[string]Bar{"bar": Bar{}}
+	m["bar"].Fizz()
+}
+```
+
+## The Solution
+
+There are actually two different bugs here, hence the two different compile errors. The first bug is that the function `Fizz` is defined on a pointer receiver `*Bar` and `m` is a map of non-pointer `Bar`. Normally this isn't an issue, because Go will automatically create a pointer to the object and then call `Fizz` on that. However, since map entries are not addressable, Go cannot create a pointer and this error occurs.
+
+The fix:
+There are two ways to fix this. The first is to change `m` to type `map[string]*Bar` and then have `&Bar{}` as the value. The other solution shown below is to change the `Fizz` method to not be a pointer receiver.
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+type Bar struct {}
+
+func (b Bar) Fizz() {
+	fmt.Println("buzz")
+}
+
+func main() {
+	m := map[string]Bar{"bar": Bar{}}
+	m["bar"].Fizz()
+}
+```
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how Go application monitoring works, take a look at the following articles:
+
+- [Sentry's unified Go SDK](https://blog.sentry.io/2019/08/15/introducing-sentrys-unified-go-sdk)
+- [How slow is slow?](https://blog.sentry.io/2020/12/17/how-slow-is-slow)
+- [Getting started with the Go SDK (docs)](https://docs.sentry.io/platforms/go)

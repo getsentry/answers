@@ -1,0 +1,83 @@
+---
+title: 'Truthy and falsy values in JavaScript'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The problem
+
+Let's say we have an online store that has recently introduced a loyalty points system. We store users as JSON objects, and only newly created users have the `loyaltyPoints` field. Consider the following code:
+
+```javascript
+const user1 = {
+  name: "Jane Doe",
+  email: "jane.doe@example.com"
+}; // old user
+
+const user2 = {
+  name: "John Smith",
+  email: "john.smith@example.com",
+  loyaltyPoints: 0
+}; // new user
+
+function displayLoyaltyPoints(user) {
+  if (user.loyaltyPoints) {
+    console.log(`User has ${user.loyaltyPoints} loyalty points`);
+  } else {
+    console.log("Field 'loyaltyPoints' not defined for user.");
+  }
+}
+
+displayLoyaltyPoints(user1);
+displayLoyaltyPoints(user2);
+```
+
+Based on a cursory reading of this code, we might expect the function `displayLoyaltyPoints` to follow the `else` path for our first user and the `if` path for our second user. However, if we run this code, we'll see that it follows the `else` path in both cases, even though `loyaltyPoints` is defined for the second user.
+
+Why does this happen and how can we fix our code?
+
+## The solution
+
+When non-boolean values are used in a boolean context, such as the condition of an `if` statement, they will be [coerced into either `true` or `false`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean#boolean_coercion). Values that are coerced into `true` are called [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) and values that are coerced into `false` are called [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy).
+
+JavaScript contains the following falsy values:
+
+* `false`
+* `0`, `-0` and `0n`
+* `""`, `''`  (empty strings)
+* `null`, `undefined` and `NaN`
+* `document.all`
+
+All other values are truthy.
+
+Because `0` is a falsy value, the `if` condition in our `displayLoyaltyPoints()` function will evaluate to `false` when provided with a user whose `loyaltyPoints` property is set to `0`. The `if` condition will also evaluate to false if the `loyaltyPoints` field does not exist (making it `undefined`).
+
+We can fix our code by explicitly checking that `user.loyaltyPoints` does not equal `undefined` instead of evaluating the value's truthiness.
+
+```javascript
+function displayLoyaltyPoints(user) {
+  if (user.loyaltyPoints !== undefined) {
+    console.log(`User has ${user.loyaltyPoints} loyalty points`);
+  } else {
+    console.log("Field 'loyaltyPoints' not defined for user.");
+  }
+}
+```
+
+Some values can be truthy without also being [loosely equal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Equality) to true or falsy without being loosely equal to false. For example, both `if` statements in the code below will evaluate to `true`:
+
+```javascript
+if ([]) {
+  console.log("[] is truthy");
+}
+
+if ([] == false) {
+  console.log("[] is loosely equal to false");
+}
+```
+
+To avoid the pitfalls associated with boolean coercion, constructions such as `if (variableName)` should only be used when `variableName` is known to be a boolean value. For variables of other types, an explicit comparison is preferred. For example, `if (variableName > 0)` or `if (variableName != undefined)`.

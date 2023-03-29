@@ -1,0 +1,27 @@
+---
+title: 'psql FATAL Database "root" Does Not Exist'
+platforms:
+  - sentry.postgres
+people:
+  - Evan Hicks
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+When getting started with Postgres, you might come across this error: `psql: FATAL: database "root" does not exist` or `psql: FATAL: database "<your user name>" does not exist`. This can happen particularly when running `psql` with no arguments from your command line. The issue is that if you specify no arguments, psql assumes you want to access a database with the same name as your user name.
+
+## The Solution
+
+If you are just setting up Postgres for the first time, you will need to use the `postgres` user to configure your database initially. Either do `su - postgres` in your command line to switch to that user, or log in as the postgres user on your computer.
+
+Once you have the database set up, you can use the `-d` option to the `psql` command or append the database name after all the other `psql` options, e.g. `psql -H myhost database`.
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how application monitoring works, take a look at the following articles:
+
+- [Database Performance Monitoring in Node](https://blog.sentry.io/2020/12/07/support-for-database-performance-monitoring-in-node)
+- [How to mutate data in a system designed for immutable data](https://blog.sentry.io/2019/10/25/how-to-mutate-data-in-a-system-designed-for-immutable-data)
+- [Database integrations for Performance Monitoring in Node (docs)](https://docs.sentry.io/platforms/node/performance/database)

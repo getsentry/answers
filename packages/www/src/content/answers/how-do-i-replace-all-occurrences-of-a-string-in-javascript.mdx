@@ -1,0 +1,83 @@
+---
+title: 'How do I Replace all Occurrences of a String in JavaScript?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+---
+
+## The Problem
+
+You want to replace all occurrences of a substring in a string. This could be a character, a word, or multiple words. For example, you want to [kebab case](https://en.wiktionary.org/wiki/kebab_case) a string of words:
+
+```javascript
+const myString = "the quick brown fox";
+```
+
+You need to replace all the empty spaces ` ` with a `-`. How do you do this?
+
+## The Solution
+
+The simplest and best way to replace multiple occurrences of a substring in a string is to use the [`replaceAll`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replaceAll) method. There are other methods you can use if you need to support older browsers.
+
+### The `replaceAll()` Method
+
+The `replaceAll()` method has two arguments: `pattern` and `replacement`. It returns a new string with all matches of the `pattern` replaced by a `replacement`. The `pattern` is a string or regular expression ([`RegExp`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp)). The `replacement` is a string or function called for each match.
+
+To replace all the empty spaces ` ` with a `-` in the example string below, you can call `replaceAll()` with the following two string arguments:
+
+```javascript
+const myString = "the quick brown fox";
+const result = myString.replaceAll(" ", "-");
+console.log(result); // the-quick-brown-fox
+```
+
+Using a regular expression for the `pattern` argument is useful for more complex replacements, such as case-insensitive replacements:
+
+```javascript
+const myString = "Apples pears apples strawberries";
+const pattern = /apples/gi;
+const replacement = "grapes";
+
+const result = myString.replaceAll(pattern, replacement);
+console.log(result); // grapes pears grapes strawberries
+```
+
+If the `pattern` argument uses a regular expression, it must be a global regular expression. This is indicated by the `g` flag. If you don't add the `g` flag, you'll get the following error:
+
+```
+Uncaught TypeError: replaceAll must be called with a global RegExp
+```
+
+The `replaceAll()` method is relatively new. It was introduced in [ES2021](https://tc39.es/ecma262/2021/#sec-string.prototype.replaceall) and works with all major browsers. If you have to support older versions of browsers, check that they support `replaceAll()`. 
+
+### The `replace()` Method
+
+The [`replace()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace) method is similar to the `replaceAll()` method, the difference being that if the `pattern` argument is a string, only the first occurrence will be replaced. You can get the `replace()` method to replace all occurrences by using a global regular expression for the `pattern` argument:
+
+```javascript
+const myString = "Apples pears apples strawberries";
+const pattern = /apples/gi;
+const replacement = "grapes";
+
+const result = myString.replace(pattern, replacement);
+console.log(result); // grapes pears grapes strawberries
+```
+
+### Using `split()` and `join()`
+
+You can also replace all occurrences of a string by first passing in the substring to be replaced in the [`split()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split) method and then using the [`join()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/join) method to join the returned array with the new substring.
+
+The `split()` method searches for the passed-in `separator` argument in the string. The `separator` is the pattern that describes where each split should occur — the substring to be replaced. The `split()` method returns an array of strings, split at each point where the `separator` occurs.
+
+The `join()` method returns a new string by concatenating all of the elements in the array returned by the `split()` method. The array elements are joined using the new replacement substring.
+
+```javascript
+const myString = "the quick brown fox";
+
+const resultArr = myString.split(" ");
+console.log(resultArr); // [ "the", "quick", "brown", "fox" ]
+console.log(resultArr.join("-")); // the-quick-brown-fox
+```
+
+This method is not suitable for more complex replacements, such as case-insensitive replacements.

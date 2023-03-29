@@ -1,0 +1,65 @@
+---
+title: 'Is There a List of pytz Timezones?'
+platforms:
+  - sentry.python
+people:
+  - James W.
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+The pytz module allows for date-time conversion and timezone calculations so that your Python applications can keep track of dates and times, while staying accurate to the timezone of a particular location.
+
+But if you want to make use of a specific timezone, or access a list of popular timezones, is there a way you can list timezones in the pytz module?
+
+## The Solution
+
+To access a list of all the timezones stored in the pytz module, use the `all_timezones` attribute:
+
+```python
+import pytz
+
+print(pytz.all_timezones)
+
+```
+
+This attribute returns a list of all the time zones supported by the pytz module.
+
+Output (shortened):
+
+```python
+['Africa/Abidjan', 'Africa/Accra', 'Africa/Addis_Ababa', 'Africa/Algiers', … 'US/Samoa', 'UTC', 'Universal', 'W-SU', 'WET', 'Zulu']
+```
+
+You can also access, for example, the European timezones in the timezone list with the following code:
+
+```python
+import pytz
+
+europe_timezones = [timezone for timezone in pytz.all_timezones if "Europe" in timezone]
+print(europe_timezones)
+
+```
+
+Output (shortened):
+
+```python
+['Europe/Amsterdam', 'Europe/Andorra', 'Europe/Astrakhan', 'Europe/Athens', … 'Europe/Warsaw', 'Europe/Zagreb', 'Europe/Zaporozhye', 'Europe/Zurich']
+```
+
+The [pytz module](http://pytz.sourceforge.net/#helpers) also contains the `common_timezones` attribute, or perhaps more useful, the `common_timezones_set` attribute that returns commonly used timezones already as a set:
+
+```python
+import pytz
+
+common_timezones = pytz.common_timezones_set
+print(common_timezones)
+```
+
+Output (shortened):
+
+```python
+LazySet({'America/Indiana/Vevay', 'US/Arizona', 'Asia/Yerevan', … 'Asia/Chita', 'Pacific/Saipan', 'Africa/Nouakchott'})
+```

@@ -1,0 +1,43 @@
+---
+title: 'How do I check if an element is hidden in jQuery?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - James W.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You want to target elements on your HTML using jQuery, but you're not sure how to target elements based on criteria like state.
+
+Say you'd like to target some buttons on your page – not all the buttons, just the ones that are hidden from the user. This could be useful to reveal all the hidden buttons on a page to a user.
+
+Is it possible to only target particular elements on a page based on their state? How do you check the state of an element?
+
+## The Solution
+
+jQuery uses selectors to find HTML elements. These selectors can access elements based on factors like type, state, id, class, and more.
+
+### Check Element State
+
+To check the state of an element, use the `is()` method. This method returns `true` if an element matches the state provided, and `false` otherwise.
+
+The code below checks if an element is visible, and creates an alert stating whether the element is visible or hidden:
+
+```javascript
+if ($(element).is(':visible')) {
+  alert('The element is visible');
+} else {
+  alert('The element is hidden');
+}
+```
+
+### Match Elements by State
+
+To match elements on a page by a particular state, use the state as a selector. The following code matches all the elements that are hidden:
+
+```javascript
+$('element:hidden');
+```

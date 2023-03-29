@@ -1,0 +1,48 @@
+---
+title: 'How to check if a key exists in a JavaScript object'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+You want to check if a key exists in a JavaScript object. How do you do this?
+
+## The Solution
+
+There are multiple methods you can use to check if a property, which can also be called a key, exists in an object. The method you choose to use depends on whether you want to check for inherited properties and whether the value of the property could be `undefined`.
+
+### Using the `hasOwnProperty()` Method
+
+The [`hasOwnProperty()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) method takes a property name as an argument and returns a boolean indicating whether the object has the property:
+
+```javascript
+const item = { name: "Macbook Pro", price: 20000, year: 2021 };
+console.log(item.hasOwnProperty("price")); // true
+```
+
+### Using the `in` Operator
+
+The [`in`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/in) operator returns a boolean indicating if the specified property is in the object:
+
+```javascript
+const item = { name: "Macbook Pro", price: 20000, year: 2021 };
+console.log("price" in item); // true
+```
+
+Unlike the `hasOwnProperty()` method, the `in` operator also checks whether the property exists on the object's [prototype chain](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain), which contains properties inherited by all newly created objects such as the `toString()` method. However, if you specifically want to check for a property of an object instance that was added and not inherited, the `hasOwnProperty()` method is a better choice than the `in` operator.
+
+### Using Property Accessors
+
+[Property accessors](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Property_accessors) use dot notation or bracket notation to give access to an object's properties. You can use property accessors with the strict inequality operator (`!==`) to determine if a key exists in an object:
+
+```javascript
+console.log(item.price !== undefined); // true
+console.log(item["price"] !== undefined); // true
+```
+
+If the property you're checking for may have a value of `undefined`, using property accessors is not recommended. This method may lead you to conclude that the property does not exist when it does exist but has a value of `undefined`. In these situations, it is preferable to use the `hasOwnProperty()` method or the `in` operator.

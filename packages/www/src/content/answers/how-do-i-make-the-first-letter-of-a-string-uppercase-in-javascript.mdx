@@ -1,0 +1,30 @@
+---
+title: 'How do I Make the First Letter of a String Uppercase in JavaScript?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+---
+
+## The Problem
+
+You want to capitalize the first letter of a string using JavaScript. How do you do this?
+
+## The Solution
+
+To make the first letter of a string uppercase, get the first letter, convert it to uppercase, and then add the rest of the string to it:
+
+```javascript
+const str = "name";
+const modStr = str[0].toUpperCase() + str.slice(1);
+console.log(str); // name
+console.log(modStr); // Name
+```
+
+The [`toUpperCase()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/toUpperCase) method converts a string value to uppercase. The [`slice()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice) method is used to get all of the characters from index position 1 to the end of the string. The uppercase first letter is concatenated with the rest of the string. This method does not alter the original string.
+
+You can also use the [`charAt()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/charAt) method to get the first character of the string:
+
+```javascript
+str.charAt(0).toUpperCase() + str.slice(1);
+```

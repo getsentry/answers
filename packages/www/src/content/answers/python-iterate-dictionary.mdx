@@ -1,0 +1,42 @@
+---
+title: 'Iterate over a dictionary in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+How can I iterate over a dictionary using a Python for loop?
+
+## The Solution
+
+The simplest way to iterate over a Python dictionary is to iterate over its keys. The following code will print each key in a dictionary with its corresponding value:
+
+```python
+word_counts = {"the": 3, "a": 5, "be": 2, "do": 1}
+
+for key in word_counts:
+    print(f"{key}: {word_counts[key]}")
+```
+
+While this works, we may prefer to iterate over keys and values at the same time. Python's built-in `dict` class includes a method called [`items()`](https://docs.python.org/3/library/stdtypes.html#dict.items), which returns a [dictionary view object](https://docs.python.org/3/library/stdtypes.html#dict-views) that can be used for exactly this purpose. Below, we've rewritten our code to use this method:
+
+```python
+word_counts = {"the": 3, "a": 5, "be": 2, "do": 1}
+
+for key, value in word_counts.items():
+    print(f"{key}: {value}")
+```
+
+You can also use the `enumerate()` function to get the index and key-value in the iteration. This is useful if you need the position of the element in the dictionary along with the key-value pair:
+
+```python
+word_counts = {"the": 3, "a": 5, "be": 2, "do": 1}
+
+for index, (key, value) in enumerate(word_counts.items()):
+    print(f"{index}  {key}:{value}")
+```

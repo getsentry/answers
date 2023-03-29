@@ -1,0 +1,53 @@
+---
+title: 'Difference between NPM and NPX in JavaScript'
+platforms: 
+  - sentry.nodejs
+people: 
+  - David Y.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+What's the difference between `npm` and `npx` in JavaScript?
+
+## The Solution
+
+The command `npm` is used to download JavaScript packages from [Node Package Manager](https://www.npmjs.com/), and `npx` is used to execute JavaScript packages downloaded this way.
+
+This command will download the NPM package [`create-react-app`](https://www.npmjs.com/package/create-react-app) to a subdirectory of the current working directory named `node_modules`:
+
+```sh
+npm install create-react-app
+```
+
+This command will execute the NPM package `create-react-app` with the name argument `myreactapp`, creating a bare-bones React app in the subdirectory `myreactapp`:
+
+```sh
+npx create-react-app myreactapp
+```
+
+To understand why both of these commands are needed, we need to consider `npm`'s approach to dependency management.
+
+Most non-trivial projects require third-party libraries, commonly called packages, to extend their capabilities and speed up development. These packages must be locally installed and correctly versioned. Problems can arise when multiple versions of a single package are used on the same system. For example, you may have a user-facing web application and an API running on the same server which were developed at different times by different developers and are dependent on different versions of the same package.
+
+A variety of solutions have been attempted to solve this problem, including [version-numbered installation directories](https://nixos.org/), [virtual environments](https://docs.python.org/3/library/venv.html), and containerization (most famously [Docker](https://www.docker.com/)). The `npm` solution to the problem is to install all packages required by a given project in that project's directory, in a subdirectory called `node_modules`. NPM can install packages globally, but this is not its default behavior. Installing packages per project prevents version conflicts from arising without the need for the added complexity of environments or containers, at the cost of disk space.
+
+However, this approach means that packages are not installed in a way that adds them to the user's [PATH](https://en.wikipedia.org/wiki/PATH_(variable)) and thus they cannot easily be directly invoked. This is fine for packages that are only used in project code, but presents a problem for packages containing executable commands. Without an additional tool for invoking these executables, developers would need to dig through their project's `node_modules` directory to find the right file.
+
+Enter `npx`. Running `npx` with the name of a package will search `node_modules` for that package and run it. Packages that are not found will first be downloaded and then run. Let's compare the process for creating a React app without `npx` and with `npx`.
+
+Without `npx`:
+
+```sh
+npm install create-react-app
+node ./node_modules/create-react-app/index.js myreactapp
+```
+
+With `npx`:
+
+```sh
+npx create-react-app myreactapp
+```
+

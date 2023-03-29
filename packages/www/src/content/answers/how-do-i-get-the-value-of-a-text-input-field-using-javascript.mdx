@@ -1,0 +1,43 @@
+---
+title: 'Get value of text input field using JavaScript'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+You want to get the value of a text input field using JavaScript. How do you do this?
+
+## The Solution
+
+Get the `<input>` element using one of the methods on the [`document`](https://developer.mozilla.org/en-US/docs/Web/API/Document) interface that returns a DOM [`Element`](https://developer.mozilla.org/en-US/docs/Web/API/Element), such as `getElementById`. You can then get the element's value using the `value` property. The example code below shows HTML and JavaScript code for an `<input>` element with a button to get the value of the input:
+
+```html
+    <label for="name">Name:</label>
+    <input
+      type="text"
+      id="name"
+      name="name"
+      required
+    />
+    <button id="input-btn" type="button">
+	    Get input value
+    </button>
+```
+
+```javascript
+const inputBtn = document.getElementById("input-btn");
+const inputEl = document.getElementById("name");
+
+function getInputVal() {
+  console.log(inputEl.value);
+}
+
+inputBtn.addEventListener("click", getInputVal);
+```
+
+A `"click"` event listener is added to the button to get the value of the input when the button is clicked.

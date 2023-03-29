@@ -1,0 +1,74 @@
+---
+title: 'What Do These Three Dots `...` in React Do?'
+platforms: 
+  - sentry.react
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You may have come across JSX code in React like this snippet:
+
+```jsx
+<Image {...aspects} source="img_source">
+```
+
+And wondered what these three dots `...` are and what they do.
+
+## The Solution
+
+These three dots are called the **spread syntax** or **spread operator**. The spread syntax is a feature of [ES6](https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_%E2%80%93_ECMAScript_2015), and it's also used in React.
+
+[Spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax) allows you to deconstruct an array or object into separate variables. Even though the syntax doesn't look particularly meaningful when you first encounter it, spread syntax is super useful.
+
+According to MDN:
+
+> **Spread syntax** (`...`) allows an iterable such as an array expression or string to be expanded in places where zero or more arguments (for function calls) or elements (for array literals) are expected, or an object expression to be expanded in places where zero or more key-value pairs (for object literals) are expected.
+
+This means is that you can use the array syntax in [function calls](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#spread_in_function_calls), in [array literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#spread_in_array_literals), and in [object literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#spread_in_object_literals).
+
+In React, you can use spread syntax to pass objects such as `props` without the need to pass individual values.
+
+For example, these three components are equal:
+
+```jsx
+function App1() {
+  return <Image width="50" height="100" source="img_source" />;
+}
+
+function App2() {
+  const props = { width: "50", height: "100" };
+  return (
+    <Image width={props.width} height={props.height} source="img_source" />
+  );
+}
+
+function App3() {
+  const props = { width: "50", height: "100" };
+  return <Image {...props} source="img_source" />;
+}
+```
+
+This syntax is particularly useful when you want to pass a dynamic object and do not know beforehand which properties might be present in it.
+
+Another popular use case of spread syntax is to copy objects or arrays. Spread operator can create a new object or array with all of the properties or elements of the existing object or array.
+
+For example:
+
+```jsx
+const books = [
+  { name: "War and Peace", read: true },
+  { name: "Count of Monte Christo", read: true },
+];
+
+function addNewBook(newBook) {
+  return [...books, { ...newBook, read: false }];
+}
+
+const updatedBookList = addNewBook({ name: "Lord of the Rings" });
+```
+
+In React, this comes in handy when you do not want to mutate specific data like `state`.

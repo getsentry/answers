@@ -1,0 +1,114 @@
+---
+title: 'Debugging a Django application'
+platforms: 
+  - sentry.django
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+What is the best way to debug a Django application? Are there any Django-specific tools to help you debug in Django?
+
+For example, how can you debug why a template is taking too long to render? Or why an API endpoint is crashing? Is there a better way to debug than using `print` statements?
+
+## The Solution
+
+There are many tools available to help us debug a Django application. Here are a few of the more popular ones:
+
+### Django Shell
+
+[Django shell](https://docs.djangoproject.com/en/4.1/ref/django-admin/#shell) is a Python shell that lets us access the database API included with Django. When we open the Django shell, Django loads all dependencies for the project and imports Django settings, allowing us to evaluate expressions related to our project.
+
+We can start the Django shell using the 'manage.py' file, like so:
+
+```shell
+$ python manage.py shell
+```
+
+### Django Debug Toolbar
+
+The [Django Debug Toolbar](https://github.com/jazzband/django-debug-toolbar) is a visual tool that helps us debug the Django application.
+
+The Django debug toolbar offers information on every page of our app using a sliding sidebar. It gives us information about various parts of the app like the current request/response, resource usage (e.g. time), Django settings, HTTP headers, SQL queries, cache, logging, and more.
+
+We can install the toolbar with `pip`:
+
+```shell
+(venv) $ pip install django-debug-toolbar
+```
+
+Now we need to add it to the project’s `INSTALLED_APPS`:
+
+```python
+# settings.py
+
+INSTALLED_APPS = [
+    'my_project',
+    ...
+    'debug_toolbar'
+]
+```
+
+Then we will need to add it to the application’s `MIDDLEWARE_CLASSES`:
+
+```python
+# settings.py
+
+MIDDLEWARE_CLASSES = [
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    ...
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
+]
+```
+
+The toolbar's sidebar will appear on any connection that matches Django's `INTERNAL_IPS` if the `DEBUG` value is set to `True`.
+
+### Django PDB
+
+Python's built-in debugging module [`pdb`](https://docs.python.org/3/library/pdb.html) is an excellent tool to debug any Python application interactively.
+
+[Django PDB](https://github.com/HassenPy/django-pdb) is a package that allows us to use the `pdb` module in the context of Django applications. It automatically activates the `pdb` for any endpoint.
+
+We can install the `django-pdb` module using `pip`:
+
+```shell
+(venv) $ pip install django-pdb
+```
+
+Next we need to add it to the end of the application’s `INSTALLED_APPS`:
+
+```python
+# settings.py
+
+INSTALLED_APPS = [
+    'my_project',
+    ...
+    'django_pdb'
+]
+```
+
+Then we will need to add it to the end of the application’s `MIDDLEWARE_CLASSES`:
+
+```python
+# settings.py
+
+MIDDLEWARE_CLASSES = [
+     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+     ...
+     'django_pdb.middleware.PdbMiddleware'
+]
+```
+
+Django PDB is fairly easy to use if you are familiar with Python's `pdb` module. You can learn more about its usage in [the documentation](https://docs.python.org/3.10/library/pdb.html).
+
+### IDE Debug Tools
+
+Lastly, we can also use the built-in debugging features of the IDE or code editor to debug a Django application.
+
+Here are some links to debug a Django app in different IDEs and code editors:
+
+- [Debugging a Django app in PyCharm](https://www.jetbrains.com/help/pycharm/debugging-django-template-tutorial.html)
+- [Debugging a Django app in Visual Studio Code](https://code.visualstudio.com/docs/python/tutorial-django#_explore-the-debugger)

@@ -1,0 +1,97 @@
+---
+title: 'Accessing the Index in a `for` Loop in Python'
+platforms: 
+  - sentry.python
+people: 
+  - Naveera A.
+date:
+  2022-11-22T12:45:10-08:00
+---
+
+## The Problem
+
+How can you access the index of each element while using Python's `for` loop?
+
+Let's say we have the following list:
+
+```python
+directions = ['north', 'east', 'south', 'west']
+```
+
+Usually, we don't need the indexes of the elements. So Python provides a simpler method of looping where instead of retrieving item indexes and looking up each element, we can just loop over the elements directly, like so:
+
+```python
+directions = ['north', 'east', 'south', 'west']
+
+for direction in directions:
+	print(direction)
+```
+
+But what if we need the indexes? For example, if we want the following output where each element is printed alongside its index in the list:
+
+```
+0 north
+1 east
+2 south
+3 west
+```
+
+## The Solution
+
+Python's `for` loops are actually [foreach loops](https://en.wikipedia.org/wiki/Foreach_loop). A foreach loop makes the code simpler to read but it maintains no counters. So rather than saying "do this _n_ times", a foreach loop essentially says "do this to everything in the sequence".
+
+For scenarios where we actually need the index or counter variable, we can use Python's built-in [`enumerate` function](https://docs.python.org/3/library/functions.html#enumerate). The `enumerate` function returns an [iterable](https://docs.python.org/3/glossary.html#term-iterable). Each element of this iterable is a tuple containing the index of the item and the original item value, like so:
+
+```python
+directions = ['north', 'east', 'south', 'west']
+directions_tuples = enumerate(directions)
+
+# output [(0, 'north'), (1, 'east'), (2, 'south'), (3, 'west')]
+```
+
+We can unpack the tuple in two variables and use it in the `for` loop, like so:
+
+```python
+directions = ['north', 'east', 'south', 'west']
+
+for index, direction in enumerate(directions):
+	print(f"{index} {direction}")
+```
+
+This will print the following output:
+
+```
+0 north
+1 east
+2 south
+3 west
+```
+
+The `enumerate` function also takes an optional argument, `start`. We can use this argument to change the starting index. By default, the value of `start` is 0.
+
+Let's say we want to print the directions with a natural counting number, we can set the value of `start` to 1, like so:
+
+```python
+directions = ['north', 'east', 'south', 'west']
+
+for index, direction in enumerate(directions, start=1):
+	print(f"{index} {direction}")
+```
+
+This time we will get the following output:
+
+```
+1 north
+2 east
+3 south
+4 west
+```
+
+There are other ways of accessing index or counter variables, for example using the `range` and `len` functions, like so:
+
+```python
+for index in range(len(directions)):
+	print(f"{index} {directions[index]}")
+```
+
+But using the `enumerate` function is the recommended and [pythonic](https://docs.python-guide.org/writing/style/) way of achieving this result.

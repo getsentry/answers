@@ -1,0 +1,43 @@
+---
+title: 'How do I get the Current Date in JavaScript?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+---
+
+## The Problem
+
+You want to get the current date in JavaScript, for example, to add a date stamp to your blog post or to blog post comments. How do you get the current date in JavaScript?
+
+## The Solution
+
+Create a timestamp using the [`Date.now()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now) method. This represents the number of milliseconds elapsed since 1 January 1970 00:00:00 UTC ([ECMAScript epoch](https://tc39.es/ecma262/multipage/numbers-and-dates.html#sec-time-values-and-time-range)), with leap seconds ignored:
+
+```javascript
+const currentTime = Date.now();
+console.log(currentTime); // 1669634159760
+```
+
+For example, you can create and save the timestamp when a blog post or comment is added to your database. When you want to display the date, you can convert the timestamp to a date and format it as needed. The `.toString()` method on the `Date` object returns a string representation of the date and time in the user's timezone:
+
+```javascript
+const dateToShow = new Date(currentTime);
+console.log(dateToShow.toString()); // Mon Nov 28 2022 13:15:59 GMT+0200 (South Africa Standard Time)
+```
+
+You can also create a new [`Date` object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date), which represents a single moment in time, and save the date as a UTC timezone timestamp:
+
+```javascript
+const currentTime = new Date();
+console.log(currentTime.toUTCString()); // Mon, 28 Nov 2022 11:24:21 GMT
+```
+
+You can then convert the timestamp to a date and format it as needed:
+
+```javascript
+const dateToShow = new Date(currentTime);
+console.log(dateToShow.toString()); // Mon Nov 28 2022 13:24:21 GMT+0200 (South Africa Standard Time)
+```
+
+You can format the date using one of the various formatting methods on the `Date` object, such as `.toString()`, as described in our answer to the following question: [How do I Format a Date in JavaScript?](https://sentry.io/answers/how-do-i-format-a-date-in-javascript).

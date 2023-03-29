@@ -1,0 +1,148 @@
+---
+title: 'How do You Split a String in C++ Using a String Delimiter?'
+platforms: 
+  - sentry.cpp
+people: 
+  - Dean R.
+---
+
+## The Problem
+
+Imagine you're building a web service that requires you to store each word from a URL query. Your input string will have spaces represented by their HTML encoding, `%20`, like so:
+
+```C++
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<string> getWords(string s) {
+    //YOUR CODE HERE
+}
+
+int main() {
+    string s = "This%20is%20a%20string.";
+    for (string x: getWords(s)) {
+        cout << x << endl;
+    }
+    return 0;
+}
+```
+
+There is no standard `split()` function in C++ like there is in other languages such as Python and JavaScript, so how can you split a string in C++ using a string delimiter?
+
+
+
+## The Solution
+
+There are several fairly simple methods one can implement to solve this problem, each with pros and cons.
+
+The `getline()` function is a simple and more readable solution whenever you need to split a string by a character and not a string of length > 1.
+
+The `strtok()` function uses a static buffer to enable a fairly simple (albeit slightly less intuitive) implementation. Unlike `getline()`, `strtok()` supports a delimiter of type `string`, which seems to make this function a viable solution. However, while a string can be supplied as the delimiter to `strtok()`, the function interprets it as meaning "split the input by *every character in the delimiter string*".
+
+Since the question specifies that the delimiter must itself be a string, the recommended way to approach this problem would be to use `string.find()` and `string.substr()`.
+
+### Use `string.find()` and `string.substr()`
+
+For this method, we need to include the string library:
+
+```C++
+#include <string>
+```
+
+The `string.find()` function has the following signature:
+
+```C++
+string.find(string delim)
+```
+
+It returns the index of the first character of the delimiter within the string from which `find()` is called.
+
+The `string.substr()` function has the following signature:
+
+```C++
+string.substr(size_t begin, size_t length)
+```
+
+It returns the substring of `string` that begins at index `begin` and has length `length`.
+
+These two functions can be used together, like so:
+
+```C++
+#include <string>
+
+vector<string> getWords(string s){
+    vector<string> res;
+    int pos = 0;
+    while(pos < s.size()){
+        pos = s.find("%20");
+        res.push_back(s.substr(0,pos));
+        s.erase(0,pos+3); // 3 is the length of the delimiter, "%20"
+    }
+    return res;
+}
+```
+
+```
+This
+is
+a
+string.
+```
+
+This method treats the delimiter as a proper string, so if the input string is:
+
+```C++
+string s = "This%20is%20a%20str2ing.";
+```
+
+Then the output will be:
+
+```
+This
+is
+a
+str2ing.
+```
+
+Note here that, although we erase `s` from the input string at each iteration, we pass the string by value and thus make a copy that we can destroy without affecting the original string.
+
+### Build Your Own
+
+Of course, if you have an objection to using prebuilt functions altogether, you could always build your own method for splitting a string. Here is one example of how you might implement it:
+
+```C++
+vector<string> getWords(string s) {
+    vector<string> res;
+    string delim = "%20";
+    string token = "";
+    for (int i = 0; i < s.size(); i++) {
+        bool flag = true;
+        for (int j = 0; j < delim.size(); j++) {
+            if (s[i + j] != delim[j]) flag = false;
+        }
+        if (flag) {
+            if (token.size() > 0) {
+                res.push_back(token);
+                token = "";
+                i += delim.size() - 1;
+            }
+        } else {
+            token += s[i];
+        }
+    }
+    res.push_back(token);
+    return res;
+}
+```
+
+Output:
+
+```
+This
+is
+a
+str2ing.
+```
+

@@ -1,0 +1,68 @@
+---
+title: 'How Can I Temporarily Disable a Foreign Key Constraint in MySQL?'
+platforms: 
+  - sentry.django
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+The `FOREIGN KEY` constraint, like other database constraints, ensures the accuracy and reliability of the data. It prevents deleting data from the referenced table, which can cause bugs and inaccuracy.
+
+But sometimes we need to disable the foreign key constraint temporarily or permanently, for example, when truncating a table or deleting column values. 
+
+How can you disable a foreign key constraint in MySQL? 
+
+## The Solution
+
+There are multiple ways to disable the foreign key constraint in MySQL.
+
+### Disabling for Specific Tables
+
+If you want to disable the foreign key constraint for specific tables, you can use the `DISABLE_KEYS` statement. Run the following command after replacing the `table_name` with your table name:
+
+```mysql
+ALTER TABLE table_name DISABLE KEYS;
+```
+
+Once you have performed the required operations, you can re-enable foreign key checks by running the following command:
+
+```mysql
+ALTER TABLE table_name ENABLE KEYS;
+```
+
+### Disabling for all Databases and Tables
+
+If you want to disable foreign key checks across all databases and tables, you can use the `FOREIGN_KEY_CHECKS` statement. In your MySQL execute the following command:
+
+```mysql
+SET FOREIGN_KEY_CHECKS=0;
+```
+
+You can re-enable the constraint using the following command:
+
+```mysql
+SET FOREIGN_KEY_CHECKS=1;
+```
+
+### Disabling Permanently
+
+You may want to change the behavior of the foreign key permanently. For example, you may require that when you delete a record, the foreign key in the dependent tables should be set to `NULL`.
+
+To do this, first drop the existing foreign key constraint in the dependent table, like so:
+
+```mysql
+ALTER TABLE table_name DROP FOREIGN KEY fk_name1;
+```
+
+And then recreate the constraint with `ON DELETE SET NULL` condition:
+
+```mysql
+ALTER TABLE table_name
+  ADD FOREIGN KEY (other_table_id)
+        REFERENCES other_table(id)
+        ON DELETE SET NULL;
+```

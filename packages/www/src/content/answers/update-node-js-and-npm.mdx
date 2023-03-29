@@ -1,0 +1,29 @@
+---
+title: 'Update Node.js and NPM'
+platforms: 
+  - sentry.nodejs
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+How do I update Node.js and NPM to the latest versions?
+
+## The Solution
+
+### Node.js
+
+How you update Node.js will depend on how it was installed. If you've installed Node.js using a package manager, such as `apt` on Debian and Ubuntu or `brew` on MacOS, it will be automatically updated when a system upgrade is run. Otherwise, you may need to [download a new version from the Node.js website](https://nodejs.org/en/).
+
+The best way to manage different versions of Node.js is Node Version Manager (NVM). The [NVM repo](https://github.com/nvm-sh/nvm/) has detailed instructions for installing and using NVM on Linux and MacOS. For Windows, [NVM on Windows](https://github.com/coreybutler/nvm-windows) is the best solution.
+
+### NPM
+
+NPM can update itself. Run the following command:
+
+```sh
+npm update --global npm
+```

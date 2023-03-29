@@ -1,0 +1,100 @@
+---
+title: 'How Can I Add a Key-Value Pair to a JavaScript Object?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+---
+
+## The Problem
+
+You want to add a key-value pair to a JavaScript object, how do you do this?
+
+## The Solution
+
+We'll describe six ways to add a key-value pair to a JavaScript object.
+
+### Using Property Accessors
+
+[Property accessors](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Property_accessors) use dot notation or bracket notation to give access to an object's properties, which can also be called keys. You can use them to add a key-value pair to an object. It's the most straightforward way of adding a key-value pair to an object.
+
+#### Dot Notation
+
+Using dot notation is another common way to add a key-value pair to an object.
+
+```javascript
+const obj = { name: "Ben" };
+obj.age = 22;
+
+console.log(obj); // { name: 'Ben', age: 22 }
+```
+
+The key should be a [`String`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) or a [`symbol`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol). If you need a key to be a different [primitive value](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) or an object, or if the insertion order of the key-value pairs is important, don't use a regular JavaScript object. Use a [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map).
+
+#### Bracket Notation
+
+Dot notation does have some limitations. If the key is dynamic, if it contains spaces or hyphens, or if it starts with a number you'll get an error message. In these cases, you can use bracket notation:
+
+```javascript
+const obj = { name: "Ben" };
+const prop1 = "prop name";
+const prop2 = "prop-name";
+const prop3 = "1prop-name";
+obj[prop1] = "value 1";
+obj[prop2] = "value 2";
+obj[prop3] = "value 3";
+
+console.log(obj);
+// {"name": "Ben", "prop name": "value 1", "prop-name": "value 2", "1prop-name": "value 3"}
+```
+
+### Using `spread (...)` Syntax
+
+You can use the [`spread (...)` syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax) to add a key-value pair to an object:
+
+```javascript
+const obj = { name: "Ben" };
+const newObj = { ...obj, age: 22 };
+console.log(newObj); // { name: 'Ben', age: 22 }
+```
+
+You can spread in any iterable, such as an array, object, or String. Unlike the other methods explained here, `spread (...)` syntax does not mutate the original object, which may be useful if you don't want to change the original object. It creates a new object, which makes its performance the worst of the methods explained here.
+
+You can add multiple properties at once or merge multiple iterables, such as objects. The merge is shallow: Any nested objects will not be copied to the new object.
+
+If a property is added that already exists on the object, the property value will be overwritten:
+
+```javascript
+const obj = { name: "Ben", age: 22 };
+const obj2 = { ...obj, age: 33 };
+console.log(obj2); // { name: 'Ben', age: 33 }
+```
+
+### Using `Object.assign()`
+
+The [`Object.assign()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign) method is similar to using the spread syntax, but it only joins two objects and mutates the target object.
+
+```javascript
+const obj = { name: "Ben" };
+Object.assign(obj, { age: 22 });
+console.log(obj); // { name: 'Ben', age: 22 }
+```
+
+The first argument is the target object; the second object is the source object. The source object's properties are added to the target object.
+
+### Using `Object.defineProperty()`
+
+The [`Object.defineProperty()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty) method can be used to add or modify a property on an object. This method is useful for more complex property additions where you want to set property descriptors such as `enumerable`, `configurable`, and `writable`.
+
+```javascript
+const obj = { name: "Ben" };
+Object.defineProperty(obj, "age", {
+  value: 22,
+  writable: false,
+  enumerable: true,
+  configurable: true,
+});
+console.log(obj); // { name: 'Ben', age: 22 }
+obj.age = 24; // this won't change the 'age' key because 'writable' is set to false
+console.log(obj); // { name: 'Ben', age: 22 }
+```

@@ -1,0 +1,46 @@
+---
+title: 'Can you force a React component to re-render without calling setState?'
+platforms: 
+  - sentry.react
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The problem
+
+A React component re-renders when its state or props change. If your React component depends on other data outside of the component, you may need to force a re-render. The [React docs](https://reactjs.org/docs/hooks-faq.html#is-there-something-like-forceupdate) recommend avoiding forced re-renders.
+
+If you have a component that is not re-rendering as expected, the issue may be due to state or props issues that can be fixed without needing to force an update.
+
+## The solution
+
+The solution depends on whether you are using class or function components. For class components, you can call the [`forceUpdate()`](https://reactjs.org/docs/react-component.html#forceupdate) method.
+
+```javascript
+this.forceUpdate();
+```
+
+For functional components, you can use an incremental counter to force a re-render:
+
+```javascript
+const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
+function handleClick() {
+    forceUpdate();
+}
+```
+
+You can also force an update by updating a state object with an empty object:
+
+```javascript
+const [state, updateState] = React.useState();
+const forceUpdate = React.useCallback(() => updateState({}), []);
+
+function handleClick() {
+    forceUpdate();
+}
+```
+
+React uses the [`Object.is` comparison algorithm](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is#Description) to compare the previous state value with the new state value. Each time the `forceUpdate` function is called in the above code example, the state is set to a new empty object.  In JavaScript, objects are compared by reference not by value. Two objects are considered equal when they both point to the same memory location. The previous state and new state objects are in different locations in memory so the component re-renders.

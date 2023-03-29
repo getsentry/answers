@@ -1,0 +1,102 @@
+---
+title: 'What is related_name used for?'
+platforms: 
+  - sentry.django
+people: 
+  - Gareth D.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The problem
+
+You've seen `related_name` defined in your Django models and you're not sure what it does, or you want to use `related_name` and you're not sure how.
+
+## The solution
+
+The `related_name` field lets you access foreign keys defined in your Django models backwards, and override the default `<model>_set` field that Django creates for convenient access to your linked models.
+
+For example, usually if you want to find all books written by a specific author, you have to look in a `Books` model and filter by author, using a query like `Book.objects.filter(author=some_author)`. Sometimes it's more convenient to start from the **Author** model and find all books by that author, using `some_author.book_set.all()`
+
+The `related_name` field lets you define what to call this backwards link. By default, Django already creates this for you using the name of the foreign key and the `_set` suffix. Let's use the following two models as an example.
+
+```python
+from django.db import models
+
+class Author(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __repr__(self):
+        return self.name
+
+class Book(models.Model):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+
+    def __repr__(self):
+        return f"{self.title} by {self.author.name}"
+```
+
+Let's say we have only two authors in our database: Alex Smith and Sam Jones. Alex has written two books and Sam has written one. In a Django shell, we could run:
+
+```
+>>> from booktracker.models import Book, Author
+>>> Author.objects.all()
+<QuerySet [Alex Smith, Sam Jones]>
+>>> Book.objects.all()
+<QuerySet [How Django Works by Alex Smith, How to Sell Django Books by Alex Smith, What Alex Got Wrong by Sam Jones]>
+```
+
+The traditional way to get all the books written by Alex would be to import both the book and the author models, do a query for the author of interest, and then pass in that author as a filter when querying for books. This could be done as follows.
+
+```
+>>> from booktracker.models import Book, Author
+>>> alex = Author.objects.get(name="Alex Smith")
+>>> alex_books = Book.objects.filter(author=alex)
+>>> alex_books
+<QuerySet [How Django Works by Alex Smith, How to Sell Django Books by Alex Smith]>
+```
+
+And if you're used to writing SQL statements, this is probably intuitive. The book table has a foreign key link to the author table, so each book "knows" who its author is, but authors don't "know" what books they wrote. If you're a human, it's probably not intuitive and you'd prefer to deal only with the Author object and get a list of books belonging to that author. With Django, you can do look-ups in reverse as follows.
+
+```
+>>> from booktracker.models import Author
+>>> alex = Author.objects.get(name="Alex Smith")
+>>> alex.book_set.all()
+<QuerySet [How Django Works by Alex Smith, How to Sell Django Books by Alex Smith]>
+```
+
+Which gets the same results using less code, and we don't even have to import our Books model.
+
+The `book_set` is the automatic `related_name` that Django assigned to our Author model when we created the Book model with a ForeignKey linking it to Author. If you want to use a different name, you can customize it by setting `related_name`. For example, if you change the definition of the Book model to:
+
+```python
+class Book(models.Model):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="books")
+    title = models.CharField(max_length=200)
+
+    def __repr__(self):
+        return f"{self.title} by {self.author.name}"
+```
+
+Then you can get all the books for a specific author using `alex.books.all()` instead of `alex.book_set.all()`, which is more intuitive still (note that this is a database change, so you'll need to run migrations again after making it in the models.py file).
+
+```
+>>> from booktracker.models import Author
+>>> alex = Author.objects.get(name="Alex Smith")
+>>> alex.books.all()
+<QuerySet [How Django Works by Alex Smith, How to Sell Django Books by Alex Smith]>
+```
+
+### Disable `related_name`
+
+If you want to disable this backwards link completely (for example, to save a bit of space in the database index that Django needs to make this work), you can set `related_name="+"`. After doing this, the `book_set` relation will no longer exist.
+
+```
+>>> from booktracker.models import Author
+>>> alex = Author.objects.get(name="Alex Smith")
+>>> alex.book_set.all()
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+AttributeError: 'Author' object has no attribute 'book_set'
+```

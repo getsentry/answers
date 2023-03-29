@@ -1,0 +1,79 @@
+---
+title: 'How do I Test for an Empty JavaScript Object?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+---
+
+## The Problem
+
+You want to check if an object, for example, an object returned from a fetch request, is empty. How do you do this?
+
+## The Solution
+
+There are various ways to check if an object is empty. The method you choose to use depends on whether you know if the value to check will be an object. The methods also have different efficiencies in terms of operations per second, which could be important if you are checking many values.
+
+### Using `Object.keys`
+
+If you know the value you are checking is an object, you can use [`Object.keys`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys#browser_compatibility) to return an array of a passed-in object's property names. If the object is empty, the length of the returned array will be 0:
+
+```javascript
+Object.keys(value).length === 0;
+```
+
+### Using a `for...in` Loop
+
+You can use a [`for...in`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...in) loop in a function to check if an object is empty. Pass in the value as an argument and loop through each property in the value:
+
+```javascript
+function isEmpty(value) {
+  for (let prop in value) {
+    if (value.hasOwnProperty(prop)) return false;
+  }
+  return true;
+}
+```
+
+For each property, check if the property exists. If there is a property, the function will return `false`. If there are no properties on the object, the function returns `true`. This method was used as an alternative to using `Object.keys` before it was added to JavaScript in the 2011 [ECMAScript 5 specification](https://262.ecma-international.org/5.1/) and is widely supported by browsers.
+
+### Using `JSON.stringify`
+
+You can use [`JSON.stringify()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify) to convert the value to a JSON string to check if the value is an empty object. It will be equal to an empty object string if it is:
+
+```javascript
+JSON.stringify(value) === '{}'
+```
+
+This method is slower than the other methods.
+
+### Adding Extra Checks if You Don't Know if the Value is an Object
+
+If you don't know if the value is an object, you'll need to add some extra checks to determine whether it is. First, check if the value is `null` or `undefined`:
+
+```javascript
+value && Object.keys(value).length === 0;
+```
+
+If you don't do this check, you'll get the following error if the value of `value` is `null` or `undefined`:
+
+```
+Cannot convert undefined or null to object
+```
+
+You can end up with false positives if the value is a JavaScript object constructor, such as `new Date()` or `new RegExp()`:
+
+```javascript
+function isEmpty(value) {
+  return value && Object.keys(value).length === 0;
+}
+
+console.log(new Date()); // Date Tue Nov 29 2022 18:18:10 GMT+0200 (South Africa Standard Time)
+console.log(isEmpty(new Date())); // true
+```
+
+To fix this, you can also check that the constructor of the value is an object:
+
+```javascript
+value.constructor === Object;
+```

@@ -1,0 +1,150 @@
+---
+title: 'Python slice notation'
+platforms:
+  - sentry.python
+people:
+  - James W.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You'd like to get a subset of a string or array with a single expression. For example, you have the following variables storing some data that you need to manipulate:
+
+```python
+hello_world_string = "Hello World!"
+
+num_string = "012345"
+```
+
+## The Solution
+
+### The Syntax
+
+Since in Python, strings are arrays, we can use the same syntax for both object types.
+
+Slicing segments an array and returns that segment.
+
+In the example below, a string is segmented to return a single word from within the string:
+
+```python
+hello_world_string = "Hello World!"
+world = hello_world_string[7:12]
+print(world)
+```
+
+**Output:**
+
+```
+World
+```
+
+### Indexing
+
+Slicing requires a start and a stop:
+
+```python
+array[start:stop]
+```
+
+The start is the index of the array that you would like the slice to begin with, the stop is the index of the array you would like to stop at.
+
+The value of the array at the stop index is not included in the slice.
+
+```python
+num_string = "012345"
+zero_to_four = num_string[0:5]
+print(zero_to_four)
+```
+
+**Output:**
+
+```
+01234
+```
+
+If an index is not provided for start, the slice will begin at the start of the array.
+
+If an index is not provided for stop, the slice will end after the end of the array.
+
+```python
+# Returns entire array
+array[:]
+```
+
+For example:
+
+```python
+num_string = "012345"
+zero_to_five = num_string[:]
+print(zero_to_five)
+```
+
+**Output:**
+
+```
+012345
+```
+
+### Step
+
+Slicing can also use a third value called step:
+
+```python
+array[start:stop:step]
+```
+
+The step designates the manner in which the slice can walk through the array.
+
+Assigning a step of `2` will include values from the array every two "steps".
+
+In the example below, a string is sliced starting at index 2, stopping when the array is complete, and taking the values at every second step.
+
+```python
+num_string = "0123456"
+even_nums = num_string[2::2]
+print(even_nums)
+```
+
+**Output:**
+
+```
+246
+```
+
+### Negative Indexing
+
+Slicing can use negative indexing. With negative indexing, the last value in an array is -1, the second last is -2, and so on.
+
+For example:
+
+```python
+num_string = "012345"
+one_two_three = num_string[-5:-2]
+print(one_two_three)
+```
+
+**Output:**
+
+```
+123
+```
+
+### Reversing Arrays with Negative Indexing
+
+Use negative indexing to step through an array in reverse.
+
+For example:
+
+```python
+num_string = "012345"
+reverse_string = num_string[::-1]
+print(reverse_string)
+```
+
+**Output:**
+
+```
+543210
+```

@@ -1,0 +1,45 @@
+---
+title: 'Get Selected Value in Dropdown List Using JavaScript'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+---
+
+## The Problem
+
+You have a dropdown list, for example, the following `<select>` dropdown list:
+
+```html
+    <select name="accommodation" id="accommodation-select">
+      <option value="">--Please choose an option--</option>
+      <option value="apartment">Apartment</option>
+      <option value="house">House</option>
+      <option value="other">Other</option>
+    </select>
+```
+
+How do you get the selected value using JavaScript?
+
+## The Solution
+
+Get the `<select>` element by using one of the methods on the [`document`](https://developer.mozilla.org/en-US/docs/Web/API/Document) interface that returns a DOM [`Element`](https://developer.mozilla.org/en-US/docs/Web/API/Element), such `getElementById`. You can then get its value using the `value` property:
+
+```javascript
+const accommodationSelect = document.getElementById("accommodation-select");
+const value = accommodationSelect.value;
+```
+
+You can also add a "change" event listener to the `<select>` element and get its value each time a different item is selected from the dropdown list:
+
+```javascript
+const accommodationSelect = document.getElementById("accommodation-select");
+accommodationSelect.addEventListener("change", handleSelectChange);
+
+function handleSelectChange(event) {
+  const currentValue = event.target.value;
+  console.log(currentValue);
+}
+```
+
+You can get the selected value from the "change" event's [`target`](https://developer.mozilla.org/en-US/docs/Web/API/Event/target) property.

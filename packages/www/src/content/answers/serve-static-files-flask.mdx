@@ -1,0 +1,116 @@
+---
+title: 'How Do You Serve Static Files in Flask?'
+platforms:
+  - sentry.flask
+people:
+  - James W.
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+If you are trying to serve static files in a Flask application, you may have come across an issue when trying to access a static file in your project's directory.
+
+Perhaps you have added your files to your project's root directory or stored them within folders in the root directory, like this:
+
+```
+App1/
+│   app1.py
+│
+└───css/
+|   │   style.css
+|
+└───img/
+|   │   myimage.png
+|
+└───templates/
+|   │   index.html
+|
+|   views.py
+```
+
+And you have set up your template's HTML to reference these static files with absolute file paths, like so:
+
+```html
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <title></title>
+  </head>
+  <body>
+
+    <img src="/img/myimage.png">
+
+  </body>
+</html>
+
+```
+
+But when you run your Flask app, the static files are not found and do not show up on your webpage.
+
+The problem here is that you haven't used the correct file structure for static files in a Flask application.
+
+## The Solution
+
+A Flask application has some default settings for static files that need to be followed.
+
+Ideally, you should use a dedicated HTTP server (like Apache or Nginx) in front of your Flask application to serve your static files in production.
+
+You need to create a folder called `static` in your application's root directory to store all your static files. Then you can use relative file paths to reference these static files, but it is best practice to use the `url_for()` function to create absolute URL references to static files.
+
+Here is an example of the static file in a directory:
+
+```
+App1/
+│   app1.py
+│
+└───static/
+│   └───css/
+│   |   │   style.css
+|   |
+│   └───img/
+│       │   myimage.png
+|
+└───templates/
+|   │   index.html
+|
+|   views.py
+
+```
+
+To reference the static files using the `url_for()` function, pass in the name of the directory – `static` in this case – and the keyword argument of `filename=` followed by your static file name.
+
+Here is an example of the `url_for()` function to reference an image from the static folder:
+
+```html
+<img src="{{url_for('static', filename='example_image.png')}}">
+```
+
+And here is an `index.html` file in a `templates` folder that references a `style.css` file and a `myimage.png` file, which are both in the `static` folder:
+
+```html
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+
+    <title></title>
+  </head>
+  <body>
+
+    <img src="{{url_for('static', filename='img/myimage.png')}}">
+
+  </body>
+</html>
+```
+
+Flask automatically creates a `static` view that serves static files from a folder named `static` in your application's directory.
+
+You can also use the `url_for()` method to allow for more [dynamic URLs](https://www.educba.com/flask-url_for/). Its use reduces the amount of modification needed in the code if something needs to change in your URL references.

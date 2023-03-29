@@ -1,0 +1,48 @@
+---
+title: 'Why does my JavaScript code receive a "No Access-Control-Allow-Origin header is present on the requested resource" error, while Postman does not?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+You have a frontend app making a request for a resource at a different [origin](https://developer.mozilla.org/en-US/docs/Glossary/Origin). The URL scheme (HTTP or HTTPS), hostname, and port need to match for two origins to be the same. For example, you are running your frontend and backend apps on local servers with different ports:
+
+- frontend local server: `http://127.0.0.1:5173`
+- backend local server: `http://127.0.0.1:1337`
+
+If you make a POST request to one of your backend APIs from your frontend app, you'll get the following error:
+
+```
+Access to fetch at 'http://localhost:1337/api from origin 'http://127.0.0.1:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+```
+
+Why does this error happen? The [same-origin policy](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy) is a browser security measure that restricts resource fetching from different origins. It prevents resources, such as API endpoints exposed by a server, from being accessible to a frontend website hosted at a different origin, such as another server. For example, it prevents malicious JavaScript on an attacker's website from reading data and interacting with an embedded website in an [iFrame](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe) that loads a website that the user may be logged in to.
+
+To allow resource sharing between a server and a resource at a different origin, the browser uses a mechanism called [cross-origin resource sharing (CORS)](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#simple_requests). CORS uses [HTTP](https://developer.mozilla.org/en-US/docs/Glossary/HTTP) headers to indicate the origins that a browser should allow resources to be loaded from.
+
+When a request is made, the browser client adds an `Origin` header to the request to indicate where the request came from. To allow cross-origin requests to be made, some changes need to be made to the server-side code to add extra headers to the HTTP response sent back to the browser client. These headers start with `Access-Control-`. The browser will allow certain cross-origin responses based on these extra headers. The most important of these headers is `Access-Control-Allow-Origin`, which specifies the origins that are allowed to access the resources from the server.
+
+Why does requesting a cross-origin resource using Postman work? Postman does not enforce CORS. CORS does not protect a resource, such as an API endpoint, against unwanted access. CORS is implemented by browsers on the client side. It can only block a frontend app from accessing cross-origin resources. It is not a strong security measure: It only restricts access, it does not protect your content. Apps that mimic a server environment and don't enforce CORS, such as Postman or non-browser HTTP clients such as [curl](https://github.com/curl/curl), are not affected by CORS so they bypass CORS restrictions.
+
+A server can protect resources by using an [HTTP `Authorization` request header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization). You can also restrict requests to certain IP addresses or block certain IP addresses if needed.
+
+## The Solution
+
+To allow cross-origin requests, add the frontend origin to the `Access-Control-Allow-Origin` header. In an Express app, you can install the [CORS](https://www.npmjs.com/package/cors) npm package and add an origin as shown in the code below:
+
+```javascript
+const express = require("express");
+const cors = require("cors");
+
+const corsOptions = {
+  origin: "http://127.0.0.1:5173",
+};
+
+const app = express();
+app.use(cors(corsOptions));
+```

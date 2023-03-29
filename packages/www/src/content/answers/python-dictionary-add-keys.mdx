@@ -1,0 +1,56 @@
+---
+title: 'Add new keys to a dictionary in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+How can I add new keys to a dictionary in Python?
+
+## The Solution
+
+Python provides a few different ways to add new key-value pairs to an existing dictionary. The simplest way is to assign a value to a new key using Python's indexing/square brackets syntax:
+
+```python
+prices = {"Apple": 1, "Orange": 2} # existing dictionary
+prices["Avocado"] = 3 # new key-value pair
+
+print(prices) # will print {"Apple": 1, "Orange": 2, "Avocado": 3}
+```
+
+This same syntax can be used to update existing key-value pairs:
+
+```python
+prices["Apple"] = 2
+
+print(prices) # will print {"Apple": 2, "Orange": 2, "Avocado": 3}
+```
+
+To add and update multiple key-value pairs at once, we can use Python's [`dict.update()`](https://docs.python.org/3/library/stdtypes.html#dict.update) method:
+
+```python
+prices.update({"Pear": 2, "Grapefruit": 2, "Orange": 3}) # adds Pear and Grapefruit, and updates Orange
+
+print(prices) # will print {"Apple": 2, "Orange": 3, "Avocado": 3, "Pear": 2, "Grapefruit": 2}
+```
+
+You can also use the dictionary comprehension and dictionary constructor together to add or update the key-value pairs:
+
+```python
+prices = {**prices, **{"Pear": 2, "Grapefruit": 2, "Orange": 3}}
+
+print(prices) # will print {"Apple": 2, "Orange": 3, "Avocado": 3, "Pear": 2, "Grapefruit": 2}
+```
+
+As of [Python 3.9](https://docs.python.org/3/whatsnew/3.9.html), we can use the [update operator](https://peps.python.org/pep-0584/) (`|=`) instead of the `update()` method:
+
+```python
+prices |= {"Pear": 2, "Grapefruit": 2, "Orange": 3} # adds Pear and Grapefruit and updates Orange
+
+print(prices) # will print {"Apple": 2, "Orange": 3, "Avocado": 3, "Pear": 2, "Grapefruit": 2}
+```

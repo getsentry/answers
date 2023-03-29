@@ -1,0 +1,54 @@
+---
+title: 'Get the last item in an array using JavaScript'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+You want to get the last item in an array, how do you do this?
+
+## The Solution
+
+There are multiple methods that can be used to get the last item in an array. Here are some ways to do this.
+
+### Using the Array `length` Property
+
+You can use the length of an array and subtract 1 from it to get the index of the last item in an array:
+
+```javascript
+const arr = ["Ferrari", "Toyota", "Kia"];
+const lastItem = arr[arr.length - 1];
+console.log(lastItem); // Kia
+```
+
+You can also use the [`at()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/at) method, which returns an item at a given index:
+
+```javascript
+const arr = ["Ferrari", "Toyota", "Kia"];
+const lastItem = arr.at(arr.length - 1);
+console.log(lastItem); // Kia
+```
+
+These methods don't change the array. If the array is empty, then `lastItem` will be `undefined`.
+
+### Using `pop()`
+
+You can also use the [`pop()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/pop) method to get the last item in an array:
+
+```javascript
+const arr = ["Ferrari", "Toyota", "Kia"];
+const lastItem = arr.pop();
+console.log(lastItem); // Kia
+console.log(arr); // ["Ferrari", "Toyota']
+```
+
+This method removes the last item in the array and returns it. It modifies the array. Like the previous methods, if the array is empty, `lastItem` will be `undefined`.
+
+### Other Methods
+
+You can use various other methods such as `slice()`, `reduce()`, or a `for` loop to get the last item in an array. These methods can be less readable than the methods described above. The methods that modify the array or create a new item will be less efficient, in terms of the number of operations that can be performed per second, than solutions that only read what the last item is. However, the performance difference is unlikely to be significant in most applications.

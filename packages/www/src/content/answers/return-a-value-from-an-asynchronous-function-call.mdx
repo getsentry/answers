@@ -1,0 +1,34 @@
+---
+title: 'Return a value from an asynchronous function call'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+How to access a return value from an asynchronous function call in JavaScript?
+
+## The Solution
+
+In modern JavaScript, we can use [`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) when calling asynchronous functions to pause the execution of the current function until a value is returned. This allows us to write and reason about asynchronous code as if it were synchronous.
+
+The code below provides an example:
+
+```javascript
+async function asyncHelloWorld() {
+  return "Hello world!";
+}
+
+async function asyncCaller() {
+  const result = await asyncHelloWorld();
+  console.log(result); // will print "Hello world!"
+}
+
+asyncCaller();
+```
+
+Note that `await` can only be called from within asynchronous functions or top-level code inside a [module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules).

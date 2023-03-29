@@ -1,0 +1,52 @@
+---
+title: '`module.exports` in Node.js'
+platforms: 
+  - sentry.nodejs
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The problem
+
+What is the purpose of Node.js's `module.exports` and do I use it?
+
+## The solution
+
+Node.js uses the [CommonJS module system](https://en.wikipedia.org/wiki/CommonJS) to allow developers to distribute their code across multiple files and make use of third-party libraries. `module.exports` is part of the CommonJS specification – it defines the object that is created when a file is imported using [`require()`](https://nodejs.org/api/modules.html#requireid). This gives developers control over which parts of a file can be accessed externally, allowing for [encapsulation](https://en.wikipedia.org/wiki/Encapsulation_(computer_programming)).
+
+Consider the following module code, which provides methods for retrieving names in different formats.
+
+```javascript
+// names.js module
+function lastname() { // private function
+  return "Doe";
+}
+
+function firstname() { // private function
+  return "Jane";
+}
+
+function firstnameLastname() { // public function
+  return `${firstname()} ${lastname()}`;
+}
+
+function lastnameFirstname() { // public function
+  return `${lastname()}, ${firstname()}`;
+}
+
+module.exports = { firstnameLastname, lastnameFirstname }; // object to be returned by require()
+```
+
+This module contains four functions, but only the last two are included in `module.exports`. If we `require()` this module in another file, we will not be able to call `firstname()` or `lastname()`.
+
+```javascript
+const names = require("names.js"); // require() returns the object assigned to module.exports
+
+console.log(names.firstnameLastname()); // will print "Jane Doe"
+console.log(names.lastnameFirstname()); // will print "Doe, Jane"
+
+console.log(names.firstname()); // will produce an error
+console.log(names.lastname()); // will produce an error
+```

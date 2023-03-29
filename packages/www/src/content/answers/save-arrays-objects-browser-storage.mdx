@@ -1,0 +1,97 @@
+---
+title: 'Saving Arrays and Objects to Browser Storage Using JavaScript'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Valerie M.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You'd like to save arrays and objects to browser storage using JavaScript as an alternative to using cookies. Is there a way to do this?
+
+## The Solution
+
+There are a couple of ways to save arrays and objects to browser storage.
+
+The [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API) allows us to store items in a more intuitive way using two mechanisms: `localStorage` and `sessionStorage`.
+
+For both of these mechanisms:
+
+- Items are converted to a JSON string using `JSON.stringify()`.
+- Items are stored in key-value pairs.
+- When items are retrieved from storage, the JSON string is parsed using `JSON.parse()`.
+- When items have been removed from storage, the storage can be cleared.
+
+Let's look at some code examples.
+
+### The `localStorage` API
+
+The `localStorage` API maintains browser storage even when the browser is closed and reopened.
+
+The code example below shows how the `localStorage` API is used to store arrays:
+
+```javascript
+const myArray = ['a', 'b', 'c', 'd'];
+
+// convert array to JSON string using JSON.stringify()
+const jsonArray = JSON.stringify(myArray);
+
+// save to localStorage using "array" as the key and jsonArray as the value
+localStorage.setItem('array', jsonArray);
+
+// get the JSON string from localStorage
+const str = localStorage.getItem('array');
+
+// convert JSON string to relevant object
+const parsedArray = JSON.parse(str);
+
+console.log(parsedArray);
+```
+
+To save objects, replace `myArray` with something like `myObject`. We'll use the `sessionStorage` API to demonstrate saving objects for brevity.
+
+### The `sessionStorage` API
+
+The `sessionStorage` API stores items for as long as the browser window is open, including page reloads and restores. The data is lost once the browser window is closed.
+
+Here's a code example to show how to use the `sessionStorage` API to store objects:
+
+```javascript
+const Person = {
+  name: 'John Smith',
+  age: 18,
+};
+
+// convert object to JSON string using JSON.stringify()
+const jsonObject = JSON.stringify(Person);
+
+// save to localStorage
+sessionStorage.setItem('person', jsonObject);
+
+// get the JSON string from sessionStorage
+const str = sessionStorage.getItem('person');
+
+// convert JSON string to valid object
+const parsedObject = JSON.parse(str);
+
+console.log(parsedObject);
+```
+
+To remove items from local and session storage, use the `removeItem()` method, giving it the key, as follows:
+
+```javascript
+localStorage.removeItem('array');
+
+sessionStorage.removeItem('person');
+```
+
+The local and session storage can also be cleared using `clear()`:
+
+```javascript
+localStorage.clear();
+
+sessionStorage.clear();
+```

@@ -1,0 +1,151 @@
+---
+title: 'Uncaught Error: Invariant Violation: Element type is invalid: expected a string (for built-in components) or a class/function but got: object'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+---
+
+## The Problem
+
+There are two possible causes for this issue: A module import or export issue or trying to render something like a React component that's not a React component.
+
+### Module Import or Export Issue
+
+When you import a component into another component, if the component is a named export, you must import it using a named import. The same applies to default exports. If there is a mismatch, your app won't render and you'll get the following message on your screen:
+
+```
+Uncaught Error: Invariant Violation: Element type is invalid: expected a string (for built-in components) or a class/function but got: object
+```
+
+You may also get this similar error message that provides potential solutions:
+
+```
+Error
+Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
+
+Check the render method of `App`.
+```
+
+This may occur if you try to import a named export variable using a default import: 
+
+`MyComponent.js`
+
+```javascript
+export const myVariable = "hello";
+```
+
+`MyOtherComponent.js`
+
+```javascript
+import myVariable from "./MyComponent";
+```
+
+It may also occur if you try to import a named export function using a default import:
+
+`MyComponent.js`
+
+```javascript
+export default function MyComponent() {
+  return <div>MyComponent</div>;
+}
+```
+
+`MyOtherComponent.js`
+
+```javascript
+import { MyComponent } from "./MyComponent";
+```
+
+React components can be broken up into separate JavaScript files by making use of JavaScript [modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules). The `import` and `export` statements used by React components are module features. The issue that caused the above error messages is a JavaScript issue — it's not React-specific.
+
+There are two types of module exports that modules (which include React components) use: default exports and named exports.
+
+A named export uses the name of each exported item, such as a variable or a function:
+
+```javascript
+export const myVariable = "hello";
+```
+
+You can also export multiple items in an object:
+
+```javascript
+const myVariable = "hello";
+const myVariable2 = "bye";
+
+export { myVariable, myVariable2 };
+```
+
+The same name is used when the item is imported into another module, which would be the JavaScript file of a React component:
+
+```javascript
+import { myVariable } from "./MyComponent";
+```
+
+You can rename the imported named export using the `as` keyword:
+
+```javascript
+import { myVariable as variable } from "./MyComponent";
+```
+
+You can import multiple named exports:
+
+```javascript
+import { myVariable, myVariable2 } from "./MyComponent";
+```
+
+You can also import all the named exports onto an object if there are many exports:
+
+```
+import { * as variables } from "./MyComponent";
+```
+
+A default export uses the `default` keyword. It was designed to make it easy to have a default function provided by a module. This is useful if you need to work with existing CommonJS and AMD modules, as explained in the following article: [ES6 In Depth: Modules](https://hacks.mozilla.org/2015/08/es6-in-depth-modules/). A JavaScript file can have only one default export, but it can have many named exports.
+
+```javascript
+export default function MyComponent() {
+  return <div>MyComponent</div>;
+}
+```
+
+A default import does not use the curly brace syntax:
+
+```javascript
+import MyComponent from "./MyComponent";
+```
+
+A default import can also be renamed easily. The above code example can be written as:
+
+```javascript
+import MyComp from "./MyComponent";
+```
+
+However, you should avoid doing this as it can be confusing for other developers.
+
+Named exports are useful if you want to export multiple items from a component or if you need to change the names of imports. You may need to do this if you're importing items from different modules that have the same name. The name change is more explicit with named imports than default imports, as the `as` keyword must be used.
+
+## The Solution
+
+Make sure that if you use a named export, you import it using a named import:
+
+```javascript
+export const myVariable = "hello";
+```
+
+```javascript
+import { myVariable } from "./MyComponent";
+```
+
+The same applies to default exports and imports:
+
+```javascript
+export default function MyComponent() {
+  return <div>MyComponent</div>;
+}
+```
+
+```javascript
+import MyComponent from "./MyComponent";
+```
+
+Also, make sure that the item is exported from the correct file.

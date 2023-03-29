@@ -1,0 +1,141 @@
+---
+title: 'What does `"use strict"` do in JavaScript, and what is the reasoning behind it?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+JavaScript developers often add the string `"use strict"` in their code. What does `"use strict"` do in JavaScript? What is the reason behind using it? Are there any benefits of using it?
+
+## The Solution
+
+The `"use strict"` directive enables [JavaScript's strict mode](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode).
+
+JavaScript's strict mode was introduced in [ECMAScript 5](https://en.wikipedia.org/wiki/ECMAScript). It enforces stricter parsing and error handling on the code at runtime. It also helps you write cleaner code and catch errors and bugs that might otherwise go unnoticed.
+
+### Usage
+
+You can enable strict mode in two different ways, globally and locally.
+
+Enable strict mode globally by adding the string `"use strict"` as the first statement in your file. All subsequent code in the script will execute in strict mode.
+
+```javascript
+// First line inside a .js file
+
+'use strict';
+
+// rest of the script
+
+```
+
+Enable strict mode locally by adding the string `"use strict"` as the first statement inside a function. Using strict mode locally inside the function will enforce stricter parsing only within the context of that function.
+
+```javascript
+// Inside a function
+
+function strict_function() {
+  'use strict'; // rest of the function
+}
+```
+
+**It is important to note that JavaScript modules are in strict mode by default.**
+
+### Benefits of Using Strict Mode
+
+Enabling strict mode in your code has [many benefits](https://johnresig.com/blog/ecmascript-5-strict-mode-json-and-more/).
+
+Here are some examples:
+
+**Prevent accidental creation of global variables**
+
+Strict mode is useful in situations where you can accidentally create a global binding. Accidental global variables can create bugs in the code. For example:
+
+```javascript
+'use strict';
+
+x = 9; // ReferenceError: x is not defined
+```
+
+```javascript
+function strict_function() {
+  'use strict';
+
+  x = 'I am a strict function';
+
+  console.log(x);
+}
+
+strict_function(); // ReferenceError: x is not defined
+```
+
+A common scenario in which you can accidentally create global variables is within for loops. With strict mode enabled, JavaScript will throw an error if you forget to add the `let` keyword before the loop counter variable (`counter` in the following example):
+
+```javascript
+function catchTheProblem() {
+  'use strict';
+
+  for (counter = 0; counter < 10; counter++) {
+    console.log('Catch me if you can!');
+  }
+}
+
+catchTheProblem(); // ReferenceError: counter is not defined
+```
+
+If you don't use strict mode here, JavaScript will create a global variable with the name `counter`.
+
+**Catch typing mistakes in variable names**
+
+If you don't use strict mode, a typing error can create a new variable, which can cause bugs down the line. For example:
+
+```javascript
+'use strict';
+
+let misspelledVariable;
+
+misspelleVariable = 9; // This line will throw en error due to // misspelling of "misspelledVariable"
+```
+
+**Prevent accidental deleting**
+
+Deleting a variable, a function, or an argument will result in an error:
+
+```javascript
+'use strict';
+
+let aVariable = 9;
+
+delete aVariable; //This will cause an error
+function testFunction() {}
+
+delete testFunction; // This will cause an error
+function testWithArgs(arg) {
+  delete arg; // This will cause an error
+}
+```
+
+**Prevent duplicating parameter names in a function**
+
+Duplicating the parameter's names will result in an error:
+
+```javascript
+function test(arg1, arg1) {} // This will cause an error
+```
+
+**Prevent writing to read-only properties**
+
+If you set an object's writable value to `false`, and then try to assign a new value to the object, strict mode will throw an error:
+
+```javascript
+'use strict';
+const obj = {};
+Object.defineProperty(obj, 'x', { value: 0, writable: false });
+obj.x = 9; // This will cause an error
+```
+
+You can see more examples and benefits of using strict mode on [w3schools](https://www.w3schools.com/js/js_strict.asp) and [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode).

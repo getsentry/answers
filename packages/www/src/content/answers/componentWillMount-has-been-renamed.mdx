@@ -1,0 +1,98 @@
+---
+title: 'Warning: componentWillMount has been Renamed, and is not Recommended for Use'
+description: 'Depending on the objective of the code, you can remove the use of componentWillMount entirely with other lifecycle methods.'
+excerpt: 'Learn what causes "Warning: componentWillMount has been renamed, and is not recommended for use."'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Nisanthan Nanthakumar
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+```
+Warning: componentWillMount has been renamed, and is not recommended for use
+```
+
+Initializing state
+
+```javascript
+// Before
+class AppComponent extends React.Component {
+  state = {};
+
+  componentWillMount() {
+    this.setState({
+      selected: this.props.selected,
+      color: 'red',
+    });
+  }
+}
+```
+
+Fetching external data
+
+```javascript
+// Before
+class AppComponent extends React.Component {
+  state = {
+    data: null,
+  };
+
+  componentWillMount() {
+    fetch('https://sentry.io/data').then(res => {
+      this.setState({ data: res.json() });
+    });
+  }
+}
+```
+
+## The Solution
+
+Starting in React version 16.3, the following component lifecycle methods are being phased out.
+
+- `componentWillMount`
+- `componentWillReceiveProps`
+- `componentWillUpdate`
+
+If you want to use these methods, prefix the methods with `UNSAFE_` . These methods are considered "unsafe" because the React team expect code that depends on these methods to be more likely to have bugs in future versions of React.
+
+Depending on the objective of the code, you can remove the use of `componentWillMount` entirely with other lifecycle methods.
+
+The solution is to move the state initialization to the constructor or to a property initializer, like so:
+
+```javascript
+// After
+class AppComponent extends React.Component {
+  state = {
+    selected: this.props.selected,
+    color: 'red',
+  };
+}
+```
+
+The solution is to move data-fetching into `componentDidMount`:
+
+```javascript
+// After
+class AppComponent extends React.Component {
+  state = {
+    data: null,
+  };
+
+  componentDidMount() {
+    fetch('https://sentry.io/data').then(res => {
+      this.setState({ data: res.json() });
+    });
+  }
+}
+```
+### Further Reading
+
+If you're looking to get a deeper understanding of how JavaScript application monitoring works, take a look at the following articles:
+
+- [Capture and report JavaScript errors with window.onerror](https://blog.sentry.io/2016/01/04/client-javascript-reporting-window-onerror)
+- [4 reasons why your source maps are broken](https://blog.sentry.io/2018/10/18/4-reasons-why-your-source-maps-are-broken)
+- [Getting started with the JavaScript SDK](https://docs.sentry.io/platforms/javascript)

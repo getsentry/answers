@@ -1,0 +1,92 @@
+---
+title: 'How do I check if an array includes a value in JavaScript?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+You want to check if an array contains a particular value. How do you do this?
+
+## The Solution
+
+There are two JavaScript array methods that are commonly used to find a value in an array: [`includes()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes) and [`indexOf()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf). If you are checking if an array contains a [primitive](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) value, such as a string or number, the solution is more straightforward than if you are checking for a value that's an object.
+
+### Checking if an Array Contains a Primitive Value
+
+A primitive value is a value that's not an object. There are seven primitive data types: string, number, `bigint`, boolean, `undefined`, symbol, and `null`.
+Using the `includes()` method is the most readable method to check if an array contains a primitive value:
+
+```javascript
+console.log(["Jenny", "Matilda", "Greta"].includes("Matilda")); // true
+```
+
+The first argument of the `includes()` method is the `searchElement`. This is the value that the method searches for in the array. The method returns `true` if the `searchElement` is found and `false` if it's not found. There's also an optional second argument called `fromIndex`, which is the index at which to start searching in the array.
+
+You can also use the `indexOf()` method to determine if an array contains a primitive value:
+
+```javascript
+console.log(["Jenny", "Matilda", "Greta"].indexOf("Matilda") !== -1); // true
+```
+
+This method returns the index position of the value in the array. If the value is not in the array, it returns -1. You can use this with the strict inequality operator (`!==`) to return `true` if the value is in the array, or `false` if it's not.
+
+You can also use the [`lastIndexOf()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/lastIndexOf) method in the same way as the `indexOf()` method to check if an array contains a primitive value.
+
+### Checking if an Array Contains an Object
+
+If you are checking if an array contains an object that's pointing to the same place in memory as one of the array items, then the check is the same as when checking for a primitive value:
+
+```javascript
+const person = [{ name: "Bill" }, { age: 44 }];
+const val = person[0];
+console.log(person.includes(val)); // true
+```
+
+If the value is not pointing to the same location in memory, the `includes()` method will return `false`. In the code below, a new object is created for the `val` variable, which has the same properties as the first element in the `person` array:
+
+```javascript
+const person = [{ name: "Bill" }, { age: 44 }];
+const val = { name: "Bill" };
+console.log(person.includes(val)); // false
+```
+
+Even though two different objects can have the same properties with equal values, they are not considered equal when compared using the strict equality operator (`===`), which the `includes()` method uses. This is because they are being compared by their reference, which is their location in memory. This is unlike primitive values, which are compared by value.
+
+To test if two objects are equal in structure, a helper function is needed. It will iterate through the properties of each object to test if they have the same properties with the same values:
+
+```javascript
+function shallowEqualityCheck(obj1, obj2) {
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+  for (const key of keys1) {
+    if (obj1[key] !== obj2[key]) {
+      return false;
+    }
+  }
+  return true;
+}
+```
+
+This `shallowEqualityCheck` function first checks if the objects have the same number of properties and, if they do, it checks that the value of each property in object 1 is the same as the value of the corresponding property in object 2.
+
+This function does a shallow equality check of two objects. It does not check for nested object properties. If you need to compare objects with nested properties, you'll need to do a [deep equality check](https://dmitripavlutin.com/how-to-compare-objects-in-javascript/#4-deep-equality).
+
+This shallow equality check function can be used with the [`some()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some) array method to check if an array contains a specific object:
+
+```javascript
+const person = [{ name: "Bill" }, { age: 44 }];
+const val = { name: "Bill" };
+console.log(person.some((item) => shallowEqualityCheck(item, val))); // true
+```
+
+The `some()` method tests if at least one element in the array passes the test implemented by the passed-in `callbackFn`. This function is executed for each element of the array. If the function returns `true` for any of the array items, the `some()` method will return `true`.
+
+In the above code, the `some()` method uses the `shallowEqualityCheck` function to check if any of the elements in the `person` array match the value of the `val` object.

@@ -1,0 +1,79 @@
+---
+title: 'How Do I Return a JSON Response from a Flask View?'
+platforms:
+  - sentry.flask
+people:
+  - James W.
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+You want to get your Flask application to return JSON data in a view response so that you can perform operations on the data. How can you do this?
+
+## The Solution
+
+There are two methods you can use to return JSON data in your Flask application’s view: by returning a Python dictionary, or by using Flask’s `jsonify()` method.
+
+
+### Return a Python Dictionary
+
+If you return a Python dictionary in a Flask view, the dictionary will automatically be converted to the JSON format for the response.
+
+Here is an example of a Flask view that returns a Python dictionary in the JSON format:
+
+```python
+from datetime import date
+
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def hello_world():
+    return {
+        "greeting": ["hello", "world"],
+        "date": date.today()
+    }
+```
+
+This view will return a JSON response that looks like this:
+
+```
+{"date":"Wed, 01 Jun 2022 00:00:00 GMT","greeting":["hello","world"]}
+```
+
+### Using `jsonify()`
+
+The `jsonify()` method takes either arguments or keyword arguments (using both will not work). These arguments are converted into the JSON format, and will take that format in the views response.
+
+When using single arguments, the values will be treated as a list of values. So `jsonify("a", "b", "c")` will be treated as `jsonify(["a", "b", "c"])`.
+
+When using keyword arguments, the data is treated as a dictionary, with the keys representing the keys of the dictionaries and the values representing the values of those keys. So `jsonify(a=1, b=2, c=3)` is treated as `jsonify({"a": 1, "b": 2, "c": 3})`.
+
+Here is an example using the `jsonify()` method to return a dictionary in the JSON format:
+
+```python
+from datetime import date
+
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def hello_world():
+    return jsonify(
+        greeting=["hello", "world"],
+        date=date.today(),
+    )
+
+```
+
+This view will return a JSON response that looks like this:
+
+```
+{"date":"Wed, 01 Jun 2022 00:00:00 GMT","greeting":["hello","world"]}
+```

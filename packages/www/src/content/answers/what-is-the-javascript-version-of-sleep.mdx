@@ -1,0 +1,75 @@
+---
+title: 'What is the JavaScript Version of `sleep()`?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+You may be familiar with another language, such as Python, that has a `sleep()` function. The Python `time` module has a built-in `sleep()` method that you can use to delay the execution of a program. The time delay, in seconds, is passed in as an argument:
+
+```python
+import time
+time.sleep(delayInSeconds)
+```
+
+What is the JavaScript version of `sleep()`?
+
+## The Solution
+
+To replicate the Python `sleep()` method, you can make a JavaScript `sleep` function using a [`Promise()` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/Promise) and [`setTimeout`](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout):
+
+```javascript
+function sleep(ms = 0) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+```
+
+You could also write it on one line using an [arrow function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions):
+
+```javascript
+const sleep = (ms = 0) => new Promise(resolve => setTimeout(resolve, ms));
+```
+
+You can then use the `sleep` function to delay the execution of a program. For example, the `delayedGreeting` function as shown in the code below is paused for five seconds:
+
+```javascript
+async function delayedGreeting() {
+  await sleep(5000);
+  console.log("hello");
+}
+
+delayedGreeting();
+```
+
+The `sleep` function takes in a time in milliseconds as an argument. It's set to 0 as a default here. It returns a [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise), which is an object that represents the eventual completion or failure of an asynchronous (async) operation.
+
+A promise has three possible states:
+
+- *Pending*: The object's initial state, neither fulfilled nor rejected.
+
+- *Fulfilled*: The operation was completed successfully.
+
+- *Rejected*: The operation failed.
+
+You can attach callbacks to an async function that returns a promise to handle the two possible outcomes:
+
+```javascript
+asyncFunctionThatReturnsPromise(options).then(successCallback, failureCallback);
+```
+
+If the promise is fulfilled, `successCallback` will be called. If it is rejected, `failureCallback` will be called.
+
+Promises allow async methods to return values like synchronous methods. The async method returns a promise to give the value later. You can use the [`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) operator to wait for the promise to be resolved.
+
+```javascript
+const value = await asyncFunctionThatReturnsPromise();
+```
+
+The `Promise()` constructor is used to wrap around callback functions that don't support promises, such as `setTimeout`. It allows us to resolve or reject a promise manually, which means we can use `setTimeout` to delay the execution of a function. The `sleep` function's returned promise is resolved using the [`resolve`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/resolve) method after the `setTimeout` timer expires. This occurs after the successful completion of the `setTimeout` function. The value of the resolved promise is `undefined`; the promise is used to pause execution so it does not need a returned value. The promise does not include a [`reject`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject) as `setTimeout` does not really fail.
+
+When using the `sleep` function to pause execution, the [`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await) operator is used to wait for the returned promise in the `sleep` function to be resolved. It can only be used in an async function or at the top level of a module.

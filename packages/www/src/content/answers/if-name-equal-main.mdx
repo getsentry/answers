@@ -1,0 +1,89 @@
+---
+title: 'What does `if __name__ == "__main__":` do?'
+platforms:
+  - sentry.python
+people:
+  - James W.
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+# What does `if __name__ == "__main__":` do?
+
+## The Problem
+
+You may have come across this `if __name__ == "__main__":` code block and wondered what it is used for and whether you can use it in your own code.
+
+What does this line of logic do? What are these variables referring to?
+
+## The Solution
+
+To understand what `if __name__ == "__main__":` does, let’s take a look at this variable: `__name__`.
+
+The `__name__` variable is set by our Python interpreter when we run our code and it's defined for each file.
+
+If the file is used as the starting point of your program, then the `__name__` variable is set to `"__main__"`. If the file is imported, then the `__name__` variable is set to the filename without the `.py` extension. For example, if you import `some_calc.py`, then `__name__` will be `some_calc`.
+
+We can use this `__name__` variable to allow a file to execute different code blocks based on whether that file is being run as the main program or as an imported module.
+
+## Example
+
+In a file called `file_one.py` below, three functions are defined and called:
+
+```python
+# file_one
+def always():
+    print("Always")
+
+
+def on_import():
+    print("On import")
+
+
+def when_main():
+    print("When Main")
+
+
+always()
+
+if __name__ == "__main__":
+    when_main()
+else:
+    on_import()
+
+```
+
+The output of the code above, when run as the main program, is this:
+
+```output
+Always
+When Main
+```
+
+The `always()` function is executed whether the file is run as the main program or imported as a module. The `when_main()` function, however, is executed **because** this file is executed as the main program.
+
+
+In another scenario, a different file imports the file above, like so:
+
+```python
+# file_two
+import file_one
+
+if __name__ == "__main__":
+    print("file_two is the main program")
+
+```
+
+If this `file_two.py` is run as the main program, the output will be:
+
+```output
+Always
+On import
+file_two is the main program
+```
+
+Here the `on_import()` function is executed in `file_one`. This is because the else statement is triggered in the `if __name__ == "__main__":` code block, as `file_one` is not the main program but is executed on import.
+
+The `always()` function from `file_one` is also executed, as it falls outside of the if-else statement and is executed whether `file_one` is the main program or imported.
+
+Finally, `file_two` triggers the if statement of the `if __name__ == "__main__":` code block and prints.

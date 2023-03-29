@@ -1,0 +1,234 @@
+---
+title: 'What is the difference between public, protected, package-private and private in Java?'
+platforms: 
+  - sentry.java
+people: 
+  - Lewis D.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+In Java, any variable, class, or method can be modified with a keyword that determines its visibility to other classes. These are known as access modifiers and there are four choices (ordered from most to least restrictive): private, default (no modifier), protected, and public. 
+
+Let's take a look at each of these access modifiers to understand the differences between them.
+
+## The Solution
+
+To explain Java access modifiers, we will reference this code example:
+
+```java
+package example;
+
+public class NPC {
+    private int level;
+    boolean stuck;
+    protected int health;
+    public boolean alive;
+
+    public NPC(int level, boolean stuck, int health, boolean alive) {
+        this.level = level;
+        this.stuck = stuck;
+        this.health = health;
+        this.alive = alive;
+    }
+}
+```
+
+Here, our `NPC` class has four properties, each with a different access modifier. Now we can extend the example to show the visibility scope for each of these.
+
+### Private
+
+Consider this code snippet:
+
+```java
+import example.NPC;
+
+public class Game {
+
+    public static void main(String[] args) {
+        NPC npc = new NPC(10, false, 100, true);
+        npc.level = 11;
+    }
+}
+```
+
+We declared the `level` property as `private` in our example, so it is accessible and modifiable within the `NPC` class. However, the property will not be visible to any other class. When trying to compile the above `Game` class, we will get following compilation error:
+
+```
+Game.java:7: error: level has private access in NPC
+        npc.level = 11;
+             ^
+1 error
+error: compilation failed
+```
+
+Any change to the `level` property must, therefore, be done within the `NPC` class, like this:
+
+```java
+package example;
+
+public class NPC {
+    private int level;
+    boolean stuck;
+    protected int health;
+    public boolean alive;
+
+    public NPC(int level, boolean stuck, int health, boolean alive) {
+        this.level = level;
+        this.stuck = stuck;
+        this.health = health;
+        this.alive = alive;
+    }
+
+    public void levelUp() {
+        this.level += 1;
+        System.out.println("NPC is now level " + level);
+    }
+}
+```
+
+```java
+import example.NPC;
+
+public class Game {
+
+    public static void main(String[] args) {
+        NPC npc = new NPC(10, false, 100, true);
+        npc.levelUp();
+    }
+}
+```
+
+**Output:**
+
+```
+NPC is now level 11
+```
+
+### Default
+
+In our code example, the `stuck` property does not have an access modifier. This is the default option in Java and is also referred to as package-private.
+
+```java
+package example;
+
+public class Wall {
+
+    public void block(NPC npc) {
+        npc.stuck = true;
+        System.out.println("NPC is now stuck");
+    }
+}
+```
+
+Here, the `Wall` class – which is in the same package as the `NPC` class – can access and modify the `stuck` property. However, as with the private access modifier, this property is not visible to classes outside of its package.
+
+```java
+package example;
+
+public class Wall {
+
+    public void block(NPC npc) {
+        npc.stuck = true;
+        System.out.println("NPC is now stuck");
+    }
+}
+```
+
+```java
+import example.*;
+
+public class Game {
+
+    public static void main(String[] args) {
+        NPC npc = new NPC(10, false, 100, true);
+        Wall wall = new Wall();
+        wall.block(npc);
+    }
+}
+```
+
+**Output:**
+
+```
+NPC is now stuck
+```
+
+### Protected
+
+The protected modifier is generally considered to be the most complex of the bunch. It is similar to the default modifier in that any class within the same package has access. However, the protected modifier extends visibility to any child class, even those outside the package. This is illustrated below with the `health` attribute and the `boss` class.
+
+```java
+package boss;
+
+import example.NPC;
+
+public class Boss extends NPC {
+
+    public Boss(int level, boolean stuck, int health, boolean alive) {
+        super(level, stuck, health, alive);
+    }
+
+    public void bossMode() {
+        this.health = 1000;
+        System.out.println("Boss now has " + this.health + " health! Good Luck");
+    }
+}
+```
+
+```java
+import boss.Boss;
+
+public class Game {
+
+    public static void main(String[] args) {
+        Boss npc = new Boss(10, false, 100, true);
+        npc.bossMode();
+    }
+}
+```
+
+**Output:**
+
+```
+Boss now has 1000 health! Good Luck
+```
+
+Both the default and protected access modifiers can be confusing for programmers with backgrounds in C++ or similar. In these languages, the `protected` modifier restricts visibility to child classes, and the default access modifier is equivalent to the `private` option in Java.
+
+### Public
+
+The public access modifier is more straightforward. Any class within the Java project has full access to properties or methods modified with the public access modifier. We have already been using public methods in previous examples, but let's refer to the `alive` property from the above `NPC` example to make it more specific:
+
+```java
+import example.NPC;
+
+public class Game {
+
+    public static void main(String[] args) {
+        NPC npc = new NPC(10, false, 100, true);
+        if (npc.alive) {
+            System.out.println("The NPC lives!");
+        }
+    }
+}
+```
+
+**Output:**
+
+```
+The NPC lives!
+```
+
+## Summary
+
+Here's a table to summarize visibility based on the assigned access modifier:
+
+|                           | Private | Default | Protected | Public |
+|---------------------------|---------|---------|-----------|------- |
+|Project                    |    X    |    X    |    X    |    ✓    |
+|Subclass different package |    X    |    X    |    ✓    |    ✓    |
+|Subclass same package      |    X    |    ✓    |    ✓    |    ✓    |
+|Class                      |    ✓    |    ✓    |    ✓    |    ✓    |

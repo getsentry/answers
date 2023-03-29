@@ -1,0 +1,83 @@
+---
+title: 'Difference Between `json.dumps()` and `flask.jsonify()`'
+platforms: 
+  - sentry.flask
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+What is the difference between `json.dumps()` and `flask.jsonify()` and when should you use which?
+
+## The Solution
+
+The [`jsonify()`](https://flask.palletsprojects.com/en/latest/api/#flask.json.jsonify) function is a part of the Flask framework whereas [`json.dumps()`](https://docs.python.org/3/library/json.html) is a method in the built-in `json` package in Python.
+
+### The `json.dumps()` Method
+
+If you are reading or writing JSON data from files, or in local memory, you should use the `json` package.
+
+The `json` package offers many methods, including the `json.dumps()` method, to interchange Python data with JSON.
+
+The `json.dumps()` method turns Python data, including dictionaries and lists, into JSON and returns this JSON as a string. For example:
+
+```python
+import json
+
+books = [
+  {'name': 'The Call of the Wild', 'author':'Jack London'},
+  {'name': 'Heart of Darkness', 'author': 'Joseph Conrad'}
+]
+
+json_string = json.dumps(books)
+print(json_string)
+```
+
+If we run the above code we will get the following output:
+
+```
+[{"name": "The Call of the Wild", "author": "Jack London"}, {"name": "Heart of Darkness", "author": "Joseph Conrad"}]
+```
+
+### The `flask.jsonify()` Function
+
+If you are using the Flask framework and want to send some data as an HTTP response, you should use the `flask.jsonify()` function.
+
+The `flask.jsonify()` function returns a Response object. Flask serializes your data as JSON and adds it to this Response object. It also adds the appropriate mimetype by setting the `content-type` header field to `application/json`.
+
+For example, if we want to return the list of books from the example above as an API response using Flask, we can write the following code:
+
+```python
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+@app.route('/books')
+def list_of_books():
+    books = [
+        {'name': 'The Call of the Wild', 'author': 'Jack London'},
+        {'name': 'Heart of Darkness', 'author': 'Joseph Conrad'}
+    ]
+    return jsonify(books)
+
+if __name__ == '__main__':
+    app.run()
+```
+
+When we call the `'/books'` endpoint using curl, we get the following JSON data:
+
+```json
+[
+  {
+    "author": "Jack London",
+    "name": "The Call of the Wild"
+  },
+  {
+    "author": "Joseph Conrad",
+    "name": "Heart of Darkness"
+  }
+]
+```

@@ -1,0 +1,57 @@
+---
+title: 'How to Revert the Last Migration?'
+platforms: 
+  - sentry.django
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You made changes to a model and made migrations, but you've realized it wasn't the right thing to do and would like to revert. How can you do that without making a new migration?
+
+How can you revert the last migration in Django?
+
+## The Solution
+
+You can reverse a migration using the `migrate` command with the number of the previous migration.
+
+Let's say you have an app called `recipes`.
+
+You can see a list of all the migrations in the migrations folder or by running the following command:
+
+```shell
+python manage.py showmigrations recipes
+```
+
+You may have the following migrations in your `recipes` app:
+
+- `0001_initial.py`
+- `0002_recipepage.py`
+- `0003_recipeindex.py`
+
+If you want to undo the `0003_recipeindex` migration, you can do it like so:
+
+```shell
+python manage.py migrate recipes 0002_recipepage
+```
+
+You can shorten the command by leaving out the full migration name. Just use the migration number:
+
+```shell
+python manage.py migrate recipes 0002
+```
+
+Make sure that everything is working the way it should, then you can delete `0003_recipeindex.py`.
+
+If you want to reverse all migrations for your app, you can use the name `zero`, like so:
+
+```shell
+python manage.py migrate recipes zero
+```
+
+Keep in mind that certain irreversible operations can make a migration irreversible. If you try to reverse an irreversible migration, you will get an `IrreversibleError`.
+
+You can read more about Django migrations on the [official documentation](https://docs.djangoproject.com/en/4.0/topics/migrations/).

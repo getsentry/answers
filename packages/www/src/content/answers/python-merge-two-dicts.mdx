@@ -1,0 +1,94 @@
+---
+title: 'How Do I Merge Two Dictionaries in a Single Expression (Take Union of Dictionaries)?'
+platforms: 
+  - sentry.python
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You'd like to merge two or more Python dictionaries in a single expression. For example, you have the following dictionaries storing some data about fictional characters:
+
+```python
+c1 = {
+	'The Hound of the Baskervilles': 'Sherlock Holmes',
+	'To Kill A Mockingbird': 'Scout Finch',
+	'Heart of Darkness': 'Kurtz'
+}
+
+c2 = {
+	'Lord of the Rings': 'Frodo Baggins',
+	'The Count of Monte Cristo': 'Edmond Dantès'
+}
+```
+
+How can you merge them into a single dictionary in a single line of code?
+
+## The Solution
+
+Depending on which version of Python you're using, you can choose one of the following methods to merge Python dictionaries.
+
+### Merging Dictionaries Using the `|` Operator
+
+Python 3.9 introduced the [merge operator(`|`)](https://docs.python.org/3.9/whatsnew/3.9.html#dictionary-merge-update-operators) in the `dict` class. Using the merge operator is the easiest way to merge dictionaries. The merge operator returns a new dictionary, leaving the original dictionaries unchanged.
+
+```shell
+>>> c = c1 | c2
+>>> c
+{'The Hound of the Baskervilles': 'Sherlock Holmes', 'To Kill A Mockingbird': 'Scout Finch', 'Heart of Darkness': 'Kurtz', 'Lord of the Rings': 'Frodo Baggins', 'The Count of Monte Cristo': 'Edmond Dantès'}
+```
+
+We can change the order of the dictionaries, like so:
+
+```shell
+>>> c = c2 | c1
+>>> c
+{'Lord of the Rings': 'Frodo Baggins', 'The Count of Monte Cristo': 'Edmond Dantès', 'The Hound of the Baskervilles': 'Sherlock Holmes', 'To Kill A Mockingbird': 'Scout Finch', 'Heart of Darkness': 'Kurtz'}
+```
+
+We can merge multiple dictionaries at once using this method.
+
+### Merging Dictionaries Using the `|=` Operator
+
+If we want to merge the dictionaries in-place, we can use the [update operator](https://docs.python.org/3.9/whatsnew/3.9.html#dictionary-merge-update-operators) (`|=`):
+
+```shell
+>>> c1 |= c2
+>>> c1
+{'The Hound of the Baskervilles': 'Sherlock Holmes', 'To Kill A Mockingbird': 'Scout Finch', 'Heart of Darkness': 'Kurtz', 'Lord of the Rings': 'Frodo Baggins', 'The Count of Monte Cristo': 'Edmond Dantès'}
+>>> c2
+{'Lord of the Rings': 'Frodo Baggins', 'The Count of Monte Cristo': 'Edmond Dantès'}
+```
+
+We can merge multiple dictionaries at once using this method.
+
+Like the merge operator, the update operator will work with Python 3.9 and above only.
+
+### Merging Dictionaries Using the `**` Operator
+
+In Python 3.5 and above, we can also use the [unpacking operator (`**`)](https://docs.python.org/3/tutorial/controlflow.html#unpacking-argument-lists) to merge the dictionaries:
+
+```shell
+>>> c3 = {**c1, **c2}
+>>> c3
+{'The Hound of the Baskervilles': 'Sherlock Holmes', 'To Kill A Mockingbird': 'Scout Finch', 'Heart of Darkness': 'Kurtz', 'Lord of the Rings': 'Frodo Baggins', 'The Count of Monte Cristo': 'Edmond Dantès'}
+```
+
+Using the unpacking operator doesn't change the original dictionaries. If you want to merge the dictionaries in-place, you cannot use the unpacking operator. We can merge more than two dictionaries at once using this method.
+
+### Merging Dictionaries Using the `dict.update()` Method
+
+For Python versions below 3.5, we can use the `update()` method of the `dict` class to merge one dictionary into another:
+
+```shell
+>>> c1.update(c2)
+>>> c1
+{'The Hound of the Baskervilles': 'Sherlock Holmes', 'To Kill A Mockingbird': 'Scout Finch', 'Heart of Darkness': 'Kurtz', 'Lord of the Rings': 'Frodo Baggins', 'The Count of Monte Cristo': 'Edmond Dantès'}
+```
+
+Using this method, we can only merge the dictionaries in-place, i.e. one of the dictionaries will be modified. So if we need to keep the original dictionaries unchanged, we need to create a copy of one of the dictionaries and then merge the second one into this copy.
+
+However, we can only merge two dictionaries at a time using this method.

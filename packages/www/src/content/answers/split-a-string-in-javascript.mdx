@@ -1,0 +1,52 @@
+---
+title: 'Split a string in JavaScript'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The problem
+
+How do I split a string in JavaScript?
+
+## The solution
+
+We can use JavaScript's [`String.prototype.split()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split) method. When called on a string, this will split the string at every instance of the provided separator, discard the separator, and return an array of substrings. The following code provides an example:
+
+```javascript
+const myString = "This is a sentence.";
+const words = myString.split(" "); // split on single space characters
+
+console.log(words); // will output ["This", "is", "a", "sentence."]
+```
+
+The separator can be a string or a regular expression, so we could also do something like this:
+
+```javascript
+const myString = "This is a sentence.";
+const words = myString.split(/[ t]/); // split on single space characters and lowercase t's
+
+console.log(words); // will output ["This", "is", "a", "sen", "ence."]
+```
+
+If we would like to retain the separator when splitting, we can use a regular expression with a [positive lookahead assertion](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Assertions#other_assertions), as below:
+
+```javascript
+const myString = "This is a sentence.";
+const words = myString.split(/(?= )/); // split on but retain single space characters
+
+console.log(words); // will output ["This", " is", " a", " sentence."]
+```
+
+We can also truncate the final array by setting the optional `limit` parameter:
+
+```javascript
+const myString = "This is a sentence.";
+const words = myString.split(" "); // split on single space characters
+words.length = 3;
+
+console.log(words); // will output ["This", "is", "a"]
+```

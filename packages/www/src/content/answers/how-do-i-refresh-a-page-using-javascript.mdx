@@ -1,0 +1,57 @@
+---
+title: 'How do I refresh a page using JavaScript?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+You want a page to refresh. You may want to do this to get new data after a user performs a certain action. How can you do this using JavaScript?
+
+## The Solution
+
+There are two [Web API](https://developer.mozilla.org/en-US/docs/Web/API) methods for refreshing a page: `location.reload()` and `history.go()`. These methods are not part of the JavaScript language but are used with JavaScript.
+
+### Using `location.reload()`
+
+The read-only properties [`window.location`](https://developer.mozilla.org/en-US/docs/Web/API/Window/location) and [`document.location`](https://developer.mozilla.org/en-US/docs/Web/API/Document/location) (which is the same as `window.document.location`) return a `Location` object, which contains information about the current URL. The `Location` object has a `reload()` method that can be used to reload the current page. For example, `reload()` can be used to refresh a page using a "Refresh page" button:
+
+```html
+<button id="btnRefresh" type="button">
+	Refresh page
+</button>
+```
+
+The `"Refresh page"` button element is selected and stored in a variable. You can then add a `"click"` event to it:
+
+```javascript
+const refreshBtn = document.getElementById("btnRefresh");
+
+function handleClick() {
+  window.location.reload();
+}
+
+refreshBtn.addEventListener("click", handleClick);
+```
+
+The page is refreshed when the "Refresh page" button is clicked.
+
+### Using `history.go()`
+
+Alternatively, you can refresh a page using the [`history.go()`](https://developer.mozilla.org/en-US/docs/Web/API/History/go) method to load a specific page from the session history or to go backward or forward through the session history. This method takes in a single argument, `delta`, that indicates the position in history to move to, relative to the current page. A negative `delta` value moves backward in the session history, and a positive value moves forward. If you add no argument or set `delta` to `0`, the `history.go()` method has the same effect as calling `location.reload()` and the current page will reload.
+
+We can replace `window.location.reload()` in our previous code example with `history.go()` like this:
+
+```javascript
+const refreshBtn = document.getElementById("btnRefresh");
+
+function handleClick() {
+  history.go(0);
+}
+
+refreshBtn.addEventListener("click", handleClick);
+```

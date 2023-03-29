@@ -1,0 +1,50 @@
+---
+title: 'ValueError: View Function Did Not Return a Response'
+platforms:
+  - sentry.flask
+people:
+  - Armin Ronacher
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+```python
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1836, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1820, in wsgi_app
+    response = self.make_response(self.handle_exception(e))
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1403, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1817, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1478, in full_dispatch_request
+    response = self.make_response(rv)
+  File "/usr/local/lib/python2.7/dist-packages/flask/app.py", line 1566, in make_response
+    raise ValueError('View function did not return a response')
+ValueError: View function did not return a response
+```
+
+## The Solution
+
+All Flask views must return a value, usually a [Response object](https://flask.palletsprojects.com/en/2.2.x/api/#response-objects). If the flask view throwing the error accepts _GET_ and _POST_ methods, check if you are neglecting return a value for one of the cases.
+
+```python
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        model.save()
+        # Failure to return a redirect or render_template
+    else:
+        return render_template('index.html')
+```
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how Flask application monitoring works, take a look at the following articles:
+
+- [Building a SaaS application block by block](https://blog.sentry.io/2018/11/14/how-to-build-saas-application)
+- [How slow is slow?](https://blog.sentry.io/2020/12/17/how-slow-is-slow)
+- [Getting started with the Flask SDK (docs)](https://docs.sentry.io/platforms/python/guides/flask/)

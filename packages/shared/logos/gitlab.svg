@@ -1,0 +1,15 @@
+<svg
+  version="1.1"
+  aria-labelledby="gitlab-logo-title"
+  role="img"
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 74 74">
+  <title id="gitlab-logo-title">GitLab logo</title>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M36.6253 73.5627L50.1127 28.9082H23.1389L36.6257 73.5627H36.6253Z" fill="#E24329"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M36.6255 73.5627L23.1381 28.9082H4.2356L36.6259 73.5622L36.6255 73.5627Z" fill="#FC6D26"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M4.23574 28.9079L0.136762 42.4778C-0.236846 43.7157 0.172457 45.0719 1.15149 45.8364L36.6254 73.5624L4.23574 28.9077V28.9079Z" fill="#FCA326"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M4.23579 28.908H23.1383L15.0145 2.013C14.5967 0.629131 12.7768 0.629131 12.3592 2.013L4.2356 28.908H4.23579Z" fill="#E24329"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M36.6255 73.5627L50.1129 28.9082H69.0154L36.6259 73.5622L36.6255 73.5627Z" fill="#FC6D26"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M69.0152 28.9079L73.1142 42.4778C73.4878 43.7157 73.0785 45.0719 72.0994 45.8364L36.6255 73.5624L69.0152 28.9077V28.9079Z" fill="#FCA326"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M69.0151 28.908H50.1125L58.2363 2.013C58.6544 0.629131 60.4742 0.629131 60.8921 2.013L69.0153 28.908H69.0151Z" fill="#E24329"/>
+</svg>

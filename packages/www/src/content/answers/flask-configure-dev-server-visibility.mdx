@@ -1,0 +1,57 @@
+---
+title: 'How do I Configure Flask Dev Server to be Visible Across the Network?'
+platforms: 
+  - sentry.flask
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+Flask ships with a development server, which has an interactive debugger and lazy loading.
+
+But when you run an app using this server, you cannot access the app from other machines on the same network, for example, from your cell phone.
+
+Can you configure the development server so the app can be accessed from other machines in the same network using the host machine's IP?
+
+## The Solution
+
+The Flask development server uses `localhost` as the default value for hostname to provide better security. According to [the official documentation](https://flask.palletsprojects.com/en/latest/quickstart/#a-minimal-application):
+
+> If you run the server you will notice that the server is only accessible from your own computer, not from any other in the network. This is the default because in debugging mode a user of the application can execute arbitrary Python code on your computer.
+
+If you trust the other users on your network or have the debugger disabled, you can change this behavior.
+
+The value of variable `host` controls what address the development server listens to. By default, the value of `host` is set to `127.0.0.1` or `localhost`. You can change this value to `0.0.0.0`.
+
+Setting `host` to `0.0.0.0` tells the operating system to listen on all public IPs.
+
+There are two ways to do so:
+
+### Using the `flask` Executable
+
+If you are running your app on the development server using the `flask` executable, you can use the `host` flag and pass the new value, like so:
+
+```shell
+flask run --host=0.0.0.0
+```
+
+In the browser of a different machine in the same network, enter the IPv4 address of your host machine, followed by the port number, like so:
+
+`http://[your-ipv4-address]:5000`
+
+This will allow you to access your app.
+
+### Using the `run()` Method
+
+If you are using `python app.py` to run your app on the development server, you can add the `host='0.0.0.0'` parameter to `app.run()`, like so:
+
+```python
+if __name__ == '__main__':
+    # run app in debug mode on port 5000
+    app.run(debug=True, port=5000, host='0.0.0.0')
+```
+
+Navigate to `http://[your-ipv4-address]:5000` from another machine in the same network, and you should be able to access your app.

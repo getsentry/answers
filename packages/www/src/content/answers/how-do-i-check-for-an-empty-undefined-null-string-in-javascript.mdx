@@ -1,0 +1,39 @@
+---
+title: 'How do I Check for an Empty/Undefined/Null String in JavaScript?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+---
+
+## The Problem
+
+You want to check that a value is not an empty string, null, or undefined. How do you do this?
+
+## The Solution
+
+To check that a value is not an empty string, null, or undefined, you can create a custom function that returns `true` if a value is `null`, `undefined`, or an empty string and `false` for all other falsy values and truthy values:
+
+```javascript
+function isEmpty(value) {
+  return (value == null || (typeof value === "string" && value.trim().length === 0));
+}
+
+console.log(isEmpty("cat")); // false
+console.log(isEmpty(1)); // false
+console.log(isEmpty([])); // false
+console.log(isEmpty({})); // false
+console.log(isEmpty(false)); // false
+console.log(isEmpty(0)); // false
+console.log(isEmpty(-0)); // false
+console.log(isEmpty(NaN)); // false
+
+console.log(isEmpty("")); // true
+console.log(isEmpty("    ")); // true
+console.log(isEmpty(null)); // true
+console.log(isEmpty(undefined)); // true
+```
+
+The `isEmpty` function uses the [equality operator (`==`)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Equality) to check if the argument `value` is `null` or `undefined`. This works because if one of the operands is `null` or `undefined`, the other operand must be `null` or `undefined` for the equality comparison to return `true`. If the argument `value` is not `null` or `undefined`, the right side of the [logical OR (||) operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_OR) is evaluated.
+
+To check for an empty string, the [logical && operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_AND) is used. The first operand uses the [`typeof`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof) operator to check if the argument `value` is a string. If the `value` is a string, leading and trailing white space and line terminator strings are removed using the [`trim()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/trim) method. This logical && operator expression returns `true` if a string is empty or consists of white space and line terminator strings only.

@@ -1,0 +1,108 @@
+---
+title: 'Programmatic navigation using React Router'
+platforms: 
+  - sentry.react
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+When using React Router you get access to the `Link` component, which allows you to navigate within a single-page application without reloading the app.
+
+But how can you implement programmatic or imperative navigation?
+
+Let's say you have a form. When the user clicks on the submit button, you want to submit the form and then navigate the user to another page.
+
+You can't substitute the submit button with the `Link` component because you want the button to submit the form first.
+
+How can you implement this behavior using React Router?
+
+## The Solution
+
+[React Router](https://reactrouter.com/) ships with a hook to let you trigger navigation programmatically.
+
+The hook is different depending on which version of React Router you are using.
+
+### React Router v6
+
+In [React Router v6](https://reactrouter.com/docs/en/v6), you can use the `useNavigate` hook. It returns a function that lets you navigate programmatically.
+
+```jsx
+import { useNavigate } from "react-router-dom";
+
+function App() {
+  const navigate = useNavigate();
+
+  function handleClick() {
+    // Handle form submission behaviour.
+    // Then trigger navigation.
+    navigate("/home");
+  }
+  return (
+    <div>
+      <h2>Click this button</h2>
+      <button onClick={handleClick}>Submit</button>
+    </div>
+  );
+}
+```
+
+This function can take up to two arguments:
+
+The first argument is required. You can think of it as the navigate-to link. It can be a route, as in the example above, or a number, like `navigate(-2)` to go back two pages in browser history.
+
+The second argument is optional. It lets you provide additional information.
+
+For example, to prevent users from returning to the current page using the browser's back button, you can use `{replace: true}` as the second argument:
+
+```jsx
+const navigate = useNavigate();
+
+function handleClick() {
+  navigate("/home", { replace: true });
+}
+```
+
+If you need the state, you can do so by adding `{state: state}` as the second argument:
+
+```jsx
+const navigate = useNavigate();
+
+function handleClick() {
+  navigate("/home", { state: state });
+}
+```
+
+You can read more about this hook in [the official documentation](https://reactrouter.com/en/main).
+
+### React Router v5
+
+If you are using [React Router v5](https://v5.reactrouter.com/), you can use the `useHistory` hook. This hook gives you access to the `history` object.
+
+The `history` object has many properties and methods that let you navigate programmatically.
+
+For example:
+
+```jsx
+import { useHistory } from "react-router-dom";
+
+function App() {
+  const history = useHistory();
+
+  function handleClick() {
+    // Handle form submission behaviour.
+    // Then trigger navigation.
+    history.push("/home");
+  }
+  return (
+    <div>
+      <button onClick={handleClick}>go home</button>
+    </div>
+  );
+}
+```
+
+You can read about other methods and properties in [the official documentation](https://v5.reactrouter.com/web/api/history).

@@ -1,0 +1,59 @@
+---
+title: 'Get the Current URL with JavaScript?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+---
+
+## The Problem
+
+You want to get the current website URL on a page. How do you do this?
+
+## The Solution
+
+There are multiple ways to get the current URL using JavaScript. Technically, we'll use [Web APIs](https://developer.mozilla.org/en-US/docs/Web/API), which are not a part of the JavaScript language but are used with JavaScript. You can use the globally scoped [`Window`](https://developer.mozilla.org/en-US/docs/Web/API/Window) and [`Document`](https://developer.mozilla.org/en-US/docs/Web/API/Document) web API interfaces to get the current URL in a browser.
+
+The `Window` interface represents a window containing a [`DOM`](https://developer.mozilla.org/en-US/docs/Glossary/DOM) document. It has a `document` property that points to the [DOM `Document`](https://developer.mozilla.org/en-US/docs/Web/API/Document) loaded in the window. This is the `Document` interface that represents the [`DOM tree`](https://developer.mozilla.org/en-US/docs/Web/API/Document_object_model/Using_the_W3C_DOM_Level_1_Core#what_is_a_dom_tree) of a loaded web page in the browser.
+
+The [`window.location`](https://developer.mozilla.org/en-US/docs/Web/API/Window/location) and [`document.location`](https://developer.mozilla.org/en-US/docs/Web/API/Document/location) (which is the same as `window.document.location`) properties are read-only and return a [`Location`](https://developer.mozilla.org/en-US/docs/Web/API/Location) object. This object contains information about the current URL, including the following properties:
+
+```json
+{
+    "ancestorOrigins": {},
+    "href": "https://sentry.io/answers/capture-errors/",
+    "origin": "https://sentry.io",
+    "protocol": "https:",
+    "host": "sentry.io",
+    "hostname": "sentry.io",
+    "port": "",
+    "pathname": "/answers/capture-errors/",
+    "search": "",
+    "hash": ""
+}
+```
+
+To get the current URL, get the `href` property value:
+
+```javascript
+window.location.href // 'https://sentry.io/answers/capture-errors/'
+// or
+document.location.href // 'https://sentry.io/answers/capture-errors/'
+```
+
+You can also get the values of the following properties on the `window` object to get the current URL:
+
+```javascript
+document.URL // 'https://sentry.io/answers/capture-errors/'
+document.documentURI // 'https://sentry.io/answers/capture-errors/'
+```
+
+If you need to parse the URL, you can create a [`URL` interface](https://developer.mozilla.org/en-US/docs/Web/API/URL) with the current URL. It has useful methods for parsing a URL, for example, you can get search parameter values by their names:
+
+```javascript
+const urlObj = new URL(window.location.href);
+console.log(urlObj.href) // https://unsplash.com/s/photos/cat?order_by=latest&orientation=landscape&color=yellow
+console.log(urlObj.searchParams.get('color')); // yellow
+```
+
+The `URL` interface is also used to construct, normalize, and encode URLs.

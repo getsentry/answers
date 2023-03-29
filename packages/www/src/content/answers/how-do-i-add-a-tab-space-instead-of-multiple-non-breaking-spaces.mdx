@@ -1,0 +1,95 @@
+---
+title: 'How do I add a tab space instead of multiple non-breaking spaces ("nbsp")?'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+
+## The Problem
+
+You want to add a tab character in HTML instead of using multiple non-breaking space HTML entities (`&nbsp;`). How can you do that?
+
+The `&nbsp;` HTML entity is useful for controlling text wrapping. You can add it between two strings to make sure that the strings aren't separated over two lines if the text wraps onto a new line.
+
+You can also use `&nbsp;` to create a tab space, which is often two or four space characters long. But this method for creating a tab space is not recommended as it's repetitive.
+
+But you can't simply add white space as needed in your HTML file because whitespace is mostly ignored when HTML is rendered in the browser. Whitespace between words is treated as a single character and whitespace at the start and end of elements and outside elements is ignored.
+
+
+## The Solution
+
+We'll take a look at three ways to add a tab space instead of using multiple non-breaking spaces:
+
+- Using other HTML entities.
+- Using a `<pre>` tag.
+- Using a CSS class.
+
+### Using other HTML entities
+
+You can add a tab space using other HTML entity whitespace characters that are wider than the `&nbsp;` HTML entity. The `&ensp;` HTML entity is about two spaces wide and `&emsp;` HTML entity is about four spaces wide. The width of these entities depends on the current font.
+
+### Using a `<pre>` tag
+
+A preferred way to add a tab space is to use a `<pre>` tag, which represents preformatted text where whitespace will be displayed as it's written in the HTML file.
+
+Here's how you can use a `<pre>` tag:
+
+```html
+<pre>
+	tab level 0
+		tab level 1
+			tab level 2
+</pre>
+```
+
+
+
+The HTML above will render the following text in the browser:
+
+```
+	tab level 0
+		tab level 1
+			tab level 2
+```
+
+
+### Using a CSS class
+
+You can create a `.tab` CSS class that adds a left margin or padding to an element and sets the `display` property to `inline-block`: 
+
+```css
+.tab {
+	display: inline-block;
+	margin-left: 4em;
+}
+```
+
+Setting `display` to `inline-block` will ensure that no line break is added after the element with the `.tab` class, so the element can be added next to another element.
+
+You can use an HTML element like `<span>` with the `"tab"` class to add tab spaces:
+
+```html
+    <div>
+      <div>tab level 0</div>
+      <div><span class="tab"></span>tab level 1</div>
+      <div><span class="tab"></span><span class="tab"></span>tab level 2</div>
+    </div>
+```
+
+
+
+The HTML above will render the following text in the browser:
+
+```
+	tab level 0
+		tab level 1
+			tab level 2
+```
+
+
+
+You could also have a class for each tab level.

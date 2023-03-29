@@ -1,0 +1,49 @@
+---
+title: 'Accessing Command Line Arguments'
+platforms:
+  - sentry.nodejs
+people:
+  - Evan Hicks
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+Sometimes in your Node app you will want to access the command line arguments that were passed in when running your script. The usage message for Node says that passing arguments are possible.
+
+```
+$ node -h
+Usage: node [options] script.js [arguments]
+```
+
+## The Solution
+
+Command line arguments passed into your script are available using `process.argv` in your code. This is an array that stores all the details of how your script was run, including the executable used and the path to the current script.
+
+The docs for using this variable can be found [here](https://nodejs.org/docs/latest/api/process.html#process_process_argv). Below is an example of what the `process.argv` looks like.
+
+```javascript
+// This is example.js
+process.argv.forEach((val, idx) => {
+  console.log(`${idx}: ${$val}`);
+});
+```
+
+```
+$ node example.js arg1 arg2=test
+0: /usr/bin/local/node
+1: /Users/myuser/example.js
+2: arg1
+3: arg2=test
+```
+
+There are also lots of packages that can be used to help parse different arguments for use in your app, such as [argparse](https://github.com/nodeca/argparse).
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how Node.js application monitoring works, take a look at the following articles:
+
+- [Database Performance Monitoring in Node.js](https://blog.sentry.io/2020/12/07/support-for-database-performance-monitoring-in-node)
+- [Debug your Node.js projects with Source Maps](https://blog.sentry.io/2019/02/20/debug-node-source-maps)
+- [Getting started with Sentry's Node.js SDK (docs)](https://docs.sentry.io/platforms/node)

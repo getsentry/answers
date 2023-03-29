@@ -1,0 +1,108 @@
+---
+title: 'What is a NullReferenceException in C# and How do I Fix it?'
+platforms: 
+  - sentry.csharp
+people: 
+  - Dean R.
+---
+
+## The Problem
+
+Here's a simple example of code that generates a `NullReferenceException`.
+
+```C#
+using System;
+
+class Solution
+{
+    static void Main(String[] args)
+    {
+        int[] n = null;
+        Console.WriteLine(n[0]);
+    }
+}
+```
+
+Here we get a `NullReferenceException` because the integer array `n` is a null pointer, so it makes no sense to try to print its 0th element.
+
+Of course, when a `NullReferenceException` appears in your code, chances are it will not be nearly as obvious. Let's take a look at a slightly more sinister example:
+
+```C#
+using System;
+
+class Birthday
+{
+    public int day { get; set; }
+    public int month { get; set; }
+    public int year { get; set; }
+}
+
+class Person
+{
+    public Birthday birthday { get; set; }
+}
+
+class Solution
+{
+    static void Main(String[] args)
+    {
+        Person bob = new Person();
+        bob.birthday.day = 1;
+        bob.birthday.month = 1;
+        bob.birthday.year = 1970;
+    }
+}
+```
+
+This code also generates a `NullReferenceException`, but why? We've clearly defined the day, month, and year of Bob's birthday, so why is the compiler still yelling at us, and how can we fix it?
+
+## The Solution
+
+In C#, objects must be instantiated before they are referenced.
+
+In our example, even though we defined all of the necessary parts of Bob's birthday, we didn't instantiate the birthday itself. By defining a separate class for `Birthday`, we are claiming that a birthday is more than just the day, month, and year that make it up. As such, our current implementation is missing something.
+
+There are two ways of solving this problem: the additive method and the subtractive method.
+
+### Method 1: The Additive Method
+
+If we want to maintain our claim that a birthday is its own concept greater than the sum of its parts, then we can code our solution accordingly by adding an instantiation of our `Birthday` object. Keeping all else equal, add the line `Birthday b = new Birthday();` to `Main()` , like this:
+
+```C#
+    static void Main(String[] args)
+    {
+        Person bob = new Person();
+        Birthday b = new Birthday(); // instantiate new Birthday object
+        b.day = 1;
+        b.month = 1;
+        b.year = 1970;
+    }
+```
+
+### Method 2: The Subtractive Method
+
+Another, perhaps more logical, way to think about it is that a birthday is not more than the sum of its parts. In that case, we can eliminate the `Birthday` class altogether and simply assign the components of Bob's birthday directly to Bob. That would look something like this:
+
+```C#
+using System;
+
+class Person
+{
+    public int birthday_day { get; set; }
+    public int birthday_month { get; set; }
+    public int birthday_year { get; set; }
+}
+
+class Solution
+{
+    static void Main(String[] args)
+    {
+        Person bob = new Person();
+        bob.birthday_day = 1;
+        bob.birthday_month = 1;
+        bob.birthday_year = 1970;
+    }
+}
+```
+
+Tracking down these issues can be tricky, but as long as you remember that a `NullReferenceException` means you tried to work with something before you made sure that it exists, you should be able to debug any such errors without too much headache.

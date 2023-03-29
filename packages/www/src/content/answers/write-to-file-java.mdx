@@ -1,0 +1,116 @@
+---
+title: 'How to Write to a File in Java'
+platforms: 
+  - sentry.java
+people: 
+  - Lewis D.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You need to write data to a file in Java. How can you do this?
+
+## The Solution
+
+If you read the Sentry answer to [How to Read to a File in Java](https://sentry.io/answers/read-file-java/), you'll know that there are numerous solutions to reading from files in Java. Similarly, there are many ways you can write data to a file, and certain implementations may be more suitable to your needs than others, depending on the amount and type of data you are writing to a file.
+
+Let's take a look at some of Java's built-in file-writing solutions, and consider which situations they are useful in.
+
+- For a simple, one-time execution, you can use the `Files` class to write textual data to a file.
+- If your application is designed to write to a file many times, then a `BufferedWriter` will help eliminate the overhead of slow write operations.
+- If you are writing non-textual data to a file, you could consider using a `FileOutputStream` optionally wrapped in a `BufferedOutputStream`.
+
+### The `Files` Class
+
+To write a small simple file, the [`Files`](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/nio/file/Files.html) class has a very intuitive approach using the [`write()`](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/nio/file/Files.html#write(java.nio.file.Path,byte%5B%5D,java.nio.file.OpenOption...)) method.
+
+In this method, you pass the data encoded as bytes and a path to the file, and the `Files` class handles the file-writing process as shown below:
+
+```java
+public void writeToFile(Path path, String content) {
+    try {
+        Files.write(path, content.getBytes());
+    } catch (IOException e) {
+        // exception handling ...
+    }
+}
+```
+
+Since Java 11, a [`writeString()`](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/nio/file/Files.html#writeString(java.nio.file.Path,java.lang.CharSequence,java.nio.charset.Charset,java.nio.file.OpenOption...)) method is available to handle passing in a `String` directly, bypassing the need to first encode the `String` to bytes.
+
+
+### The `FileWriter` Class
+
+The [`FileWriter`](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/io/FileWriter.html) class has been around since Java 1.1, and it's a convenient class for writing character-oriented files. The syntax for `FileWriter` is concise and intuitive.
+
+An advantage of using the `FileWriter` class is that it has a `boolean` parameter `append`, which can be supplied when invoking a new class. If `append` is true, then the data that is written will be appended to the end of the file, instead of overwriting the file entirely.
+
+Here's a code example to write and append to a file:
+
+```java
+public void writeToFile(String path, String content, boolean append) {
+    try (FileWriter fileWriter = new FileWriter(path, append)) {
+        fileWriter.write(content);
+    } catch (IOException e) {
+        // exception handling ...
+    }
+}
+```
+
+In this example, the [*try-with-resources*](https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html) construct is used, which negates the need to explicitly close the writer when we are finished with it. Note that if you did not use the *try-with-resources*, you will need to remember to close the writer yourself once you're finished writing.
+
+### The `BufferedWriter` Class
+
+The [`BufferedWriter`](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/io/BufferedWriter.html) class, as its name suggests, supports buffering. When the [`write()`](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/io/BufferedWriter.html#write(char%5B%5D,int,int)) method is called, the data is written to the `BufferedWriter`'s internal buffer, and persisted to file only when this internal buffer is completely filled. This buffering process reduces the number of expensive write operations the code needs to make, so the `BufferedWriter` is most suited to writing large files efficiently.
+
+Here's an example using the `BufferedWriter` class:
+
+```java
+public void writeToFile(String path, String content, boolean append) {
+    try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path, append))){
+        bufferedWriter.write(content);
+    }
+    catch (IOException e) {
+        // exception handling ...
+    }
+}
+```
+
+In this example, the `BufferedWriter` is created with the *try-with-resources* construct and when the *try-with-resources* automatically closes the `BufferedWriter`, the `FileWriter` which the `BufferedWriter` writes to will also be closed. So in this case, the `FileWriter` will be closed at the same time the `BufferedWriter` instance is closed.
+
+### The `FileOutputStream` and `BufferedOutputStream` Classes
+
+In the three approaches we've explored so far, we have focussed on writing character-oriented data to file. However, the [`FileOutputStream`](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/io/FileOutputStream.html) class can be used to write streams of byte-oriented data, such images or Unicode data, and other data that can't be represented as text. Of course, you can write textual data to file using a `FileOutputStream` by simply encoding the `String` text to bytes.
+
+```java
+public void writeToFile(String path, byte[] content) {
+    try (FileOutputStream outputStream = new FileOutputStream(path)) {
+        outputStream.write(content);
+    } catch (IOException e) {
+        // exception handling ...
+    }
+}
+```
+
+Similarly, the [`BufferedOutputStream`](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/io/BufferedOutputStream.html) class adds buffering to the underlying [`OutputStream`](https://docs.oracle.com/en/java/javase/12/docs/api/java.base/java/io/OutputStream.html) for increased efficiency.
+
+In our `FileOutputStream` example above, we could wrap the underlying `OutputStream` in a `BufferedOutputStream` to buffer all bytes until they are written.
+
+```java
+public void writeToFile(String path, byte[] content) {
+    try(BufferedOutputStream  bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(path))) {
+        bufferedOutputStream.write(content);
+    }
+    catch (IOException e) {
+        // exception handling ...
+    }
+}
+```
+
+There are no set criteria for when a `BufferedOutputStream` should be used, so you should consider buffer size, disk speed, and network speed (if applicable) and how these factors influence potential performance gains or losses before settling on this option for writing to a file.
+
+## Further Reading
+
+- [How to Read a File in Java](https://sentry.io/answers/read-file-java/)

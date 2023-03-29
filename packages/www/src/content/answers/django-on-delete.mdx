@@ -1,0 +1,171 @@
+---
+title: 'What Does `on_delete` do in Django Models?'
+platforms: 
+  - sentry.django
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+What does the `on_delete` option do in Django models?
+
+## The Solution
+
+The `on_delete` option determines how the deletion of referenced data will be handled by the database to maintain data integrity.
+
+Let's say we are making a learning management system (LMS). We define the following models:
+
+```python
+class Student(models.Model):
+	name = models.CharField(max_length = 255)
+
+class Homework(models.Model):
+	title = models.CharField(max_length = 255)
+	student = models.ForeignKey(Student, on_delete=models.CASCADE)
+```
+
+The `Homework` model stores a reference to the student who submitted that homework as a [`ForeignKey`](https://docs.djangoproject.com/en/4.0/ref/models/fields/#django.db.models.ForeignKey). A `ForeignKey` is a many-to-one relationship, which means that every student can submit multiple homework assignments, but each homework assignment can be submitted by only one student.
+
+Let's create an instance of both objects:
+
+```python
+# Run these commands in Django shell
+student = Student.objects.create(name="Jane")
+homework = Homework.objects.create(title="Jane's homework", student=student_1)
+```
+
+What happens if we want to delete `homework`? We can do so without any problem as `student` doesn't contain any reference to `homework`. The `student` instance existed before we created `homework` and it can carry on existing after we delete `homework`.
+
+But before we can delete `student`, we have to tell Django what to do with `homework`. Do we want orphaned `homework` instances lying around in our LMS? Or do we need to delete all the `homework` submitted by a student when that student is deleted?
+
+This is where the `on_delete` option is used. It tells Django what behavior to adopt when the referenced object is deleted. We can set `on_delete` to one of seven options. Let's take a look at each option:
+
+### CASCADE
+
+Cascades deletes. When we delete `student`, `homework` will also be deleted.
+
+```python
+# models.py
+class Homework(models.Model):
+	...
+	student = models.ForeignKey(Student, on_delete=models.CASCADE)
+
+
+# Django shell
+student.delete()
+
+# also deletes homework
+```
+
+### PROTECT
+
+Prevents deletion of the referenced object. When we try to delete `student`, we will get a [ProtectedError](https://docs.djangoproject.com/en/4.0/ref/exceptions/#django.db.models.ProtectedError):
+
+```python
+# models.py
+class Homework(models.Model):
+	...
+	student = models.ForeignKey(Student, on_delete=models.PROTECT)
+
+
+# Django shell
+student.delete()
+
+# Raises ProtectedError. We first need to delete homework before Django will allow us to delete student.
+
+```
+
+### RESTRICT
+
+Prevents deletion of the referenced object. When we try to delete `student`, we will get a [RestrictedError](https://docs.djangoproject.com/en/4.0/ref/exceptions/#django.db.models.RestrictedError):
+
+```python
+# models.py
+class Homework(models.Model):
+	...
+	student = models.ForeignKey(Student, on_delete=models.RESTRICT)
+
+
+# Django shell
+student.delete()
+
+# Raises RestrictedError.
+
+```
+
+Unlike `PREVENT`, `RESTRICT` allows deletion of a referenced object if it also references a different object that is being deleted in the same operation, but via a `CASCADE` relationship. To learn more, see the example in [Django documentation](https://docs.djangoproject.com/en/4.0/ref/models/fields/#django.db.models.ForeignKey.on_delete).
+
+### SET_NULL
+
+This option sets the `ForeignKey` to `null`, but we have to specify `null=True` in our model.
+
+```python
+# models.py
+class Homework(models.Model):
+	...
+	student = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True)
+
+
+# Django shell
+student.delete()
+
+# Sets the foreign key in homework to null and deletes student.
+
+```
+
+### SET_DEFAULT
+
+This option sets the `ForeignKey` to its default value, but we have to specify a default value in our model.
+
+```python
+# models.py
+class Homework(models.Model):
+	...
+	student = models.ForeignKey(Student, on_delete=models.SET_DEFAULT, default=1)
+
+
+# Django shell
+student.delete()
+
+# Sets the foreign key in homework to the student whose id is 1, and deletes student.
+
+```
+
+### SET()
+
+This option sets the `ForeignKey` to the value passed to `SET()`
+
+```python
+# models.py
+class Homework(models.Model):
+	...
+	student = models.ForeignKey(Student, on_delete=models.SET(get_student))
+
+
+# Django shell
+student.delete()
+
+# Calls the get_student function that you have defined, sets the foreign key in homework to the value returned by the get_student function, and deletes student.
+
+```
+
+### DO_NOTHING
+
+This option makes no changes to the object with the `ForeignKey`. In most cases, `DO_NOTHING` is a bad choice as it can create integrity issues. But some advance level use cases might need this option.
+
+```python
+# models.py
+class Homework(models.Model):
+	...
+	student = models.ForeignKey(Student, on_delete=models.DO_NOTHING)
+
+
+# Django shell
+student.delete()
+
+# Deletes student. Makes no changes to homework.
+
+```

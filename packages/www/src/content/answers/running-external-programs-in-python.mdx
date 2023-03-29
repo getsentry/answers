@@ -1,0 +1,76 @@
+---
+title: 'Running External Programs in Python'
+platforms: 
+  - sentry.python
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+How can you execute an external program or call a system command from within a Python program?
+
+Let's say you are working on an inherited shell script. Reimplementing the script in Python would take a long time. How can you run those shell commands from within Python?
+
+## The Solution
+
+The recommended method for subprocess management in Python is to use Python's [`subprocess` module](https://docs.python.org/3/library/subprocess.html).
+
+The `subprocess` module [replaced](https://docs.python.org/3/library/subprocess.html#replacing-older-functions-with-the-subprocess-module) many older modules and functions like the [`os.system` module](https://docs.python.org/3/library/os.html#os.system).
+
+The easiest way to use the `subprocess` module is to use the [`run()` function](https://docs.python.org/3/library/subprocess.html#subprocess.run). The `run()` function can handle most of the use cases and the official documentation recommends using it for all use cases it can handle. For more advanced use cases, we can use the underlying [`Popen` class](https://docs.python.org/3/library/subprocess.html#subprocess.Popen).
+
+We can use the `run()` function to execute shell commands in a UNIX environment, like so:
+
+```bash
+>>> import subprocess
+>>> subprocess.run(['ls'])
+test.py
+CompletedProcess(args=['ls'], returncode=0)
+```
+
+On completion of a process, the `run()` function will return an instance of the [`CompletedProcess` class](https://docs.python.org/3/library/subprocess.html#subprocess.CompletedProcess).
+
+The important thing to keep in mind is that the `run()` function bypasses the shell and makes a [system call](https://en.wikipedia.org/wiki/System_call) directly. Any command that is a part of the shell itself, and not a separate executable, may not work this way.
+
+For example, running the above code on Windows will result in an error:
+
+```bash
+>>> import subprocess
+>>> subprocess.run(['ls'])
+Traceback (most recent call last):
+	...
+FileNotFoundError: [WinError 2] The system cannot find the file specified
+```
+
+We get the above error because in Windows `ls` is a part of PowerShell itself and not a standalone executable that can be called directly.
+
+To run a shell command using the `run()` function, we need to provide some extra arguments. We need to pass the name of the shell, the `-Command` flag to indicate that we want it to run a specific command, and then finally the command itself, like so:
+
+```bash
+subprocess.run(['pwsh', '-Command', 'ls'])
+```
+
+Interacting with the text-based programs that are available on the shell is one of the most popular use cases of the `subprocess` module. But using the `subprocess` module, we can access any application on our computer, not just the text-based ones.
+
+For example, we can write the following code to open Notepad:
+
+```python
+import subprocess
+
+subprocess.run(["notepad"])
+```
+
+In the case of opening Notepad, the process is marked complete when we close the Notepad window.
+
+We can even run a Python script from within our parent Python script, like so:
+
+```python
+import subprocess
+
+subprocess.run(["python", "my-python-script.py"])
+```
+
+However, bear in mind that using `subprocess` to write concurrent code is not recommended.

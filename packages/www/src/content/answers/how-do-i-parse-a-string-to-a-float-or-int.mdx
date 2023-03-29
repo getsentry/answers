@@ -1,0 +1,79 @@
+---
+title: 'How do I parse a string to a float or int?'
+platforms: 
+  - sentry.python
+people: 
+  - Gareth D.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+How do I parse a string to a float or int in Python?
+
+For example, I have a string like "1337" or "13.37" and I want to parse it to an int or float data type.
+
+## The Solution
+
+If your string input is clean and predictable, the easiest way to parse a string to a float or int is by using the `float` or `int` built-in modules.
+
+To cast a string to a float:
+
+```python
+my_float_str = "13.37"
+my_float_float = float(my_float_str)
+print(my_float_float)  # will print 13.37
+```
+
+To cast a string to an int:
+
+```python
+my_int_str = "1337"
+my_int_int = int(my_int_str)
+print(my_int_int)  # will print 1337
+```
+
+In some situations, you may need to account for edge cases. For example, you can't use the `int` module if your input contains non-numerical characters such as a period.
+
+```python
+my_float_str = "13.37"
+
+# do not do this
+my_int_str = int(my_float_str)
+```
+
+This will result in the following error:
+
+```
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: invalid literal for int() with base 10: '13.37'
+```
+
+If you are happy to throw away the floating point component (that is, round down to the nearest integer), you can first cast the string to a float and then cast the resulting float to an int. For example:
+
+```python
+my_float_str = "13.37"
+my_int_str = int(float(my_float_str))
+print(my_int_str)   # will print 13
+```
+
+Note that `float` will still throw an error if you try to parse a string with more than one period. For example:
+
+```python
+float("123.456.789")
+
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: could not convert string to float: '123.456.789'
+```
+
+If your input is dirty or unpredictable, you'll need to implement some additional error handling or add a data cleaning step before attempting to cast your data to different types. For example, you can use a try-except statement to catch a `ValueError` exception:
+
+```python
+try:
+    not_a_float = float("123.456.789")
+except ValueError:
+    print("Could not parse string to float")
+```

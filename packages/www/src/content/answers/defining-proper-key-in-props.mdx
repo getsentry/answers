@@ -1,0 +1,74 @@
+---
+title: Encountered Two Children with the Same Key — React Fix
+description: 'When you are rendering React components in a map function inside the render function, you must provide a key prop to each component that is unique.'
+platforms:
+  - sentry.react
+people:
+  - Evan Hicks
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+When you are rendering React components in a `map` function inside the `render` function, you must provide a `key` prop to each component that is unique, otherwise React will put a warning in the console and may or may not correctly update your component when it rerenders. One of the most common mistakes is using an object as the key. An object will get stringifyed by React into `[object Object]` regardless of the specifics of the object you passed in. So two completely different objects will have the same key. If this happens you will see something like a warning like the following in the console:
+
+Warning: Encountered two children with the same key, [object
+Object]. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+
+```react
+render() {
+    return (
+        <div>
+            {this.state.users.map(user => (
+                <UserComponent user={user} key={user} />
+            ))}
+        </div>
+    )
+}
+```
+
+Another common mistake is to use array indexes for the keys.
+
+```react
+render() {
+    return (
+        <div>
+            {this.state.users.map((user, idx) => (
+                <UserComponent user={user} key={idx} />
+            ))}
+        </div>
+    )
+}
+```
+
+## The Solution
+
+A `key` prop should be unique, stable and reproducible.
+
+Unique: The key for an element should be unique amongst its siblings. The key does not need to be globally unique. This is the problem with using the object for a key, since the string form of any object is always the same.
+
+Stable: The key for a certain element should always be the same. This is why using the array indexes can cause errors. If user ABC is at index 0, and then gets moved to index 1, the component will not rerender because the keys are the same, even though the data connected to those keys has changed.
+
+Reproducible: It should always be possible to get the same key for the object every time. Generally this means to not use random values for keys.
+
+The best practice in situations like this is to use the unique ID backing your objects. In this example, the user's ID that would have been stored in the database. However it's possible to use other hashing functions to get similar results.
+
+```react
+render() {
+    return (
+        <div>
+            {this.state.users.map((user, idx) => (
+                <UserComponent user={user} key={user.id} />
+            ))}
+        </div>
+    )
+}
+```
+### Further Reading
+
+If you're looking to get a deeper understanding of how React application monitoring works, take a look at the following articles:
+
+- [Debugging tough frontend errors by giving Sentry more clues](https://blog.sentry.io/2019/01/17/debug-tough-front-end-errors-sentry-clues)
+- [How Aumni keeps errors out of userland](https://sentry.io/customers/aumni)
+- [Getting started with Sentry's React SDK (docs)](https://docs.sentry.io/platforms/javascript/guides/react)

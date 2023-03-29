@@ -1,0 +1,87 @@
+---
+title: 'Capturing JavaScript Errors'
+platforms:
+  - sentry.javascript.browser
+people:
+  - David Cramer
+date:
+  2021-05-13T13:44:34-07:00
+---
+
+## The Problem
+
+You have a single page JavaScript application, and unlike your API server, the client-side application doesn't generate error logs.
+
+## The Solution
+
+A good starter practice is to instrument your application using **try…catch** statements. This allows you to gracefully handle the error and show a message to the user:
+
+```html
+<div id="page"></div>
+
+<script>
+  try {
+    renderPage();
+  } catch (err) {
+    document.getElementById('page').innerHTML =
+      'An error occurred: ' + err.message;
+  }
+</script>
+```
+
+### Reporting JavaScript Errors
+
+Now, while this pattern will help you create a better user experience, it still doesn't inform you about these kinds of events. A minor change can be made to greatly improve this abstraction:
+
+```html
+<script>
+  function logError(err) {
+    // send the error to our reporting server
+    $.ajax({
+      url: 'http://example.com/report-js-error',
+      method: 'POST',
+      data: {
+        message: err.message,
+        stack: err.stack,
+      },
+    });
+    // for debug purposes, also capture it to console
+    console && console.log(err);
+  }
+
+  try {
+    renderPage();
+  } catch (err) {
+    logError(err);
+    document.getElementById('page').innerHTML =
+      'An error occurred. Dont worry though, weve ' +
+      'been alerted and are working on a solution';
+  }
+</script>
+```
+
+### Uncaught Exceptions
+
+We're able to gracefully handle page rendering errors, but what about the rest of our application? This is where [Sentry](https://sentry.io/welcome/) fits into place. Sentry takes care of automatically instrumenting the JavaScript stack and sends errors to the reporting server. By using Sentry you can avoid the `try…catch` pattern.
+
+Integrating the JavaScript SDK is just a few lines of code:
+
+```html
+<script src="https://browser.sentry-cdn.com/<VERSION>/bundle.min.js"></script>
+```
+
+Configure your DSN:
+
+```html
+Sentry.init({ dsn: 'https://<key>@sentry.io/<project>' });
+```
+
+That's it! Sentry takes care of the problem and gets out of your way.
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how JavaScript error reporting works, take a look at the following articles:
+
+- [Capture and report JavaScript errors with window.onerror](https://blog.sentry.io/2016/01/04/client-javascript-reporting-window-onerror)
+- [What the heck is "Script error"?](https://blog.sentry.io/2016/05/17/what-is-script-error)
+- [How to write bulletproof function wrappers in JavaScript](https://blog.sentry.io/2016/02/03/wrap-javascript-functions)

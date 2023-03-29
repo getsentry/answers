@@ -1,0 +1,98 @@
+---
+title: 'How do I pass command line arguments to a Node.js program?'
+platforms: 
+  - sentry.nodejs
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+How do we pass command-line arguments to a Node.js script or program, and how can we access them in Node.js?
+
+## The Solution
+
+Command-line arguments are a great way to provide additional information and/or customization to a Node.js script.
+
+### Passing the Arguments
+
+We can pass any number of command-line arguments while invoking a Node.js application by typing them in after the name of the file, like so:
+
+```powershell
+node example.js a b c d
+```
+
+Arguments can be standalone or they can be a key-value pair:
+
+```powershell
+node example.js letter=a
+```
+
+### Retrieving the Arguments
+
+Node.js has a built-in object called `process`. This object exposes an array `argv`, which contains all the arguments passed from the command-line.
+
+But first, let's take a look at what happens when we launch a Node.js process without any arguments.
+
+Let's create a file `index.js` and add the following code to it:
+
+```javascript
+process.argv.forEach((value, index) => {
+  console.log(index, value);
+});
+```
+
+When we run the following command:
+
+```powershell
+node index.js
+```
+
+We get the following output in our terminal:
+
+```powershell
+0 \path\to\node.exe
+1 \path\to\index.js
+```
+
+There are two things to note:
+
+- The array `argv` exists even if we do not pass any additional arguments to our Node.js process.
+- The first two elements of this array always contain the path to our node binary and the path to our script.
+
+Let's re-run the script, but this time with some arguments:
+
+```powershell
+node index.js one two three env=dev
+```
+
+And this time we get:
+
+```powershell
+0 \path\to\node.exe
+1 \path\to\index.js
+2 one
+3 two
+4 three
+5 env=dev
+```
+
+In order to get only the additional arguments we can create a new array and exclude the first two elements like so:
+
+```javascript
+const arguments = process.argv.slice(2);
+arguments.forEach((value, index) => {
+  console.log(index, value);
+});
+```
+
+And we get the following:
+
+```powershell
+0 one
+1 two
+2 three
+3 env=dev
+```

@@ -1,0 +1,63 @@
+// Since this is a button, we have to disable a whole bunch of styles
+button[role='tab'] {
+  user-select: none;
+  box-sizing: border-box;
+  text-transform: uppercase;
+  border: none;
+  padding: 0 0.875rem;
+  font-weight: bold;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-rendering: optimizeLegibility;
+  letter-spacing: 0.2px;
+  outline: 0;
+  white-space: nowrap;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  -webkit-appearance: none;
+  height: 2.5rem;
+  line-height: normal;
+  background-color: transparent;
+  color: $mdPurple;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    height: 0.25rem;
+    width: calc(100% - 1.75rem);
+    bottom: 0;
+    left: 0.875rem;
+    display: none;
+    border-radius: 1rem;
+  }
+
+  &:hover,
+  &:focus {
+    &::before {
+      display: block;
+      background-color: $colorTextLight;
+    }
+  }
+
+  &:focus,
+  &:focus:active,
+  &.isActive:focus {
+    color: $mdPink;
+    &::before {
+      display: block;
+      background-color: $mdPink;
+    }
+  }
+
+  &:active,
+  &.isActive {
+    color: $mdViolet;
+
+    &::before {
+      display: block;
+      background-color: $mdPink;
+    }
+  }
+}

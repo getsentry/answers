@@ -1,0 +1,84 @@
+---
+title: 'Making a list out of a list of lists in Python?'
+platforms: 
+  - sentry.python
+people: 
+  - James W.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You want to flatten both regular and irregular lists of lists. Nested for loops could be used to solve this problem.
+
+But are there any simpler solutions in Python?
+
+## The Solution
+
+### Using Python Libraries
+
+The Python `itertools` module is a simple and readable method for flattening regular lists of lists:
+
+```python
+import itertools
+
+regular_list = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+flat_list = list(itertools.chain.from_iterable(regular_list))
+print(flat_list)
+```
+
+**Output:**
+
+```
+[1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+### Using List Comprehension
+
+Use list comprehension to flatten a regular list:
+
+```python
+regular_list = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+flat_list = [item for inner_list in regular_list for item in inner_list]
+print(flat_list)
+```
+
+**Output:**
+
+```
+[1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+### Using Nested Loops
+
+Using nested loops might not be a shortcut, but this method is useful for flattening both regular and irregular lists of lists:
+
+```python
+def flatten_list(list_of_lists):
+    flattened_list = []
+
+    for element in list_of_lists:
+        if type(element) is list:
+            for item in element:
+                flattened_list.append(item)
+        else:
+            flattened_list.append(element)
+    return flattened_list
+
+# Regular list of lists
+regular_list_of_lists = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+
+# Irregular list of lists
+irregular_list_of_lists = [1, [2, 3, 4], 5, [6, 7], 8, 9]
+
+print(flatten_list(regular_list_of_lists))
+print(flatten_list(irregular_list_of_lists))
+```
+
+**Output:**
+
+```
+[1, 2, 3, 4, 5, 6, 7, 8, 9]
+[1, 2, 3, 4, 5, 6, 7, 8, 9]
+```

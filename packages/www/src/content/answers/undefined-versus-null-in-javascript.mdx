@@ -1,0 +1,47 @@
+---
+title: 'Undefined versus null in JavaScript'
+platforms:
+  - sentry.javascript.browser
+people:
+  - David Y.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+What is the difference between the values `undefined` and `null` in JavaScript?
+
+## The Solution
+
+When a variable has been declared but not yet assigned a value, it will have the type and value `undefined`. `undefined` is one of JavaScript's [primitive types](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined).
+
+```javascript
+let myVar;
+
+console.log(myVar); // will print "undefined"
+console.log(typeof myVar); // will also print "undefined"
+```
+
+When a variable has not been declared or assigned, it will also be of type `undefined` and throw a [`ReferenceError`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Not_defined) when accessed. Therefore, `typeof` will produce the same result for declared but undefined variables and undeclared variables.
+
+```javascript
+console.log(undeclaredVar); // will throw a ReferenceError
+console.log(typeof undeclaredVar); // will print "undefined"
+```
+
+In contrast, `null` is a value that represents nothing. Think of `null` as an empty container and `undefined` as the absence of a container. A variable will only have the value `null` when it is explicitly assigned, and will be of type [`object`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object).
+
+```javascript
+const myVar = null;
+
+console.log(myVar); // will print "null"
+console.log(typeof myVar); // will print "object"
+```
+
+The difference between `undefined` and `null` is important when using JavaScript's equality operators. `null` and `undefined` are considered the same when using loose equality (`==`) but not when using strict equality (`===`).
+
+```javascript
+console.log(undefined == null); // will print "true"
+console.log(undefined === null); // will print "false"
+```

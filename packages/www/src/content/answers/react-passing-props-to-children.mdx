@@ -1,0 +1,112 @@
+---
+title: 'How Do You Pass Props to `{this.props.children}`?'
+platforms: 
+  - sentry.react
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You have a parent component that acts as a wrapper around other components. Can it pass props to its children?
+
+Let's say we have a component called `RadioGroup` that has a number of children components called `RadioInput`, like so:
+
+```jsx
+<RadioGroup>
+    <RadioInput value="first">First</RadioInput>
+    <RadioInput value="second">Second</RadioInput>
+    <RadioInput value="third">Third</RadioInput>
+</RadioGroup>
+```
+
+The `RadioInput` component just renders an `<input>` element:
+
+```jsx
+const RadioInput = (props) => {
+  return (
+    <div>
+      <label>
+        {props.children}
+        <input type="radio" name={props.name} value={props.value} />
+      </label>
+    </div>
+  );
+};
+```
+
+To group `input` elements together, they must have the same `name` attribute. We can do it manually, like this:
+
+```jsx
+<RadioGroup>
+	<RadioInput name="group1" value="first">First</RadioInput>
+	<RadioInput name="group1" value="second">Second</RadioInput>
+	<RadioInput name="group1" value="third">Third</RadioInput>
+</RadioGroup>
+```
+
+But is there a way to add the `name` attribute programmatically by passing it as a prop to the parent component? For example:
+
+```jsx
+<RadioGroup name="group1">
+	<RadioInput value="first">First</RadioInput>
+	<RadioInput value="second">Second</RadioInput>
+	<RadioInput value="third">Third</RadioInput>
+</RadioGroup>
+```
+
+## The Solution
+
+To pass additional props to the children from within the parent component, you need to clone the children components using `React.cloneElement()`.
+
+The `React.cloneElement()` API clones an element and returns a new React element. The cool thing is that the resulting element will have all of the original element's props, with the new props merged in.
+
+For example:
+
+```jsx
+const newElement = React.cloneElement(originalElement, {
+  extraProp: "Some extra prop",
+});
+```
+
+Here, `newElement` will have all the props from the `originalElement`, along with the `extraProp`.
+
+In our original example, let's say we have the `RadioGroup` component defined as follows:
+
+```jsx
+const RadioGroup = (props) => {
+  return <div>{props.children}</div>;
+};
+```
+
+You can write a function `renderChildren` and use it inside the `return` statement:
+
+```jsx
+const RadioGroup = (props) => {
+  const renderChildren = () => {
+    return props.children;
+  };
+
+  return <div>{renderChildren()}</div>;
+};
+```
+
+Now you can loop over all `props.children` using the `map` function and clone each child with `React.cloneElement()`. While cloning we will add `name` to the existing props, like so:
+
+```jsx
+const RadioGroup = (props) => {
+  const renderChildren = () => {
+    return React.Children.map(props.children, (child) => {
+      return React.cloneElement(child, {
+        name: props.name,
+      });
+    });
+  };
+
+  return <div>{renderChildren()}</div>;
+};
+```
+
+This way all the children components will have the `name` attribute set to whatever you pass to the `RadioGroup` component.

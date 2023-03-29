@@ -1,0 +1,31 @@
+---
+title: 'Auto-reloading a Flask application'
+platforms: 
+  - sentry.flask
+people: 
+  - James W.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You are working on a Flask project and notice that the process of manually reloading your Flask application every time you save new changes is tedious and inefficient.
+
+Is there a way to automatically reload your Flask application whenever you save changes to your code?
+
+## The Solution
+
+Use the `--debug` option when you run your Flask app to enable debug mode.
+
+```bash
+flask --app example_app.py --debug run
+```
+
+This will enable auto-reload whenever changes are made to your code and saved. It will also enable an interactive debugger in the browser if any errors occur during a request.
+
+For more information about running your Flask app, run the following command to get a list of options:
+
+```bash
+flask run --help
+```

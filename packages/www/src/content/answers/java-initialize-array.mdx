@@ -1,0 +1,77 @@
+---
+title: 'How to initialize an array in Java?'
+platforms: 
+  - sentry.java
+people: 
+  - Lewis D.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You want to create a new array data structure in Java, but you're not sure how to go about it.
+
+## The Solution
+
+In Java, the array object is used to store multiple elements of the same type. These elements are stored in contiguous memory, the length of which is immutable once initialization is complete.
+
+We can **declare** an array in the same way as any other variable or object in Java, by giving a type and a name:
+
+```java
+int[] myArray;
+```
+
+However, this merely declares the array, it does not initialize it. The array has the value `null`.
+
+Let's take a look at the two ways we can initialize our array.
+
+### Initialize an array using known element values
+
+If we already know the element values we want stored in the array, we can initialize the array like this:
+
+```java
+myArray = new int[]{0, 1, 2, 3};
+```
+
+Java allows a shorthand of this by combining declaration and initialization: 
+
+```java
+int[] myArray = {0, 1, 2, 3};
+```
+
+This example is functionally equivalent to the previous example that declared and initialized our array separately. Interestingly, the square brackets that symbolize an array `[]` can be put on either side of the array name during the declaration with no change in functionality:
+
+```java
+int myArray[] = {0, 1, 2, 3};
+```
+
+### Initialize an array using length
+
+Next, if you do not know the exact data elements you want in your array when you initialize it, you can instead provide the length of the array, and it will be populated with default values based on the array type:
+
+```java
+int myArray[] = new int[4];
+```
+
+After the initialization, the array will contain the following elements.
+
+```
+[0, 0, 0, 0]
+```
+Each data type has a default value as follows:
+
+| Data Type |  Default Values |
+|:---------:|:---------------:|
+|    Byte   |        0        |
+|   Short   |        0        |
+|    Int    |        0        |
+|    Long   |        0        |
+|   Float   |       0.0       |
+|   Double  |       0.0       |
+|  Boolean  |      false      |
+|    Char   | '\u0000′ which is the Unicode for null|
+|  Object   |       null      |
+
+
+Remember that, once the array is initialized, the length and type of the array is immutable. However, we can still make changes to the element values contained within the array.

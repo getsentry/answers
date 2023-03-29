@@ -1,0 +1,39 @@
+---
+title: 'What are the differences between HashMap and Hashtable in Java?'
+platforms: 
+  - sentry.java
+people: 
+  - Lewis D.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+In Java, both [`HashMap`](https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html) and [`Hashtable`](https://docs.oracle.com/javase/8/docs/api/java/util/Hashtable.html) are data structures that map keys to values. In fact, the two data structures are so alike that in some applications, using either implementation may not make a noticeable difference. We should state at the outset that the Hashtable class has been made obsolete since Java 2 Platform v1.2.
+
+Still, it is important to know when to use HashMap or Hashtable, because even though the two are quite similar, using these data structures improperly could produce undesirable results. Let's consider some of the fundamental differences between HashMaps and Hashtables and examine why you would avoid Hashtables as a rule of thumb.
+ 
+## The Solution
+
+The key functional difference between HashMap and Hashtable is that a Hashtable is **synchronized** by default. This means that two or more threads may modify the data structure *and* will each wait their turn to do so. While this seems beneficial, in practice you will likely need additional synchronization management. Consider the example below: 
+
+```java
+if (!ht.containsKey("myKey")) {
+    ht.put(key, value);
+}
+```
+This code will require additional synchronization because the Hashtable's synchronization is per method. This means a [race condition](https://www.baeldung.com/cs/race-conditions) could easily occur here between the `containsKey()` and `put()` method calls. This problem, and many similar issues, are solved in the [ConcurrentHashMap](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ConcurrentHashMap.html) implementation, which is a more modern and recommended alternative to the Hashtable.
+
+By comparison, the HashMap data structure has no built-in synchronization and is therefore not safe to use in multithreaded applications. For example, iterating over a HashMap is `fail-fast`, which means that an exception will be thrown as soon as modification by another thread is detected. This lack of synchronization does, however, give a significant performance boost over synchronized alternatives in single-threaded implementations.
+
+Another difference between a HashMap and Hashtable is that a Hashtable does not allow keys or values to be set to `null`. The HashMap, however, allows any of its values to be `null`, as well as one of its keys. Keys still have to be unique, so this is why only one can be `null`. 
+
+Below is a table that summarizes all the key differences as outlined above. In conclusion, we should always be using the HashMap class where synchronization is not applicable and a single threaded implementation is sufficient. Where multithreading is required, then the best substitution for a Hashtable is a ConcurrentHashMap. 
+
+
+|  	| HashMap 	| Hashtable 	|
+|---	|---	|---	|
+| Synchronization 	| Not synchronized, therefore not particularly thread-safe. 	| Synchronized, can therefore be used in multithreaded implementations.  |
+| Null values 	| Can have one null key and many null values.	| Neither keys nor values may be null. 	|
+| Efficiency 	| Due to no synchronization, it's faster than the Hashtable and uses less memory.	| Much slower than the HashMap. 	|

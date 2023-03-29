@@ -1,0 +1,30 @@
+---
+title: 'Loop over an array in JavaScript'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The problem
+
+What is the best way to loop over an array in JavaScript?
+
+## The solution
+
+Looping over arrays in JavaScript was historically done using either a standard `for` loop or the [`Array.prototype.forEach()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach) loop. The former approach loops over indexes rather than items, and the latter approach [can sometimes behave unexpectedly](javascript-async-await-in-foreach-loop). Modern JavaScript provides the [`for...of`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of) statement as a simple way to loop over array items.
+
+```javascript
+const numbers = [1, 2, 3];
+
+for (const number of numbers) {
+  console.log(number);
+}
+
+// output:
+// 1
+// 2
+// 3
+```

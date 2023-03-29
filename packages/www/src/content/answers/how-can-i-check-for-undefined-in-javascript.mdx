@@ -1,0 +1,41 @@
+---
+title: 'How can I Check for "undefined" in JavaScript?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+---
+
+## The Problem
+
+You want to check if a value is `undefined`. For example, you may want to check if the value returned from a fetch request is defined before trying to access its properties. How do you do this?
+
+## The Solution
+
+There are two common ways to check if a value is undefined.
+
+You can use the [strict equality operator (`===`)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Strict_equality) to check if a value is `undefined`:
+
+```javascript
+value === undefined
+```
+
+You can also check if the type of a value is `undefined` using the [`typeof`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof) operator:
+
+```javascript
+typeof value === 'undefined'
+```
+
+An interesting thing to note is that `undefined` is not a reserved word in JavaScript. A reserved word is a keyword that can't be used as an identifier for naming things such as variables, properties, or functions. Reserved words include: `import`, `const`, and `return`. You can use `undefined` as a variable name, as long as the variable is not in the global scope. As can be seen in the example code below, you can make the `typeof undefined` equal to `string`:
+
+```javascript
+function myFunction() {
+  const undefined = "string value";
+  console.log(undefined); // string value
+  console.log(typeof undefined); // string
+}
+
+myFunction();
+```
+
+You can name variables `undefined`, but you shouldn't because it will create bugs.

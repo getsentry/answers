@@ -1,0 +1,72 @@
+---
+title: 'How can I create a memory leak in Java?'
+platforms: 
+  - sentry.java
+people: 
+  - Michael N.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The problem
+
+Java is famous for its garbage collector (GC), which automatically clears unused objects. This means programmers no longer need to manually handle memory management as they do in languages like C and C++. Unfortunately, in some cases, the GC cannot clear objects from memory that are no longer in use and this causes memory leaks. This leads to objects building up in memory and possibly causing an [`OutofMemoryError` exception](https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/memleaks002.html).
+
+You may want to create memory leaks when performance testing or profiling software, but understanding how memory leaks are created can also help us to prevent them.
+
+## The solution
+
+There are many ways to create memory leaks. We'll take a look at four.
+
+### Unclosed resources
+
+A frequent cause of memory leaks is when resources such as database connections and file streams are left unclosed. Here's an example:
+
+```Java
+private static void readFile() throws Exception {
+    FileReader fileReader = new FileReader("src/file.txt");
+    int character;
+    while ((character = fileReader.read()) != -1) {
+        System.out.print((char) character);
+    }
+}
+```
+
+Here, we've created and used a `FileReader` without calling the `close()` method when it's done. This means the `FileReader` remains open and in memory while the application is running.
+
+### Poorly implemented `hashCode` and `equals` methods
+
+Memory leaks are created when `equals` and `hashCode` methods on objects are either poorly implemented or not implemented. These two methods are the basis of comparing two objects in Java. When they are not properly implemented, duplicate objects are created and allocated memory by the GC. For example, `HashMap` and `HashSet` use these methods to ensure there are no repeat keys.
+
+Not implementing these methods creates duplicate keys causing memory leaks. This is shown below:
+
+```Java
+// Student.java
+public class Student {
+    String name;
+
+    Student(String name) {
+        this.name = name;
+    }
+}
+
+// run this method from the main application method
+private static void createMap() {
+    Map<Student, Integer> map = new HashMap<>();
+    for (int i = 0; i < 100; i++) {
+        map.put(new Student("jon"), 1);
+    }
+    System.out.println("Map size: " + map.size());
+}
+```
+
+Since `Map` doesn't allow duplicate keys, running this code should give us an output of `Map size: 1` but instead it returns `Map size: 100`. This is because the `Student` class doesn't implement the `equals` or `hashCode` methods, so the `HashMap` can't tell that the objects created are the same.
+
+### Overriding the `finalize` method
+
+The [`finalize`](https://docs.oracle.com/javase/9/docs/api/java/lang/Object.html#finalize--) method exists on all Java objects and is called when the JVM decides that an object should be garbage collected. You can override this method to create a function that doesn't resolve or runs for a long time, creating a memory leak. The memory leak is because once the `finalize` method is called, the GC has to wait for the method to resolve (that is, finalize) before removing it from the heap.
+
+### Static fields
+
+Another common cause of memory leaks is `static` fields. Static fields are kept in memory for the entire lifespan of the application, which is especially problematic for static fields that hold large objects. Too many static objects kept in memory will cause an `OutofMemoryError` exception as the GC won't have any space to allocate new objects.
+

@@ -1,0 +1,156 @@
+---
+title: 'Wrong References to `this`'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Valerie M.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+The `this` keyword is used in JavaScript to refer to an object. The object it refers to depends on how `this` is being invoked. The following [table](https://www.w3schools.com/js/js_this.asp) shows the different global and function contexts that `this` can be used:
+
+| Where `this` is called | What it refers to           |
+| ---------------------- | --------------------------- |
+| Object method          | The object                  |
+| Used alone             | The global object           |
+| In a function          | The global object           |
+| In a function (strict) | `undefined`                 |
+| In an event            | The element receiving event |
+
+In light of the above uses of `this`, there are bound to be problems where the `this` keyword ends up referring to the wrong object. We're going to explore how these incorrect references come about and how to fix them.
+
+## The Solution
+
+To understand how wrong references to `this` can occur, let's look at the following code example where `this` is used when working with functions:
+
+```javascript
+function myFunction() {
+  return this;
+}
+
+// returns "[object Window]"
+```
+
+In the above example, `this` refers to the global object, which is an open browser window.
+
+In `strict mode`, as shown below, `this` becomes `undefined` because default binding is not allowed. In this case, `this` should be used in objects you created.
+
+```javascript
+'use strict';
+function myFunction() {
+  return this;
+}
+
+// returns "undefined"
+```
+
+The use of `this` is further explained below in the case of using it inside an object method.
+
+```javascript
+const person = {
+  firstName: 'John',
+  lastName: 'Doe',
+  id: 1,
+  fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  },
+};
+
+// Outputs "John Doe"
+console.log(person.fullName());
+```
+
+If you want to output a person's full name, `this` is used and will refer to the `person` object.
+
+However, things can become confusing when you want to use nested functions inside an object:
+
+```javascript
+const person = {
+  firstName: 'John',
+  lastName: 'Doe',
+  id: 1,
+  fullName() {
+    function name() {
+      this.firstName = 'Jane';
+      return this;
+    }
+    const p = name();
+    return `${this.firstName} ${p.firstName}`;
+  },
+};
+
+// Outputs "John Jane"
+console.log(person.fullName());
+```
+
+The above code outputs the result as expected because of object method binding, where each reference to `this` is bound to the `firstName` of the calling object where:
+
+- `this.firstName` returns "John", and
+- `p.firstName` returns "Jane".
+
+However, if we were to modify the return statement for `fullName` to have the following (instead of outputting the `firstName`):
+
+```javascript
+const person = {
+  firstName: 'John',
+  lastName: 'Doe',
+  id: 1,
+  fullName() {
+    function name() {
+      return this;
+    }
+    const p = name();
+    return `${this} ${p}`;
+  },
+};
+
+// Outputs [object Object] [object Window]
+console.log(person.fullName());
+```
+
+You'll notice that the `this` returned inside the `name()` function refers to the `object Window`, which is a global object. Even though `this` is used inside an object, it is still seen as being used alone and inside a function. As such, it refers to the global object.
+
+If we want to bind `this` to any object properties defined inside `name()`, one way is to assign the `this` value from the calling object to another variable that would be used inside the nested function.
+
+```javascript
+const person = {
+  firstName: 'John',
+  lastName: 'Doe',
+  id: 1,
+  fullName() {
+    const that = this;
+    function name() {
+      return that;
+    }
+    return name();
+  },
+};
+```
+
+Furthermore, methods such as `bind()`, `call()`, and `apply()` can be used to refer `this` to any object.
+
+The code below illustrates the use of the `bind()` method where the `member` object borrows a property from the `person` object. In this case, the `this` keyword refers to the `member` object, so we get the output "Steve Doe".
+
+```javascript
+const person = {
+  firstName: 'John',
+  lastName: 'Doe',
+  id: 1,
+  fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  },
+};
+
+const member = {
+  firstName: 'Steve',
+  lastName: 'Doe',
+};
+
+const p = person.fullName.bind(member);
+
+// Outputs "Steve Doe"
+console.log(p());
+```

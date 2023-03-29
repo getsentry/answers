@@ -1,0 +1,117 @@
+---
+title: 'How Do You Get POSTed JSON in Flask?'
+platforms: 
+  - sentry.flask
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+How can you access the data that has been sent to a Flask app through a POST request?
+
+## The Solution
+
+A user can submit various types of data using a POST request. Depending on the type of data, Flask uses different ways to extract and parse the data before storing it in the global [request object](https://flask.palletsprojects.com/en/latest/api/?highlight=request#flask.request).
+
+We're going to take a look at two of the most common types of data. You can read more about how Flask handles other kinds of data on [the official documentation](https://flask.palletsprojects.com/en/latest/api/?highlight=request#flask.Request).
+
+### Form Data
+
+When a user fills out a form on the frontend of a web app and hits submit, the browser sends that data to our app. The data is submitted using a POST request with the [Content-Type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type) header set to `multipart/form-data`.
+
+When Flask receives form data, it parses and stores it in the `form` property of the request object. The `form` property is an [`ImmutableMultiDict`](https://werkzeug.palletsprojects.com/en/latest/datastructures/#werkzeug.datastructures.ImmutableMultiDict "(in Werkzeug v2.2.x)"), which implements all standard dictionary methods.
+
+Let's say a user submits a form with two input fields: name and age. We can extract form data, like so:
+
+```python
+from flask import Flask, request
+# ...
+
+@app.route('/form_example', methods=['POST'])
+def handle_form():
+	print(request.form.get('name'))
+	print(request.form.get('age'))
+	return request.form
+```
+
+### JSON Data
+
+The most commonly used format of the incoming data is JSON. Flask stores the JSON data in the `json` property of the request object. We can access the data like so:
+
+```python
+from flask import Flask, request
+# ...
+
+@app.route('/json_example', methods=['POST'])
+def handle_json():
+    data = request.json
+    print(data.get('name'))
+    print(data.get('age'))
+    return data
+```
+
+An important point to remember is that the `json` will only contain the data if the `Content-Type` header is set to `application/json`.
+
+We can use the `headers` attribute of the request object to check the `Content-Type`, like so:
+
+```python
+from flask import Flask, request
+# ...
+
+@app.route('/json_example', methods=['POST'])
+def handle_json():
+  content_type = request.headers.get('Content-Type')
+  if (content_type == 'application/json'):
+    ...
+  else:
+    return "Content type is not supported."
+```
+
+A better way to check is to use the [`is_json`](https://flask.palletsprojects.com/en/latest/api/?highlight=json#flask.Request.is_json) property of the request object:
+
+```python
+from flask import Flask, request
+# ...
+
+@app.route('/json_example', methods=['POST'])
+def handle_json():
+  if request.is_json:
+    ...
+  else:
+    ...
+```
+
+If the `Content-Type` header is not set correctly, Flask will store the data as a string (even if it is JSON) in the `data` property of the request object.
+
+We can use Flask's `json` module to covert the string back to JSON, like so:
+
+```python
+from flask import Flask, request, json
+# ...
+
+@app.route('/string_example', methods=['POST'])
+def handle_non_json():
+	data = json.loads(request.data)
+	return data
+```
+
+The good thing about using the `json` module is that it can extract the data correctly even when it receives a request with `Content-Type` header set to `application/json`.
+
+Either of the following two requests will result in the same response:
+
+```bash
+$ curl -X POST -H "Content-type: application/json" -d "{\"name\" : \"John\", \"age\" : \"5\"}" "localhost:5000/string_example"
+```
+
+```bash
+$ curl -X POST -H "Content-type: text/plain" -d "{\"name\" : \"John\", \"age\" : \"5\"}" "localhost:5000/string_example"
+```
+
+It is best to use this solution in situations where we don't know which header will be sent to our app.
+
+### Further Reading
+
+[How do you get the Data Received in a Flask Request?](https://sentry.io/answers/get-data-flask-request/)

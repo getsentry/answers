@@ -1,0 +1,89 @@
+---
+title: 'How to Lexicographically Sort an Array in Java'
+platforms: 
+  - sentry.java
+people: 
+  - Lewis D.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You are faced with an unsorted array of strings you need to sort lexicographically (or alphabetically). How can you do this?
+
+## The Solution
+
+Let's take a look at a couple of approaches one can take to solve this sorting setback.
+
+### Using `String.compareTo()`
+
+The first approach we will consider is programmatically without resorting to any built-in sorting methods. In this approach, our algorithm is simple: Given our `String` array, we will iterate over the values twice. Our first loop selects the first element in the array, our second loop goes through the remaining elements and compares each element with our initial string. To make this comparison, we will use the `String.compareTo()` method. The `compareTo(String string)` method will return a value less than `0` if the string being compared to is lexicographically less than the string passed in. Conversely, the method will return a value greater than `0` if the string being compared to is lexicographically greater than the string argument passed in. If the strings are equal, `compareTo()` will return `0`. Using these properties, we can decide on the ordering of the array. Let's look at how we will sort the array in the example below:
+
+```java
+public class Sort {
+
+    public static void main(String[] args) {
+        String[] array = {"shrew", "porcupine", "newt", "chameleon"};
+        String[] sorted = sortArray(array);
+
+        for (String s : sorted) {
+            System.out.print(s + " ");
+        }
+    }
+
+    public static String[] sortArray(String[] array) {
+        // our outer loop starts at index 0, the first word in the array
+        for (int i = 0; i < array.length - 1; i++) {
+            // our inner loop starts at the next word in the array
+            for (int j = i + 1; j < array.length; j++) {
+                // lexicographically compare the outer string with the remaining strings
+                if (array[i].compareTo(array[j]) > 0) {
+                    // if our outer string is lexicographically bigger, swap the string positions
+                    String swap = array[i];
+                    array[i] = array[j];
+                    array[j] = swap;
+                }
+            }
+        }
+        return array;
+    }
+}
+```
+Executing the code above yields:
+
+```
+ chameleon newt porcupine shrew  
+```
+
+One thing to note about our self-coded approach is that this algorithm is not very efficient. This is because of our nested for loop, which means we have effectively coded a [Bubble Sort](https://en.wikipedia.org/wiki/Bubble_sort) solution, giving us a worst-case time complexity of *O(n<sup>2</sup>)*. Let's look at a more efficient (and simpler) approach next.
+
+### Using `Arrays.sort()`
+
+The simplest way to solve sorting an array is to use the [`Arrays.sort()`](https://docs.oracle.com/javase/8/docs/api/java/util/Arrays.html#sort-byte:A-) method. This method works for sorting both primitive and object arrays in Java. Because strings are objects, the method we will use is `Arrays.sort(Object[])`. This sorting uses the [TimSort](https://en.wikipedia.org/wiki/Timsort) algorithm, which has a worst-case time complexity of *O(n\*log(n))*.  By default, `sort()` will sort the array lexicographically. Let's take a look at an example:
+
+```java
+import java.util.Arrays;
+
+public class Sort {
+
+    public static void main(String[] args) {
+        String[] array = {"shrew", "porcupine", "newt", "chameleon"};
+        Arrays.sort(array);
+
+        for (String s : array) {
+            System.out.print(s + " ");
+        }
+    }
+}
+```
+
+Executing the code above yields:
+
+```
+ chameleon newt porcupine shrew  
+```
+
+### Closing Thoughts
+
+As you can see, the built-in `Arrays.sort()` method is a simple, readable, and efficient way of sorting an array, and in most cases it will be perfectly adequate for any sorting requirements. However, this answer only considers two types of sorting algorithms. In reality, the best sorting solution depends on many factors, including the amount of data being sorted, the type of data being sorted, and any time and space constraints. It is useful to familiarize yourself with the other [sorting algorithms](https://en.wikipedia.org/wiki/Sorting_algorithm) that are available before determining which is best for your application.

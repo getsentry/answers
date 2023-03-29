@@ -1,0 +1,159 @@
+---
+title: 'What are Python Metaclasses?'
+platforms:
+  - sentry.python
+people:
+  - James W.
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+You may have heard that Python is an object-oriented programming language, or "Everything in Python is an object". While these statements are true, they can cause some confusion around the definition of things like objects, classes, and metaclasses in Python.
+
+So what is an object? What is a class? What is a metaclass?
+
+If they are all objects, why are they named differently? And is it important to learn about this at all?
+
+Understanding these objects is vital to understanding Python. Let's take a look at metaclasses in Python, how they compare to classes and objects, and how they can be used.
+
+## The Solution
+
+To understand metaclasses, it's important to understand what classes and objects are.
+
+### Classes and Objects
+
+A class is like a blueprint for an object. The class defines the structure of the object, while the object is an actual instance of what that blueprint defines.
+
+A class defines the data associated with the object, the attributes of the object, as well as the functions that can be used to manipulate the object – the methods.
+
+Here we have an example of the instantiation of an object from the `list` class:
+
+```python
+my_list = list("abcde")
+```
+
+The object is created through the `list` class, and is stored in the variable `my_list`.
+
+The type of the object can be checked using the `type()` method:
+
+```python
+print(my_list)
+print(type(my_list))
+```
+
+**Output:**
+
+```
+['a', 'b', 'c', 'd', 'e']
+<class 'list'>
+```
+
+The output tells us that the `my_list` object is an instance of the `list` class.
+
+We can use the `dir()` method to view all the attributes and methods associated with an object as a result of it being an instance of a particular class:
+
+```python
+print(dir(my_list))
+```
+
+**Output (shortened)**
+
+```
+['__add__', '__class__', … 'pop', 'remove', 'reverse', 'sort']
+```
+
+The output of the `dir()` method lists the attributes associated with an instance of the `list` class. The `__class__` attribute can be accessed to show what class the object belongs to.
+
+### Classes Are Objects
+
+Let’s see what happens when we call the `__class__` attribute on the `list` class itself, like so:
+
+```python
+print(my_list.__class__.__class__)
+```
+
+**Output:**
+
+```
+<class 'type'>
+```
+
+In the output above, we can see that the `list` class is an instance of the `type` class. This is an example of metaclasses at work.
+
+A metaclass is a class that allows for other classes to be instantiated as objects of the metaclass.
+
+In our example, the `type` class is an example of a **metaclass**, and the `list` class is an instance (or **object**) of the `type` class.
+
+Here is an example showing that the `str` and `list` classes are all instances of the `type` class:
+
+```python
+print("a".__class__)
+print("a".__class__.__class__)
+
+print("\n")
+
+print([1].__class__)
+print([1].__class__.__class__)
+```
+
+**Output:**
+
+```
+<class 'str'>
+<class 'type'>
+
+<class 'list'>
+<class 'type'>
+```
+
+Everything in Python is an instance of a class. If you check the type of the Boolean, function, and floating point types, you will find that they are all instances of a class. Consequently, everything in Python is an object.
+
+### Creating and Using a Metaclass
+
+Let's look at some code that demonstrates the creation of a metaclass and an instance of that class:
+
+
+```python
+class ExampleMetaClass(type):
+    pass
+
+
+class SubClass(metaclass=ExampleMetaClass):
+    pass
+
+
+subclass_object = SubClass()
+
+print(f"subclass_object's class is {subclass_object.__class__}/n")
+print(f"SubClass's class is {subclass_object.__class__.__class__}/n")
+print(f"ExampleMetaClass's class is {subclass_object.__class__.__class__.__class__}")
+```
+
+**Output:**
+
+```
+subclass_object's class is <class '__main__.SubClass'>
+
+SubClass's class is <class '__main__.ExampleMetaClass'>
+
+ExampleMetaClass's class is <class 'type'>
+```
+
+Here we create a metaclass called `ExampleMetaClass`. Then we create a class called `SubClass` that takes `ExampleMetaClass` as a keyword argument.
+This is how `SubClass` is instantiated as an object of `ExampleMetaClass`. We can see in the output of the code that the class from which `SubClass` is created is `<class '__main__.ExampleMetaClass'>`.
+
+We also see in the output that the type of our `ExampleMetaClass` is `<class 'type'>`. So `ExampleMetaClass` is an instance of the `type` class here, and is therefore itself instantiated from the metaclass `type`.
+
+Whenever a class is created, even if the `metaclass` keyword isn't defined, it is created from a metaclass. The default metaclass is the `type` metaclass.
+
+### Why Use Metaclasses?
+
+Metaclasses allow for code not only to manipulate data, but to manipulate classes. Often this change happens when an object of the class is instantiated. Using metaclasses also helps to abstract our code, making it more readable and helping to reduce the amount of code written by avoiding repetition in code.
+
+A metaclass might be created that prohibits classes that are instances of the metaclass from being created more than once. This is an example of the Singleton design pattern, which can be helpful for creating classes that connect to external sources, as it prevents more than one connection from being open at a time.
+
+Metaclasses allow for something called metaprogramming. Metaprogramming is the creation of classes that assist programmers when writing code by creating an infrastructure that the programmer can build on top of, rather than starting from scratch. Metaclasses provide these frameworks through their attributes, methods, and objects that the programmer can use.
+
+This metaprogramming nature of the metaclass means that often metaclasses are used by programmers, but are less often created by them. However, they are extremely useful for programmers creating the frameworks that so many other programmers use.

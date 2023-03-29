@@ -1,0 +1,40 @@
+---
+title: 'Difference between `var functionName = function() {}` and `functionName() {}` in JavaScript'
+platforms:
+  - sentry.javascript.browser
+people:
+  - David Y.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+What is the difference between `var functionName = function() {}` and `functionName() {}` in JavaScript?
+
+## The Solution
+
+We call `var functionName = function() {}` a _function expression_ and `functionName() {}` a _function declaration_.
+
+- We use a function expression to assign a function as the value of a variable.
+- We use a function declaration to declare a function to be used anywhere in our scope.
+
+Function expressions are only evaluated when the JavaScript interpreter reaches their line of code, whereas function declarations are evaluated at the start of execution. We can see the difference in this code snippet:
+
+```javascript
+functionExpressed(); // will throw a TypeError, as functionExpressed is not yet defined
+
+var functionExpressed = function() {
+  console.log('Executing functionExpressed...');
+};
+
+functionExpressed(); // will print "Executing functionExpressed..." as it is now defined
+
+functionDeclared(); // will print "Executing functionDeclared..." even though we only define the function below this call
+
+function functionDeclared() {
+  console.log('Executing functionDeclared...');
+}
+```
+
+In most simple cases, we will want to use function declarations, but it can sometimes be useful to have a function that is only defined after other code has run. Function expressions give us more control over the code flow at the expense of having to be more careful about where we place individual statements.

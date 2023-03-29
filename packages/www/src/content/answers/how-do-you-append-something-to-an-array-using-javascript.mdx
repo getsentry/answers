@@ -1,0 +1,85 @@
+---
+title: 'How do you append something to an array using JavaScript?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+You want to add an item or multiple items to an array. How do you do this?
+
+## The Solution
+
+There are several methods you can use to add an item or multiple items to an array. Let's take a look at a few of the more common ways to do it.
+
+### Using `push()`
+
+To add one or more elements to the end of an array, you can use the [`push()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/push) method:
+
+```javascript
+const arr = ["Mexico", "India"];
+// add one element
+arr.push("China");
+console.log(arr); // ["Mexico", "India", "China"]
+
+// add multiple elements
+arr.push("Sudan", "Kenya");
+console.log(arr); // ["Mexico", "India", "China", "Sudan", "Kenya"]
+```
+
+This method takes in elements to add to the array as arguments, changes the original array, and returns the new length of the array.
+
+### Using Spread Syntax
+
+You can append one or more items to an array using [spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax):
+
+```javascript
+const arr1 = ["Mexico", "India"];
+const arr2 = ["Japan", "Brazil"];
+
+// add one item
+const arrNew1 = [...arr1, "China"];
+console.log(arrNew1); // ["Mexico", "India", "China"]
+
+// add multiple items
+const arrNew2 = [...arr1, ...arr2];
+console.log(arrNew2); // ["Mexico", "India", "Japan", "Brazil"]
+```
+
+A new array with the appended item or items is created by spreading an array of items into or adding items to an [array literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Array#array_literal_notation).
+
+You can also use spread syntax to spread an iterable, such as an array, into the arguments of the `push()` method:
+
+```javascript
+const arr1 = ["Argentina", "France"];
+const arr2 = ["South Korea", "Italy"];
+arr1.push(...arr2);
+console.log(arr1); // ["Argentina", "France", "South Korea", "Italy"]
+```
+
+### Using `concat()`
+
+You can use the [`concat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat) method to merge two or more arrays. This method does not change the original array but returns a new array. You can use `concat()` to append an array of items to another array:
+
+```javascript
+const arr1 = ["Argentina", "France"];
+const arr2 = ["South Korea", "Italy"];
+const newArr = arr1.concat(arr2);
+console.log(newArr); // ["Argentina", "France", "South Korea", "Italy"]
+```
+
+### Using the Array `length` Property
+
+You can also add an item to the end of an array by setting the array element at the index equal to the array's length:
+
+```javascript
+const arr = ["Norway", "Namibia"];
+arr[arr.length] = "New Zealand";
+console.log(arr); // ["Norway", "Namibia", "New Zealand"]
+```
+
+This method modifies the original array.

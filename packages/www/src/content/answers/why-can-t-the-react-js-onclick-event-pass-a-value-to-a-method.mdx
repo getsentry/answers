@@ -1,0 +1,55 @@
+---
+title: "Why can't the React.js onClick event pass a value to a method?"
+platforms:
+  - sentry.react
+people:
+  - Gareth D.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+
+## The problem
+
+When you want to pass a value as an argument to an event handler function of an `onClick` event, a common mistake is to try to pass the value into the function directly.
+
+```javascript
+function greet(name) {
+    alert(`hello, ${name}`);
+}
+
+return (
+	<button onClick={greet("Peter")}>Say greeting</button>
+);
+```
+
+If you do this, the function will only be called on page load. In the above code example, you'll get an alert message pop-up with the greeting "hello, Peter" when the page is first loaded. After you click "OK" to close the alert pop-up, if you click the "Say greeting" button the pop-up won't open again.
+
+A similar issue would occur if the `onClick` event handler was a state setter function.
+
+```javascript
+<button onClick={setCount(count + 1)}>Add 1</button>
+```
+
+On page load, you would get the following error:
+
+```
+Uncaught Error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+```
+
+## The solution
+
+When you call an `onClick` event handler function directly with an argument passed in, the function is executed when the component is mounted. This would cause the example `greet` function to show the alert pop-up on page load. Clicking the button afterwards does not work because the `greet` function has already been executed.
+
+To fix this, use an inline function:
+
+```javascript
+<button onClick={() => greet("Peter")}>Say greeting</button>
+```
+
+An inline function is a function that's defined when the component is rendered. This `onClick` event handler is now called by React only when the button is clicked by a user.
+
+The fix is the same if you are setting state. The reason why passing in a value to a state setter `onClick` event handler causes an infinite loop, if you call it without an inline function, is that the state is set when the component is rendered. This causes the component to re-render as the state is updated. The state is then set again when the component is re-rendered, which causes another re-render. This continues and causes an infinite loop.
+
+One thing to note is that using an arrow function in the rendered component creates a new function each time the component re-renders. You don't need to worry about performance issues from it, unless you find that it's slowing down your app. You can read more about this in the following article: [React, Inline Functions, and Performance](https://medium.com/@ryanflorence/react-inline-functions-and-performance-bdff784f5578).
+

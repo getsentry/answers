@@ -1,0 +1,80 @@
+---
+title: "What's the Difference Between the Assignment (`=`) and Equality (`==`, `===`) Operators?"
+platforms:
+  - sentry.javascript.browser
+people:
+  - Naveera A.
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+People who are new to programming often find it difficult to understand the difference between `=`, `==`, and `===`.
+
+In mathematics we only use `=`, so what do the other two mean?
+
+## The Solution
+
+The `=` is an assignment operator, while `==` and `===` are called equality operators.
+
+### Assignment Operator (`=`)
+
+In mathematics and algebra, `=` is an **equal to** operator. In programming `=` is an [assignment operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Assignment), which means that it assigns a value to a variable.
+
+For example, the following code will store a value of `5` in the variable `x`:
+
+```javascript
+let x; // declaring a variable.
+
+x = 5; // assigning a value of 5 to the variable.
+```
+
+We can combine the declaration and assignment in one line:
+
+```javascript
+let y = 10;
+```
+
+It may look like the assignment operator works the same way as algebra's **equal to** operator, but that's not the case.
+
+For example, the following doesn't make any sense in algebra:
+
+```javascript
+x = x + 4;
+```
+
+But it is acceptable in JavaScript (and other programming languages). JavaScript will take the expression on the right-hand side of the operator `x + 4` and store this value in `x` again.
+
+### Equality Operator (`==`)
+
+In JavaScript, the operator that compares two values is written like this: `==`. It is called an [equality operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Equality). The equality operator is one of the many [comparison operators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#comparison_operators) in JavaScript that are used in logical and conditional statements.
+
+The equality operator returns `true` or `false` based on whether the operands (the values being compared) are equal.
+
+For example, the following code will return `false`:
+
+```javascript
+let x = 5; // declares x and assigns x to the value 5
+x == 8; // returns false
+```
+
+Interestingly, if we compare an integer `5` and a string `"5"` it returns `true`.
+
+```javascript
+5 == "5"; // returns true
+```
+
+That is because in most cases, if the two operands are not of the same type, JavaScript attempts to convert them to an appropriate type for comparison. **This behavior generally results in comparing the operands numerically.**
+
+### Strict Equality Operator (`===`)
+
+Like the equality operator above, the [strict equality operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Strict_equality) compares the two values. But unlike the equality operator, the strict equality operator compares both the **content** and the **type** of the operands.
+
+So using the strict equality operator, `5` and `"5"` are not equal.
+
+```javascript
+5 === "5"; // returns false
+```
+
+It is better to use the strict equality operator to prevent type conversions, which may result in unexpected bugs. But if you’re certain the types on both sides will be the same, there is no problem with using the shorter operator.

@@ -1,0 +1,31 @@
+---
+title: 'Debug a Node.js server application'
+platforms: 
+  - sentry.nodejs
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The problem
+
+How do I debug a Node.js server application?
+
+## The solution
+
+Node.js contains a [built-in debugger](https://nodejs.org/en/docs/guides/debugging-getting-started/) that can interface with Chromium-based web browsers and popular IDEs such as [Visual Studio Code](https://code.visualstudio.com/) and [JetBrains WebStorm](https://www.jetbrains.com/webstorm/). Start the debugger by supplying the `--inspect` flag when running your server code.
+
+```sh
+node --inspect myApp.js
+```
+
+This will start a debugging server on `127.0.0.1:9229`. Follow the [official instructions](https://nodejs.org/en/docs/guides/debugging-getting-started/#inspector-clients) to connect to the server with your favourite browser or IDE.
+
+If you do not want to debug through a browser or editor, you can use Node.js's simple CLI-based debugger by running `node inspect`:
+
+```sh
+node inspect myApp.js
+```
+
+Type `help` for a list of debugging commands.

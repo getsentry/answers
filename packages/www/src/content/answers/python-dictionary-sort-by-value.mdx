@@ -1,0 +1,37 @@
+---
+title: 'Sort a dictionary by value in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+How can I sort a dictionary by value in Python?
+
+## The Solution
+
+Python dictionaries were originally intended to be used for data that does not have a meaningful order. In older versions of Python, no order is guaranteed. However, as of [Python 3.7](https://docs.python.org/3/whatsnew/3.7.html), key-value pairs in Python dictionaries are ordered according to when they were inserted. This means that we can sort a dictionary by sorting its key-value pairs and creating a new dictionary from them. The code below shows how to do this:
+
+```python
+prices = {"Orange": 3, "Avocado": 5, "Apple": 1, "Pear": 2, "Grapefruit": 4}
+prices_sorted = dict(sorted(prices.items(), key=lambda item: item[1]))
+
+print(prices_sorted) # will output {"Apple": 1, "Pear": 2, "Orange": 3, "Grapefruit": 4, "Avocado": 5}
+```
+
+Here we use Python's built-in [`sorted()`](https://docs.python.org/3/library/functions.html#sorted) function to sort our dictionary's [items](https://docs.python.org/3/library/stdtypes.html#dict.items) (i.e. its key-value pairs) by value, ascending. We then convert the output of `sorted()`, which will be a list of tuples, into a new dictionary. As items will be inserted into our new dictionary in order of their values, we now have a dictionary ordered by value.
+
+In older versions of Python, we would need to use an [`OrderedDict`](https://docs.python.org/3/library/collections.html#collections.OrderedDict) from Python's built-in [`collections`](https://docs.python.org/3/library/collections.html) module in place of an ordinary dictionary, as shown below:
+
+```python
+from collections import OrderedDict
+
+prices = {"Orange": 3, "Avocado": 5, "Apple": 1, "Pear": 2, "Grapefruit": 4}
+prices_sorted = OrderedDict(sorted(prices.items(), key=lambda item: item[1]))
+
+print(prices_sorted) # will output OrderedDict([("Apple", 1), ("Pear", 2), ("Orange", 3), ("Grapefruit", 4), ("Avocado", 5)])
+```

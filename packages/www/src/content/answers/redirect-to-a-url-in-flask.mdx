@@ -1,0 +1,53 @@
+---
+title: 'Redirect to a URL in Flask'
+platforms: 
+  - sentry.flask
+people: 
+  - David Y.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+How do I redirect to a URL in Flask?
+
+## The Solution
+
+Redirection in Flask can be done by returning a redirect response object, created by invoking the [`redirect()`](https://flask.palletsprojects.com/en/latest/api/#flask.redirect) function. The same method is used for redirecting to other routes on the same application and external websites.
+
+Example code below:
+
+```python
+from flask import Flask, redirect
+
+app = Flask(__name__)
+
+
+@app.route("/redirect-external", methods=["GET"])
+def redirect_external():
+    return redirect("https://sentry.io/", code=302)
+
+
+@app.route("/redirect-internal", methods=["GET"])
+def redirect_internal():
+    return redirect("/landing", code=302)
+
+
+@app.route("/landing", methods=["GET"])
+def landing():
+    return "Internal redirect."
+
+
+@app.route("/", methods=["GET"])
+def index():
+    return '<a href="/redirect-internal">Internal redirect</a>' \
+           '<br>' \
+           '<a href="/redirect-external">External redirect</a>'
+
+
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=8080)
+```
+
+In the above application, visiting `/redirect-internal` will take the user to the `/landing` route, and visiting `/redirect-external` will take the user to https://sentry.io. An [HTTP redirect code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Redirections) can be specified to indicate what kind of redirection is being performed. Different codes from 301 to 308 are used depending on the original request's method and whether the redirect is temporary or permanent.

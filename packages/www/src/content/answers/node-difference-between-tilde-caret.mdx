@@ -1,0 +1,76 @@
+---
+title: "What's the Difference Between Tilde (~) and Caret (^) in a `package.json` file?"
+platforms:
+  - sentry.nodejs
+people:
+  - Naveera A.
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+Dependencies in a `package.json` file often contain a tilde (~) or caret (^) sign before the version number. What do these signs mean, and what is the difference between them?
+
+## The Solution
+
+All `npm` packages must adhere to the [Semantic Versioning specification](https://semver.org/).
+
+So if a package version looks like this `2.1.4`, each of these numbers has a meaning.
+
+### 2.1.`4`
+
+This number refers to a patch release, which means it is a bug fix and is backward compatible.
+
+### 2.`1`.4
+
+This number refers to a minor release, which means new features have been added but it is still backward compatible.
+
+### `2`.1.4
+
+This number refers to a major release, which means that it introduces major changes and may break backward compatibility.
+
+We can specify which releases to accept while updating a package by using special signs in front of the version number in our `package.json` file.
+
+### Using a Tilde (~)
+
+Using a tilde sign before our version number means that we can accept only a patch release when updating our package.
+
+### Using a Caret (^)
+
+Using a caret (^) sign means that we can accept minor releases and patch releases, but not a major release when updating our package.
+
+### Using an Asterisk (*)
+
+Using an asterisk means "accept all releases", but this is not advisable as it will accept major releases and may break our code.
+
+### Example
+
+Let's say we are using the `lodash` package in a project. We currently have version `3.8.0` installed. Lodash announces a new release with version number `3.9.0`.
+
+Our `package.json` file looks like the following:
+
+```json
+"dependencies": {
+	"lodash": "~3.8.0"
+},
+```
+
+When we update our packages, the `lodash` package will not update because we have specified not to accept a minor release using `~`.
+
+In order to accept this release we will need to change the `~` to `^` like so:
+
+```json
+"dependencies": {
+	"lodash": "^3.8.0"
+},
+```
+
+The [npm server calculator](https://semver.npmjs.com/) is a fun tool to master versioning numbers and ranges.
+
+### Further Reading
+
+- [About semantic versioning](https://docs.npmjs.com/about-semantic-versioning)
+- semver's [Tilde Ranges](https://github.com/npm/node-semver#tilde-ranges-123-12-1)
+- [`package.json` dependencies](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#dependencies)
+- [semver documentation](https://docs.npmjs.com/cli/v6/using-npm/semver)

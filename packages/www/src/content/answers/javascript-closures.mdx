@@ -1,0 +1,182 @@
+---
+title: 'How do JavaScript closures work?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+How do JavaScript closures work? And why are they used?
+
+## The Solution
+
+[Closures](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures) are one of the trickier parts of JavaScript. But once you're past your "Aha!" moment, you will appreciate their beauty.
+
+To understand how closures work, you first need to understand the concept of scope, scope chain, and lexical scope.
+
+### Scope
+
+You can think of scope as the boundaries inside which a variable is accessible. Consider the following example:
+
+```javascript
+function printName() {
+  const name = 'nav';
+  console.log(name);
+}
+
+printName(); // logs 'nav'
+```
+
+The variable `name` belongs to the scope created inside the function `printName()`. You can access it inside the function `printName()`. But if you try to access `name` from outside `printName()`, JavaScript will throw a reference error:
+
+```javascript
+function printName() {
+  const name = 'nav';
+}
+
+printName();
+
+console.log(name); //ReferenceError: name is not defined
+```
+
+In JavaScript, every code block (`if` blocks, `for` loops) and function has its own scope. You can think of the curly braces `'{}'` as gates. These gates prevent the variables from leaking out.
+
+If you declare a variable outside any block of code or function, it will be globally scoped. A variable in the global scope can be accessed everywhere in the code.
+
+In the following example, the variable `name` is global, which means it is accessible everywhere:
+
+```javascript
+const name = 'nav';
+
+function printName() {
+  console.log(name);
+}
+
+printName(); // logs 'nav'
+
+console.log(name); // logs 'nav'
+```
+
+### The Scope Chain
+
+Scopes can be nested inside each other, just like a function can be nested inside another function.
+
+Consider the following example:
+
+```javascript
+function outerFunction() {
+  const name = 'nav';
+
+  function innerFunction() {
+    console.log(name.toUpperCase());
+  }
+
+  innerFunction();
+}
+
+outerFunction(); // logs 'NAV'
+```
+
+The variable `name` is inside the scope of `outerFunction()`, but `innerFunction()` can access it. Keeping the gates analogy in mind, curly braces `'{}'` prevent the inner variables from going out, but they allow the outer variables to come in.
+
+The scope chain is a stack of all accessible scopes, from the most immediate context to the global context.
+
+The scope chain of `innerFunction()` consists of its local scope, scope of `outerFunction()`, and the global scope (the outermost scope).
+
+The scope chain of `outerFunction()` consists of its local scope and the global scope.
+
+Now consider the following example:
+
+```javascript
+const name = 'nav';
+
+function outerFunction() {
+  const name = 'jane';
+
+  function logName() {
+    console.log(name);
+  }
+
+  logName();
+}
+
+outerFunction(); // logs 'jane'. Overwriting the variable inside the
+// local scope only.
+
+console.log(name); // logs 'nav'. The global variable didn't change
+```
+
+The variable `name` is a global variable. When it is redeclared inside the scope of `outerFunction()`, a new local variable is created with the same name and a new value. Inside the scope of `outerFunction()`, the local variable `name` is used.
+
+Every time a variable is initialized, the interpreter will first look it up in its own scope. If the variable is not found in the local scope, then the interpreter will look it up in the parent scope. If it is not found in the parent scope, the interpreter will look it up in the grandparent scope, and so on, until it reaches the global scope.
+
+**The variables of the parent scope (outer scope) are accessible inside the children scope (inside scope), but not the other way round.**
+
+### The Lexical Scope
+
+What happens if you define the function `logName()` outside the `outerFunction()`, and call it from within `outerFunction()`?
+
+```javascript
+let name = 'nav';
+
+function logName() {
+  console.log(name);
+}
+
+function outerFunction() {
+  let name = 'jane';
+  logName();
+}
+
+outerFunction(); // logs 'nav'
+```
+
+You may think that `logName()` will log `'jane'`, as it was called within the scope of `outerFunction()`. But `logName()` logs the value `nav`.
+
+This is lexical scoping. Lexical scope means that the scope chain (“What is the parent scope for this variable?”) is determined by where functions are _defined_ in the code base, not where functions are _executed_.
+
+According to [MDN documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures):
+
+> This is an example of _lexical_ _scoping_, which describes how a parser resolves variable names when functions are nested. The word _lexical_ refers to the fact that lexical scoping uses the location where a variable is declared within the source code to determine where that variable is available. Nested functions have access to variables declared in their outer scope.
+
+In the example above, the scope chain of `logName()`, at the time of its definition, contains the global variable `name = 'nav'` and not the local variable `name = 'jane'`.
+
+### Closures
+
+In the last example we declared the `logName()` function in a global scope, but called it from within `outerFunction()`.
+
+What will happen if we do it the other way round? For example:
+
+```javascript
+function outerFunction() {
+  const name = 'nav';
+
+  function logName() {
+    console.log(name);
+  }
+
+  return logName;
+}
+
+const myFunc = outerFunction();
+
+myFunc(); // logs 'nav'
+```
+
+The function `logName()` is declared inside the scope of `outerFunction()`. JavaScript has first-class functions, which means it is possible for `outerFunction()` to return a reference to `logName()` when `outerFunction()` is executed.
+
+The `logName()` function is now disguised as `myFunc`, and you can call it from outside the scope of `outerFunction()`.
+
+The `logName()` function has its scope chain, which includes the variable `name`. The interesting thing is that it remembers `name`, or _closes over_ it, even after `outerFunction()` has finished its execution. The variable `name` wasn't cleaned up or destroyed at the end of execution of `outerFunction()`. This is how it logs the value of `name`.
+
+The `logName()` function forms a closure. A closure is a function that is bundled together with references to its surrounding state.
+
+In other words, a closure is a combination of an inner function and its lexical scope, which includes the parent or outer scope. It can access its lexical scope even if it is executed outside of it.
+
+### Uses of Closures
+
+Closures are useful in many situations. For example, when you need to create [private variables](https://www.w3schools.com/js/js_function_closures.asp) or [define a behavior that is attached to an event](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures#practical_closures). The latter is used extensively in event-based frontend JavaScript.

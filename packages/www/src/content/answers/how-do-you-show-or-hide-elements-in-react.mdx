@@ -1,0 +1,103 @@
+---
+title: 'How do you show or hide elements in React?'
+platforms: 
+  - sentry.react
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+
+## The problem
+
+You have an element that you would like to show or hide, for example an element that is shown or hidden when a user clicks a button. How do you conditionally render an element?
+
+## The solution
+
+There are three common ways to conditionally render elements in JSX: using the logical AND (&&) operator, using the conditional (ternary) operator, and using an `if` statement.
+
+### Using the logical AND (&&) operator
+
+You can use the [logical AND (&&) operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_AND) to conditionally render an element based on a boolean state value:
+
+```javascript
+export default function MyComponent() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  function toggle() {
+    setIsOpen((isOpen) => !isOpen);
+  }
+
+  return (
+    <div className="App">
+      {isOpen && <Popup />}
+      <button onClick={toggle}>Toggle show</button>
+    </div>
+  );
+}
+```
+
+In the example code above, the component `Popup` is initially not shown. When the "Toggle show" button is clicked once, `isOpen` is set to true. `MyComponent` re-renders and the component `Popup` is rendered as a [React element](https://reactjs.org/docs/rendering-elements.html). If the button is clicked again, `isOpen` is set to false and the `Popup` component is not rendered.
+
+The issue with using the `&&` operator is that you may end up unintentionally rendering `0` instead of nothing if the value to the left of the `&&` operator is `0`, which would be the case in the following code if the `items` prop was an array with no items.
+
+```javascript
+function ItemList({ items }) {
+  return (
+    <div>
+      <ul>
+        {items.length &&
+          items.map((item) => <li key={item.id}>{item.name}</li>)}
+      </ul>
+    </div>
+  );
+}
+```
+
+The `&&` operator evaluates the values it compares, the operands, from left to right. It returns immediately with the value of the first [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) value it finds. If all values are [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy), the last evaluated value is returned. This is why `0` would be displayed if the value of `items.length` is 0. The length of `[]` is 0. You can fix this by making sure that the value is a boolean, for example:
+
+```javascript
+!!items.length && ...
+// or
+items.length > 0 && ...
+// or
+Boolean(items.length) && ...
+```
+
+### Using the conditional (ternary) operator
+
+You can use a [ternary operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Conditional_Operator) to conditionally render an element without having to worry about converting values to booleans:
+
+```javascript
+function ItemList({ items }) {
+  return (
+    <div>
+      <ul>
+        {items.length
+          ? items.map((item) => <li key={item.id}>{item.name}</li>)
+          : null}
+      </ul>
+    </div>
+  );
+}
+```
+
+### Using an `if` statement
+
+You can also use an `if` statement instead of a ternary operator if you prefer the syntax:
+
+```javascript
+function ItemList({ items }) {
+  let itemsElements = null;
+  if (items.length) {
+    itemsElements = items.map((item) => <li key={item.id}>{item.name}</li>);
+  }
+
+  return (
+    <div>
+      <ul>{itemsElements}</ul>
+    </div>
+  );
+}
+```

@@ -1,0 +1,205 @@
+---
+title: 'Asynchronous Callbacks in JavaScript'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+How do callbacks work in JavaScript?
+
+Let's say we have the following code:
+
+```javascript
+function first() {
+  console.log('First');
+}
+
+function second() {
+  console.log('Second');
+}
+
+function third() {
+  console.log('Third');
+}
+```
+
+We call the functions in order like so:
+
+```javascript
+first();
+second();
+third();
+```
+
+And we get the following output:
+
+```
+First
+Second
+Third
+```
+
+Let's add a `setTimeout` method in the second function, like so:
+
+```javascript
+function first() {
+  console.log('First');
+}
+
+function second() {
+  setTimeout(() => {
+    console.log('Second');
+  }, 0);
+}
+
+function third() {
+  console.log('Third');
+}
+```
+
+Now if we call the functions in order as before, we get a different result:
+
+```
+First
+Third
+Second
+```
+
+Why does the `second` function run after the `third` function, even though the timer in the `setTimeout` function is set to 0?
+
+## The Solution
+
+To understand why we are getting the unexpected output, we first need to understand the [JavaScript event loop](https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop).
+
+Since JavaScript is a single-threaded programming language, it can only process one statement at a time. To handle the asynchronous operations, like the `setTimeout()` method, JavaScript uses a concept called the event loop.
+
+According to the documentation:
+
+> JavaScript has a runtime model based on an **event loop**, which is responsible for executing the code, collecting and processing events, and executing queued sub-tasks.
+
+The event loop keeps track of the order of execution using a stack and a message queue.
+
+You can think of the stack as the execution area, where each function is added in order. The queue is a waiting area for the asynchronous functions.
+
+Let's take a high-level look at how the event loop will execute our three functions.
+
+### Functions Without a Callback (or Asynchronous Code)
+
+For the three functions without any asynchronous code, the browser will do the following:
+
+- Add `first()` to the stack.
+
+  - Run `first()` which will log `First` to the console.
+  - Remove `first()` from the stack.
+
+- Add `second()` to the stack.
+
+  - Run `second()` which will log `Second` to the console.
+  - Remove `second()` from the stack.
+
+- Add `third()` to the stack.
+
+  - Run `third()` which will log `Third` to the console.
+  - Remove `third()` from the stack.
+
+- Check the queue for messages (functions waiting to be processed).
+
+  - Queue is empty.
+
+- Execution cycle complete.
+
+And we will get the following output, as expected:
+
+```
+First
+Second
+Third
+```
+
+### Functions With a Callback (or Asynchronous Code)
+
+When we add the `setTimeout()` method to the second function, our execution steps look like the following:
+
+- Add `first()` to the stack.
+
+  - Run `first()` which will log `First` to the console.
+  - Remove `first()` from the stack.
+
+- Add `second()` to the stack.
+
+  - Run `second()`
+    - Add `setTimeout()` to the stack on top of `second()`.
+    - Run `setTimeout` API, which will start a timer. At the end of the timer, the anonymous function will be added to the message queue.
+    - Remove `setTimeout()` from the stack.
+  - Remove `second()` from the stack.
+
+- Add `third()` to the stack.
+  - Run `third()` which will log `Third` to the console.
+  - Remove `third()` from the stack.
+- Check the queue for messages.
+
+  - Find the anonymous function from `setTimeout()`
+
+- Add the anonymous function to the stack.
+
+  - Run the anonymous function which will log `Second` to the console.
+  - Remove the anonymous function from the stack.
+
+- Check the queue again for messages.
+
+  - Queue is empty.
+
+- Execution cycle complete.
+
+And we will get the following output:
+
+```
+First
+Third
+Second
+```
+
+The important thing to remember is that the timer in the `setTimeout()` method does not set the time after which the code will execute. It sets the time after which the event loop will add the anonymous function to the queue.
+
+If we were working with an external web API, the anonymous function would be added to the queue after the API has returned its data.
+
+The timer, or any other asynchronous code, cannot add the anonymous function directly to the stack at the end of its completion as it would interrupt the currently running function.
+
+And the event loop will execute any function in the message queue only after executing all the top-level functions.
+
+If we want to delay the execution of the `third` function until the `second` function has been completed, we can use the `third` function as a callback to the `second` function by passing it as an argument to the `second` function, like so:
+
+```javascript
+function first() {
+  console.log('First');
+}
+
+function second(cb) {
+  setTimeout(() => {
+    console.log('Second');
+
+    // Execute the callback function
+    cb();
+  }, 0);
+}
+
+function third() {
+  console.log('Third');
+}
+
+first();
+second(third);
+```
+
+When we run the above code, we will get the desired output:
+
+```
+First
+Second
+Third
+```

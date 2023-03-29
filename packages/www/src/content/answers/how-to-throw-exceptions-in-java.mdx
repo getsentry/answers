@@ -1,0 +1,102 @@
+---
+title: 'How to Throw Exceptions in Java'
+platforms: 
+  - sentry.java
+people: 
+  - Adam E.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+In Java, you might want to explicitly throw an exception when you know your program has reached some state that would prevent it from continuing  to execute successfully.
+
+## The Solution
+
+To throw an exception, we need to specify the keyword `throws` along with the exception type and any additional arguments the relevant exception constructor will accept. For example, to throw a generic exception we can use the [`Exception`](https://docs.oracle.com/javase/9/docs/api/java/lang/Exception.html) class as shown below:
+
+```java
+public class Main {
+    
+    public static void main(String[] args) throws Exception {
+        try {
+            int x = 1 / 0;
+        } catch (Exception exception) {
+            throw new Exception("Something went wrong!");
+        }
+    }
+}
+```
+
+This will yield the following output:
+
+```
+Exception in thread "main" java.lang.Exception: Something went wrong!
+	at Main.main(Main.java:7)
+```
+
+### Extending the `Exception` Class
+
+The `Exception` thrown above can be a bit limiting as the information provided by the exception is rather sparse. We could provide a more detailed exception message to the `Exception` constructor and pass in the underlying caught exception. But there might be cases where we need more scope for custom exception attributes that are not available by using the `Exception` class. Additionally, we might want to define exceptions that represent business processes not covered by the standard Java subclasses of `Exception` (such as `ArrayIndexOutOfBoundsException`, `ArithmeticException`, and `IllegalArgumentException`). We can create our own exceptions by extending the `Exception` class.
+
+Let's say your code interfaces with some driver or third-party code. Should that third-party code experience an error, it may yield some error code. We can create a custom exception class that facilitates passing in an error code as `enum`, and use this error code to perform additional actions in our application if required.
+
+```java
+public class CustomException extends Exception {
+
+    private final ErrorCode errorCode;
+
+    public CustomException(String message, ErrorCode errorCode) {
+        super(message);
+        this.errorCode = errorCode;
+    }
+
+    public CustomException(String message, ErrorCode errorCode, Throwable cause) {
+        super(message, cause);
+        this.errorCode = errorCode;
+    }
+
+    public ErrorCode getCode() {
+        return this.errorCode;
+    }
+
+    public String toString() {
+        return super.getMessage() + " Error code: " + getCode();
+    }
+
+    enum ErrorCode {
+        BAD_THINGS
+    }
+}
+```
+
+We can now throw our `CustomException`:
+
+```java
+public class Main {
+
+    public static void main(String[] args) throws CustomException {
+        try {
+            int x = 1 / 0;
+        } catch (Exception exception) {
+            throw new CustomException("Something bad!", CustomException.ErrorCode.BAD_THINGS, exception);
+        }
+    }
+}
+```
+
+The output of this program yields:
+
+```java
+Exception in thread "main" Something bad! Error code: BAD_THINGS
+	at Main.main(Main.java:7)
+Caused by: java.lang.ArithmeticException: / by zero
+	at Main.main(Main.java:5)
+```
+
+Creating custom exceptions can be helpful, but there are some general best practices to remember when deciding to implement a custom exception class:
+
+- Ensure that the custom exception class provides some benefit over the existing JDK-provided exceptions. The JDK provides standard exceptions, such as [`UnsupportedOperationException`](https://docs.oracle.com/javase/9/docs/api/java/lang/UnsupportedOperationException.html) (which can be used to indicate that a request operation is not supported) and [`IllegalArgumentException`](https://docs.oracle.com/javase/9/docs/api/java/lang/IllegalArgumentException.html) (which can indicate that illegal arguments have been passed to a method). These are just two of many built-in classes that extend `Exception`.
+- Ensure that you have a constructor that sets the underlying throwable cause. Should your program catch a standard exception, your custom exception should not swallow this important information.
+- Follow the exception naming convention, which is that all exception class names should be suffixed with `Exception`.

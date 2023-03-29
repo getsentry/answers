@@ -1,0 +1,178 @@
+---
+title: 'How Can I Remove a Specific Item from an Array?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - James W.
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+If you want to remove an item from an array, you can use the `pop()` method to remove the last element or the `shift()` method to remove the first element.
+
+However, if the item you want to remove is not the first or last element, these methods are not the tools for the job.
+
+## The Solution
+
+There are a few methods you can use to remove specific elements from an array in JavaScript. If the `pop()` or `shift()` methods won't work for your purposes, you can select a method depending on whether you'll identify the item by its value or its index.
+
+### Removing the Last Element of an Array
+
+The `pop()` method removes and returns the last element of an array.
+
+```javascript
+
+const myArray = [1, 2, 3, 4, 5];
+
+const x = myArray.pop();
+
+console.log(`myArray values: ${myArray}`);
+console.log(`variable x value: ${x}`);
+
+```
+
+**Output:**
+
+```
+myArray values: 1,2,3,4
+variable x value: 5
+```
+
+### Removing the First Element of an Array
+
+The `shift()` method removes and returns the first element of an array.
+
+```javascript
+
+const myArray = [1, 2, 3, 4, 5];
+
+const x = myArray.shift();
+
+console.log(`myArray values: ${myArray}`);
+console.log(`variable x value: ${x}`);
+```
+
+**Output:**
+
+```
+myArray values = 2,3,4,5
+variable x value: 1
+```
+
+### Removing an Element by Index
+
+If you are identifying the item to be removed by its index, you can use the `delete` operator. If you want to use the value of the item you are removing, use the `splice()` method.
+
+#### The `delete` Operator
+
+The `delete` operator deletes the object property at the specified index, but does not update the length of the array, and the value at that index of the array will be `undefined`.
+
+```javascript
+
+const myArray = [1, 2, 3, 4, 5];
+
+delete myArray[1];
+
+console.log(`myArray values: ${myArray}`);
+```
+
+**Output:**
+
+```
+myArray values: 1,,3,4,5
+```
+
+#### The `splice()` Method
+
+The `splice()` method takes two arguments, the index of the element you wish to remove and the index you wish to remove up to.
+
+The `splice()` method creates a new array that stores all the values that were removed from the original array. The original array will no longer contain the values removed, and its length will be updated.
+
+```javascript
+
+const myArray = [1, 2, 3, 4, 5];
+
+const x = myArray.splice(1, 1);
+
+console.log(`myArray values: ${myArray}`);
+console.log(`variable x value: ${x}`);
+
+```
+
+**Output:**
+
+```
+myArray values: 1,3,4,5
+variable x value: 2
+```
+
+### Removing an Element by Value
+
+If you are identifying the element to be removed by its value, you can delete the element from its index after identifying the index with the `indexOf()` method. If you want to use the value of the element you are removing, then use the `filter()` method, or a combination of the `indexOf()` and `splice()` methods.
+
+#### Combining `indexOf()` and `splice()` Methods
+
+Pass the value of the element you wish to remove from your array into the `indexOf()` method to return the index of the element that matches that value in the array. Then make use of the `splice()` method to remove the element at the returned index.
+
+```javascript
+
+const myArray = [1, 2, 3, 4, 5];
+
+const index = myArray.indexOf(2);
+
+const x = myArray.splice(index, 1);
+
+console.log(`myArray values: ${myArray}`);
+console.log(`variable x value: ${x}`);
+
+```
+
+**Output:**
+
+```
+myArray values: 1,3,4,5
+variable x value: 2
+```
+
+The `indexOf()` method returns the first index where the value matches the parameter passed into it, and `-1` if no value is found to match.
+
+#### The `filter()` Method
+
+The array `filter()` method takes in a function as a required argument. The function requires one parameter `currentValue`, which represents the element in the array the `filter()` method is currently on while looping through the array.
+
+The function should perform a check that returns `true` if the `currentValue` is the value of the element you wish to remove, and `false` if not.
+
+The `filter()` method then returns an array that contains the values from the array that match the `currentValue`.
+
+The values the `filter()` method returns are not removed from the original array, but that functionality can be added to the function you pass into `filter()`.
+
+```javascript
+
+const myArray = [1, 2, 3, 4, 5];
+
+function removeValue(value, index, arr) {
+    // If the value at the current array index matches the specified value (2)
+    if (value === 2) {
+    // Removes the value from the original array
+        arr.splice(index, 1);
+        return true;
+    }
+    return false;
+}
+
+// Pass the removeValue function into the filter function to return the specified value
+const x = myArray.filter(removeValue);
+
+console.log(`myArray values: ${myArray}`);
+console.log(`variable x value: ${x}`);
+
+```
+
+**Output:**
+
+```
+myArray values: 1,3,4,5
+variable x value: 2
+```

@@ -1,0 +1,56 @@
+---
+title: "What's the Difference Between `null=True` and `blank=True` in Django?"
+platforms:
+  - sentry.django
+people:
+  - Naveera A.
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+What is the difference between `null=True` and `blank=True` in Django Model Fields?
+
+## The Solution
+
+The fundamental difference between these two is that `null` controls the validation at the database level, and `blank` is used during form field validation at the application level.
+
+Consider the following model with a title field, a date field, and a time field:
+
+```python
+from django.db import models
+
+class Book(models.Model):
+  title = models.CharField(max_length=200)
+  pub_date = models.DateField()
+  pub_time = models.TimeField()
+```
+
+**By default all fields are required.** In order to make a field optional, we have to say so explicitly.
+
+If we want to make the `pub_time` field optional, we add `blank=True` to the model, which tells Django's field validation that `pub_time` can be empty.
+
+```python
+pub_time = models.TimeField(blank=True)
+```
+
+But adding `blank=True` to the model is not enough. Trying to submit a form based on the model above will result in an integrity error because, while the field validation will accept an empty response, the database will not accept a null value. 
+
+To inform our database that the column for this field can be left empty (i.e. null), we need to add `null=True` in our model:
+
+```python
+pub_time = models.TimeField(blank=True, null=True)
+```
+
+Be aware though that if you change the `null` value of a model field, you will have to create a new migration and apply it, so the database schema is updated to set the `NULL` or `NOT NULL`. 
+
+An exception to the above is if you are using `CharField` or `TextField`. For both of these fields, Django saves an empty string if `blank=True`. For example, if we want to make the title field optional we can do it like so:
+
+```python
+title = models.CharField(max_length=200, blank=True)
+pub_date = models.DateField()
+pub_time = models.TimeField(blank=True, null=True)
+```
+
+Although we could still set a `null=True` on the title field, the Django convention is to avoid using `null=True` for `CharField` and `TextField` since these fields could have two different values for "no data": `None` or an empty string `""`.

@@ -1,0 +1,84 @@
+---
+title: 'Method Pointer Receivers in Interfaces'
+platforms:
+  - sentry.go
+people:
+  - Evan Hicks
+date:
+  2021-02-26T11:25:34-08:00
+---
+
+## The Problem
+
+The error:
+./prog.go:23:7: cannot use b (type Bar) as type Foo in argument to Fizzy: Bar does not implement Foo (Fizz method has pointer receiver)
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+type Foo interface {
+	Fizz()
+}
+
+type Bar struct {}
+
+func (b *Bar) Fizz() {
+	fmt.Println("fizz")
+}
+
+func Fizzy(foo Foo) {
+	foo.Fizz()
+}
+
+func main() {
+	b := Bar{}
+	Fizzy(b)
+}
+```
+
+## The Solution
+
+This error happens because the pointer to a type is its own unique type. In this example, `*Bar` is a different type to `Bar`. The method receiver `Fizz` is defined on the `*Bar` type, not the `Bar` type. So only `*Bar` satisfies the interface `Foo`.
+
+The fix:
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+type Foo interface {
+	Fizz()
+}
+
+type Bar struct {}
+
+func (b *Bar) Fizz() {
+	fmt.Println("fizz")
+}
+
+func Fizzy(foo Foo) {
+	foo.Fizz()
+}
+
+func main() {
+	b := &Bar{}
+	Fizzy(b)
+}
+```
+
+Change `b` to a pointer to a `Bar`. Since `*Bar` satisfies the interface `Foo`, `b` can now be used as a function argument to `Fizzy`.
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how Go application monitoring works, take a look at the following articles:
+
+- [How slow is slow?](https://blog.sentry.io/2020/12/17/how-slow-is-slow)
+- [Sentry's unified Go SDK](https://blog.sentry.io/2019/08/15/introducing-sentrys-unified-go-sdk)
+- [Getting started with the Go SDK (docs)](https://docs.sentry.io/platforms/go)

@@ -1,0 +1,103 @@
+---
+title: 'How Can I Safely Create a Nested Directory?'
+platforms: 
+  - sentry.python
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+How can you safely create a nested directory using Python?
+
+For example, you want to create a directory called `innerDirectory` inside a directory called `outerDirectory`. But first you want to make sure that:
+
+- The `innerDirectory` doesn't already exist.
+
+- The `outerDirectory` already exists. If `outerDirectory` doesn't exists, then Python should create it.
+
+## The Solution
+
+From Python 3.5, we can use the [`pathlib`](https://docs.python.org/3/library/pathlib.html) module to create, delete, and manipulate files and directories easily.
+
+The `pathlib` module has several classes, but for the purpose of creating directories (and files), we just need the `Path` class. We can import it from `pathlib` like so:
+
+```powershell
+>>> from pathlib import Path
+```
+
+Next, we need to create a `Path` object. There are [multiple ways](https://docs.python.org/3/library/pathlib.html#methods) to create a path object. For our purpose, we will create it using the string representation of the required path.
+
+Since the backslash character is also used to escape characters, it is best to use the raw string literal (the string prepended with an `r`) to represent the Windows path:
+
+```powershell
+>>> p = Path(r"C:\Users\username\projects\outerDirectory\innerDirectory")
+```
+
+
+If you are on a Linux machine or using macOS, your path would look like:
+
+```bash
+>>> p = Path('/home/username/projects/outerDirectory/innerDirectory')
+```
+
+We can check if the path, including the `innerDirectory`, already exists by using the `exists()` method. If the path doesn't exist it will return a `False`:
+
+```powershell
+>>> p = Path(r"C:\Users\username\projects\outerDirectory\innerDirectory")
+>>> p.exists()
+False
+```
+
+To create the `innerDirectory` we can use the `mkdir()` method:
+
+```powershell
+>>> p = Path(r"C:\Users\username\projects\outerDirectory\innerDirectory")
+>>> p.mkdir()
+```
+
+Let's see what happens if the two checks in question fail.
+
+### The `innerDirectory` Already Exists
+
+If we use the `mkdir()` method while the `innerDirectory` already exists, we will get the `FileExistsError`:
+
+```powershell
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "C:\Users\username\AppData\Local\Programs\Python\Python310\lib\pathlib.py", line 1173, in mkdir
+    self._accessor.mkdir(self, mode)
+FileExistsError: [WinError 183] Cannot create a file when that file already exists: 'C:\\Users\\username\\projects\\outerDirectory\\innerDirectory'
+```
+
+If we do not want to get the error, we can set the `exist_ok` argument in the `mkdir` method to `True`, like so:
+
+```powershell
+>>> p.mkdir(exist_ok=True)
+```
+
+The default value of `exist_ok` is set to `False`, which means that by default we will always get a `FileExistsError` if the file or directory we are trying to create already exists.
+
+### The `outerDirectory` Doesn't Exist
+
+If we try to create the `innerDirectory` without creating an `outerDirectory` first, we will get the `FileNotFound` error:
+
+```powershell
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "C:\Users\username\AppData\Local\Programs\Python\Python310\lib\pathlib.py", line 1173, in mkdir
+    self._accessor.mkdir(self, mode)
+FileNotFoundError: [WinError 3] The system cannot find the path specified: 'C:\\Users\\username\\projects\\outerDirectory\\innerDirectory'
+```
+
+If we want Python to create the missing parent directory, we can pass the value `True` to the `parents` argument of the `mkdir` method:
+
+```powershell
+>>> p.mkdir(exist_ok=True, parents=True)
+```
+
+The default value of the `parents` argument is also set to `False`, which means that by default Python will not create a missing parent directory.
+
+Using the `pathlib` module is the most robust way of manipulating files, and the tool we recommend. But if you are working with a Python version lower than 3.5, you may need to use the [`os.path`](https://docs.python.org/3/library/os.path.html) module.

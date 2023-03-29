@@ -1,0 +1,102 @@
+---
+title: 'How to insert an item into an array at a specific index using JavaScript'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+You want to insert an item into an array at a specific index. For example, inserting an item at a specific index in a to-do list.
+
+## The Solution
+
+There are various methods to insert an item into an array, broadly divided into those that change the original array and those that don't.
+
+### Using the `splice()` Method
+
+The [`splice()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice) method is used to change an array by adding, removing, or replacing elements. This method modifies the original array.
+
+```javascript
+const arr = ["walk the dog", "go shopping", "exercise"];
+const index = 2;
+const value = "go to the pharmacy";
+arr.splice(index, 0, value);
+console.log(arr); // "walk the dog", "go shopping", "go to the pharmacy", "exercise"
+```
+
+The first argument of the `splice()` method is the `start` index, which is the index at which to start changing the array. This is the only required argument. The second argument is the `deleteCount`. To add elements to an array, add each element as an additional argument. The `splice()` method returns an array of the deleted elements. If no elements are deleted, an empty array is returned.
+
+If you are dealing with very large arrays, the `splice()` method is most likely to perform the best as it does not need to create a new array, unlike the other methods that are described below.
+
+If you don't want to modify the original array, you can also make a copy of the array before using the `splice()` method:
+
+```javascript
+const arr = ["walk the dog", "go shopping", "exercise"];
+const arrCopy = [...arr];
+const index = 2;
+const value = "go to the pharmacy";
+arrCopy.splice(index, 0, value);
+console.log(arrCopy); // "walk the dog", "go shopping", "go to the pharmacy", "exercise"
+```
+
+### Using the `slice()` Method
+
+The [`slice()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice) method selects a portion of an array and returns a [shallow copy](https://developer.mozilla.org/en-US/docs/Glossary/Shallow_copy) of it. It does not modify the original array.
+
+The `slice()` method has two optional arguments: The `start` argument is the zero-based index at which to start selecting a portion of the array. The `end` argument is the zero-based index at which to stop selecting a portion of the array. The `slice()` method extracts up to the `end` argument index, it does not include the array element at the `end` index.
+
+The `slice()` method can be used along with [spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax) to insert an item into an array at a specific index:
+
+```javascript
+const arr = ["walk the dog", "go shopping", "exercise"];
+const index = 2;
+const value = "go to the pharmacy";
+const newArr = [...arr.slice(0, index), value, ...arr.slice(index, arr.length)];
+console.log(newArr); // "walk the dog", "go shopping", "go to the pharmacy", "exercise"
+```
+
+### Using a Loop
+
+You can also use a for loop to loop through each item in an array, add each item to a new array, and insert an item at a specific index:
+
+```javascript
+const arr = ["walk the dog", "go shopping", "exercise"];
+const index = 2;
+const value = "go to the pharmacy";
+const newArr = [];
+for (let i = 0; i < arr.length; i++) {
+  if (i === index) {
+    newArr.push(value);
+  }
+  newArr.push(arr[i]);
+}
+
+console.log(newArr); // "walk the dog", "go shopping", "go to the pharmacy", "exercise"
+```
+
+### Using `reduce()`
+
+You can create a custom function that uses [`reduce()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce) to insert an element into an array at a specific index:
+
+```javascript
+const arr = ["walk the dog", "go shopping", "exercise"];
+const index = 2;
+const value = "go to the pharmacy";
+
+function insert(array, val, ind) {
+  return ind >= arr.length
+    ? array.concat(val)
+    : array.reduce(
+      (accumulator, currentValue, i) => accumulator.concat(i === ind ? [val, currentValue] : currentValue),
+      [],
+    );
+}
+
+console.log(insert(arr, value, index)); // "walk the dog", "go shopping", "go to the pharmacy", "exercise"
+```
+
+This method creates a new array; it does not change the original array.

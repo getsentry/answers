@@ -1,0 +1,34 @@
+---
+title: 'List files in a directory using Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+How can I create a list of the files in a directory using Python?
+
+## The Solution
+
+Python's built-in [`os`](https://docs.python.org/3/library/os.html) module provides a powerful function for file system traversal called [`os.walk()`](https://docs.python.org/3/library/os.html#os.walk). This function returns a [generator iterator](https://docs.python.org/3/glossary.html#term-generator-iterator) that can be used in a for loop to methodically traverse a file system tree, starting at a given path. For each level of the tree, `os.walk()` will return a three-value tuple containing:
+
+* The name of the current directory.
+* A list of subdirectory names in the current directory.
+* A list of file names in the current directory.
+
+We can use this method to build a list of the file names in a given directory, as in the code below. If we only want the files inside the top directory, we can [`break`](https://docs.python.org/3/reference/simple_stmts.html#break) out of the for loop after the first iteration. Otherwise, we can let it keep going to get a list of all files in all subdirectories.
+
+```python
+import os
+
+my_path = "/home/alice/work-files"
+file_list = []
+
+for (directory, subdirectories, files) in os.walk(my_path):
+    file_list.extend(files)
+    break  # remove this line to include files inside subdirectories
+```

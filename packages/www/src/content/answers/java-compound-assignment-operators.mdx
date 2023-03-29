@@ -1,0 +1,135 @@
+---
+title: "Why don't Java's compound assignment operators require casting?"
+platforms: 
+  - sentry.java
+people: 
+  - Lewis D.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+When you assign two variables with different primitive types – for example `long` to `int` – you need to use casting.
+
+```java
+public class Example {
+    public static void main(String[] args) {
+        int i = 2;
+        long j = 2L;
+        i = (int) ((long) i + j);
+        System.out.println(i);
+    }
+}
+```
+
+**Output:**
+
+```
+4
+```
+
+Here, we're telling the compiler "I want the `int` value of the sum of these two `long` variables, and you can treat `i` as though it is a `long` type". Without casting, the code would not compile.
+
+However, we can use the compound assignment operator `+=` without any visible casting:
+
+```java
+public class Example {
+    public static void main(String[] args) {
+        int i = 2;
+        long j = 2;
+        i += j;
+        System.out.println(i);
+    }
+}
+```
+
+**Output:** 
+
+```
+4
+```
+
+The code compiles and executes successfully.
+
+Why does this magically work where the previous example requires such specific coding?
+
+## The Solution
+
+Many people think that these compound assignment operators are merely a shorthand for the normal assignment operator, with an additional mathematical action added on. This is true when all our variables are of the same type. However, this is not the case when the types are different. We can see this by running the following two code examples through a Java [decompiler](http://java-decompiler.github.io/).
+
+```java
+public class Example1 {
+    public static void main(String[] args) {
+        int i = 2;
+        int j = 2;
+        i += j;
+        System.out.println(i);
+    }
+}
+```
+```java
+public class Example2 {
+    public static void main(String[] args) {
+        int i = 2;
+        long j = 2L;
+        i += j;
+        System.out.println(i);
+    }
+}
+```
+
+The decompiled versions will reveal something interesting. The first example looks just as we would expect with the compound assignment operator being compiled into its longer form:
+
+```java
+public class Example1 {
+    public static void main(String[] var0) {
+        byte var1 = 2;
+        byte var2 = 2;
+        int var3 = var1 + var2;
+        System.out.println(var3);
+    }
+}
+```
+
+The second example, however, is a bit more interesting:
+
+```java
+public class Example2 {
+    public static void main(String[] var0) {
+        byte var1 = 2;
+        long var2 = 2L;
+        int var4 = (int) ((long) var1 + var2);
+        System.out.println(var4);
+    }
+}
+```
+
+As we can see, the casting is done automatically by the compiler, and the decompiled example looks much like the initial example.
+
+The two examples are still functionally equivalent. However, this can cause some unexpected results if the developer is not aware of this compiler behavior. Consider this example:
+
+```java
+public class Example {
+    public static void main(String[] args) {
+        int i = 1;
+        long j = 2147483648L;
+        i += j;
+        System.out.println(i);
+    }
+} 
+```
+
+**Output:**
+
+```
+-2147483647
+```
+
+The hidden casting in this example causes integer overflow, and we end up with a result that we may not have been expecting. Without the compound operator – that is, using `i = i + j` – the compiler would give us an error with the following explanation:
+
+```
+error: incompatible types: possible lossy conversion from long to int
+```
+
+The reason the compound assignment operators in Java do not require casting is that the casting is done automatically by the compiler. The use of compound assignment operators in Java can lead to unexpected behaviour if the developer is unaware of the compiler's interpretation of them. They should, therefore, be used with caution when variables of different types are involved.

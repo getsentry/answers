@@ -1,0 +1,73 @@
+---
+title: 'Default function parameter values in JavaScript'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - David Y.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+Consider the code below for evaluating a home loan application. Applicants for the loan must provide their income and can optionally provide a deposit to reduce the total amount of the loan.
+
+```javascript
+const homeCost = 1000000;
+const loanPeriods = 240;
+
+function evaluateHomeLoanApplication(name, income, deposit) {
+  const approvalThreshold = (homeCost - deposit) / loanPeriods;
+  if (income >= approvalThreshold) {
+    console.log(`Loan application for ${name} approved.`);
+  } else {
+    console.log(`Loan application for ${name} denied.`);
+  }
+}
+
+evaluateHomeLoanApplication("John Smith", 4200); // application denied
+evaluateHomeLoanApplication("Jane Doe", 4000, 100000); // application approved
+```
+
+The first loan application will be denied, even though John Smith's income is enough to cover the repayment. Why does this happen and how can we fix it?
+
+## The Solution
+
+When an argument is omitted from a function call, it will be given a value of [`undefined`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined). This causes our loan evaluation function above to attempt the following calculation:
+
+```
+const approvalThreshold = (1000000 - undefined) / 240
+```
+
+This will produce a result of [NaN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN), leading our code to deny the loan even though the `income` value provided is sufficient.
+
+One way to avoid this would be to always specify a value of `0` for `deposit` in our function call. A better way would be to assign a [default value for `deposit`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Default_parameters), as below:
+
+```javascript
+const homeCost = 1000000;
+const loanPeriods = 20 * 12;
+
+function evaluateHomeLoanApplication(name, income, deposit = 0) {
+  const approvalThreshold = (homeCost - deposit) / loanPeriods;
+  if (income >= approvalThreshold) {
+    console.log(`Loan application for ${name} approved.`);
+  } else {
+    console.log(`Loan application for ${name} denied.`);
+  }
+}
+
+evaluateHomeLoanApplication("Jane Doe", 4200); // application approved
+evaluateHomeLoanApplication("Jane Doe", 4000, 100000); // application approved
+```
+
+Parameters with default values should be included after parameters without default values. Default values can include the values of previously defined parameters, as below:
+
+```javascript
+function submitLoanApplication(name, message = `Your loan application has been submitted, ${name}.`) {
+  console.log(message);
+}
+
+submitLoanApplication("Jane Doe"); // will print "Your loan application has been submitted, Jane Doe."
+submitLoanApplication("John Smith", "A custom message."); // will print "A custom message."
+```
+

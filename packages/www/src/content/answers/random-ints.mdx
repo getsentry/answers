@@ -1,0 +1,83 @@
+---
+title: 'How do I generate random integers within a specific range in Java?'
+platforms: 
+  - sentry.java
+people: 
+  - Lewis D.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You need to generate random integers within a specific range. Is there a way to do it in Java?
+
+## The Solution
+
+There are a number of ways to generate random integers confined to a specific range in Java, and the problem is simplified by the several approaches the built-in Java libraries offer.
+
+Let's take a look at a couple of solutions that rely on core Java, excluding the numerous third-party libraries offering similar functionality.
+
+We'll consider the following randomized range integer-generating approaches:
+
+- [Random](#random)
+- [SecureRandom](#securerandom)
+- [ThreadLocalRandom](#threadlocalrandom)
+- [Math](#math)
+
+The best solution for your needs depends on the application you need random integers to be generated for.
+
+### Random
+
+We can use the [`java.util.Random`](https://docs.oracle.com/javase/8/docs/api/java/util/Random.html) class to create a new random number generator, which we can then use to retrieve a pseudorandom, uniformly distributed `int` value.
+
+To get our random number, we'll call the `nextInt(int bound)` method. This method returns an `int` in the range starting at 0 up to, but not including, the **bound** value we supply. Let's take a closer look:
+
+```java
+public int randomRangeRandom(int start, int end) {
+    Random random = new Random();
+    int number = random.nextInt((end - start) + 1) + start; // see explanation below
+    return number;
+}
+```
+
+Here, the **bound** value calculation defines the upper value in our range. For example, if we set our `start` and `end` to 5 and 10 respectively, we'll pass in 6 (`(end - start) + 1`) as our **bound**. The `nextInt()` method call will generate a number between 0 and 6 (exclusive) and then we'll add the start value (5) which gets us back into our desired range.
+
+### SecureRandom
+
+We can also use the [`java.security.SecureRandom`](https://docs.oracle.com/javase/8/docs/api/java/security/SecureRandom.html) class when we require cryptographically strong random numbers. The `SecureRandom` class is designed to return a [non-deterministic](https://en.wikipedia.org/wiki/Nondeterministic_algorithm) output, which is useful for high unpredictability but comes at a performance cost. Because `SecureRandom` extends `Random`, the code example for `randomRangeRandom()` can be followed, initializing the `SecureRandom` class instead of the `Random` class.
+
+**Note**: Make sure you have imported `java.security.SecureRandom` or `java.security.*` because while `Random` is in `java.util`, `SecureRandom` is in `java.security`.
+
+
+### ThreadLocalRandom
+
+The third random number generating approach is best for multithreaded applications. Like `SecureRandom`, the [`java.util.concurrent.ThreadLocalRandom`](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ThreadLocalRandom.html) class also extends `Random`, and is therefore a thread-safe substitute for `Random`. Note that `ThreadLocalRandom` does not inherit any attributes of `SecureRandom`, so it's not a cryptographically secure random number generator. 
+
+```java
+public int randomRangeThreadLocalRandom(int start, int end) {
+    int number = ThreadLocalRandom.current().nextInt(start, end);
+    return number;
+}
+```
+
+**Note**: Make sure you import `java.util.concurrent.*` or `java.util.concurrent.ThreadLocalRandom`.
+
+### Math
+
+Finally, we can generate a random number using the [`java.lang.Math`](https://docs.oracle.com/javase/8/docs/api/java/lang/Math.html) class. The `Math` class provides a `random()` method, but this method returns a double value from 0.0 (inclusive) to 1.0 (exclusive). This means we will have to write some additional code to generate an `int` value within our specified range.
+
+To make this clearer, let's look at the output of executing each step when calling `randomRangeMath(5, 10)`:
+
+```java
+public int randomRangeMath(int start, int end) {
+    int range = end - start; // calculate our range:  5
+    double randomDouble = Math.random(); // returns a double: 0.3
+    double calc = (randomDouble * range) + start; // calculation returns 6.5
+    long number = Math.round(calc); // 6.5 is rounded up to 7
+    
+    return (int) number;
+}
+```
+
+

@@ -1,0 +1,90 @@
+---
+title: 'How can I get the named parameters from a URL using Flask?'
+platforms: 
+  - sentry.flask
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+How can I get the named parameters from a URL using Flask?
+
+## The Solution
+
+Flask provides a global request object that contains all sorts of [information about the current HTTP request](https://flask.palletsprojects.com/en/2.1.x/api/?#flask.Request). Flask also parses the incoming request data for you.
+
+You can use the `args` property of this global request object to get the values of query parameters.
+
+For example, to access the query parameters of the following URL:
+
+`http://mysite.com/query_example?language=Python&framework=Flask`
+
+You can use the `get` method on `request.args`, like so:
+
+```python
+# import main Flask class and request object
+from flask import Flask, request
+
+# create the Flask app
+app = Flask(__name__)
+
+
+@app.route('/query_example')
+def query_example():
+    language = request.args.get('language')
+    framework = request.args.get('framework')
+
+    print(f'language: {language}, framework: {framework}')
+    return 'Query Parameters Example'
+
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
+```
+
+You will get:
+
+```powershell
+language: Python, framework: Flask
+```
+
+The `request.args` attribute is an [ImmutableMultiDict](https://werkzeug.palletsprojects.com/en/2.1.x/datastructures/#werkzeug.datastructures.ImmutableMultiDict) that implements all standard dictionary methods.
+
+The `get` method also takes optional arguments for default value and type. The following example should explain this behavior:
+
+```python
+def query_example():
+    language = request.args.get('language', default='Python')
+    framework = request.args.get('framework', default='Flask')
+```
+
+For `/query_example?language=JavaScript`:
+
+```powershell
+language: JavaScript, framework: Flask
+```
+
+For `/query_example`:
+
+```powershell
+language: Python, framework: Flask
+```
+
+For `/query_example?language=JavaScript&framework=Express`:
+
+```powershell
+language: JavaScript, framework: Express
+```
+
+For `/query_example?framework=Express`:
+
+```powershell
+language: Python, framework: Express
+```
+
+## Further Reading
+
+[How do you access the query string in Flask routes?]()

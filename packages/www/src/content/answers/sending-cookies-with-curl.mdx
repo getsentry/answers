@@ -1,0 +1,83 @@
+---
+title: 'Sending Cookies with Curl'
+platforms: 
+  - sentry.bash
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+HTTP cookies are key-value pairs that are sent by the server to the client to store. The client sends the cookies back on subsequent requests. In this way, the server can keep track of the client's state.
+
+The command line tool [curl](https://curl.se/) is a powerful tool that developers use to transfer data to and from a server.
+
+How can you store the cookies sent by the server when using curl? And how can you send those cookies to the server on subsequent requests?
+
+## The Solution
+
+The general design of curl is minimalistic. This means that we need to turn on the "cookie engine", otherwise curl will not acknowledge any cookies.
+
+We can enable the cookie engine by asking curl to read or write the cookies.
+
+For example, we can activate the cookie engine and read the cookies using the option `--cookie` or the shorter version `-b`. We can read the cookies from a string `theme=dark` and send them in an HTTP request like so:
+
+```bash
+curl --cookie theme=dark https://www.google.com
+```
+
+or
+
+```bash
+curl -b theme=dark https://www.google.com
+```
+
+### Reading Cookies from a File
+
+To read the cookies from a file, we can provide the file name after the read cookie option, like so:
+
+```bash
+curl -b cookies.txt https://www.google.com
+```
+
+So how does curl know that this time we are providing a file name and not a string? If no '=' symbol is used in the argument, curl treats the argument as a filename, and reads data from there.
+
+The above command will only read the cookies from the file. If the server updates the cookies in its response, curl will update that cookie in its in-memory store only, which will be discarded eventually.
+
+### Writing Cookies to a File
+
+We can tell curl to write cookies to a file using the `--cookie-jar` or `-c` option.
+
+For example, we can use the following command to save the cookies returned by the server in the file `cookie-jar.txt`:
+
+```bash
+curl -c cookie-jar.txt https://www.google.com
+```
+
+An important point to keep in mind is that curl will write all cookies from its in-memory cookie storage to the given file only at the end of operations. Curl will not save the cookie data to the file during its lifetime.
+
+Often we will need to read and write cookies at the same time, like so:
+
+```bash
+curl -b cookie-jar.txt -c cookie-jar.txt https://www.google.com
+```
+
+### Cookie File Format
+
+The cookie file used with curl should follow the Netscape cookie file format. According to the [documentation](https://curl.se/docs/http-cookies.html):
+
+> The cookie file format is text based and stores one cookie per line. Lines that start with `#` are treated as comments.
+>
+> Each line that specifies a single cookie consists of seven text fields separated with TAB characters. A valid line must end with a newline character.
+>
+> Field number, type, example data and the meaning of it: 
+>
+> 0.  string `example.com` - the domain name
+> 1.  boolean `FALSE` - include subdomains
+> 2.  string `/foobar/` - path
+> 3.  boolean `TRUE` - send/receive over HTTPS only
+> 4.  number `1462299217` - expires at - seconds since 01 January 1970, or 0
+> 5.  string `person` - name of the cookie
+> 6.  string `daniel` - value of the cookie

@@ -1,0 +1,92 @@
+---
+title: 'How do I access parameters from the URL as part the HttpRequest object?'
+platforms: 
+  - sentry.django
+people: 
+  - Gareth D.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The problem
+
+You are using URL parameters like `https://example.com?first_name=Alex&sort=descend` to pass data to your Django application and you want to access these as variables in your Django code. How can you extract this information from the Django `HttpRequest` object?
+
+## The solution
+
+The simplest way is to access the parameters directly from Django's request object using `request.GET.get("first_name")`. For example, if you have the following `views.py` file:
+
+```python
+from django.http import HttpResponse
+
+def home(request):
+    first_name = request.GET.get("first_name")
+    sort = request.GET.get("sort")
+
+    text = f"<h1>Searched for first name: {first_name} with sort option: {sort}<h1>"
+
+    return HttpResponse(text)
+```
+
+And the following in your `urls.py` file:
+
+```python
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home)
+]
+```
+
+Then you can run the development server and visit `http://localhost:8000/?first_name=Alex&sort=descending` to see the response "Searched for first name: Alex with sort option: descending".
+
+### Getting parameters submitted in HTML forms
+
+By default, HTML forms will submit data encoding in these GET parameters, using the name of any inputs as the keys of the parameters. Instead of typing out the parameters in the URL manually, you might have a form similar to the following (usually in your template file instead of directly in your views.py which we've done here for simplicity).
+
+```python
+from django.http import HttpResponse
+
+def home(request):
+    first_name = request.GET.get("first_name")
+    sort = request.GET.get("sort")
+
+    text = f"""<h1>Searched for first name: {first_name} with sort option {sort}<h1>
+
+    <form>
+        <input name="first_name" type="text">
+        <input name="sort" type="text">
+        <input type="submit">
+    </form>
+"""
+
+    return HttpResponse(text)
+```
+
+Now when you enter data into the two textboxes and press "Submit" on the page shown when you run your app, you'll see the data appear in your URL and in the returned string.
+
+### Using POST instead of GET
+
+When you submit using a GET request (the default for HTML forms), the form data is encoded into the URL. If you want to avoid this happening (e.g. for sensitive data that you don't want tracked in your users' browser history), you can use POST instead by using `request.POST.get("first_name")`. For example:
+
+```python
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def home(request):
+    first_name = request.POST.get("first_name")
+    sort = request.POST.get("sort")
+
+    text = f"""<h1>Searched for first name: {first_name} with sort option {sort}<h1>
+
+    <form method="POST">
+        <input name="first_name" type="text">
+        <input name="sort" type="text">
+        <input type="submit">
+    </form>
+"""
+
+    return HttpResponse(text)
+```

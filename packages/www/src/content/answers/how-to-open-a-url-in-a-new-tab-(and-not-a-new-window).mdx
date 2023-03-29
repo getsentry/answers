@@ -1,0 +1,37 @@
+---
+title: 'How to open a URL in a new tab (and not a new window)'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+
+## The Problem
+
+You have a link element pointing to a website that you want to open in a new tab when it's clicked. This is useful if you have multiple links to external websites that a user might navigate to, as it means less back-button clicking and page reloads.
+
+
+## The Solution
+
+The `target` attribute of a link element specifies where to open the linked URL. If you set `target` to `"_blank"`, the URL will usually open in a new tab. Users can configure their browsers to open links in a new window.
+
+```html
+<a href="https://www.google.com" target="_blank">Google</a>
+```
+
+Note that there is a security concern with using `target="_blank"`: The linked page gets partial access to the linking page through the `window.opener` object, a vulnerability that can be exploited for a phishing attack. 
+
+For example, a user on a social media website may click a link to a phishing website that changes the window location of the linking page to a fake website that mimics the log-in page of the real social media website. If the user doesn't realize that the website URL has changed, they may assume they were logged out and try to log in again, giving the attacker a chance to steal their login details. Read more about this in the article [_Target="\_blank" - the most underestimated vulnerability ever_](https://www.jitbit.com/alexblog/256-targetblank---the-most-underestimated-vulnerability-ever/).
+
+To fix this vulnerability, you can add `rel="noopener noreferrer"` to the link. The `noopener` keyword tells the browser to set `window.opener` to `null` so that the linked page does not get partial access to the linking page. The `noreferrer` header tells the browser to omit the [`Referer`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referer) header to prevent sending referrer information. 
+
+Newer browsers that implicitly set `rel="noopener"` to links using `target="_blank"` have largely overcome this vulnerability. You can see which browsers support this behavior [here](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#browser_compatibility).
+
+If you need to open a URL in a new tab using JavaScript, you can use the `open()` method of the [`Window`](https://developer.mozilla.org/en-US/docs/Web/API/Window) interface:
+
+```javascript
+window.open('https://www.google.com', '_blank', 'noopener, noreferrer');
+```

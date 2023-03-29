@@ -1,0 +1,55 @@
+---
+title: 'How do I Format a Date in JavaScript?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+---
+
+## The Problem
+
+You have a [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) object that you would like to display as a user-friendly string of text. How do you do this?
+
+## The Solution
+
+The date object has multiple methods for creating a date string in different formats. The two main methods are [`Date.toLocaleDateString()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString) and [`Intl.DateTimeFormat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl). Both of these are used to return a formatted date string. The date is formatted for a specific language and time zone.
+
+These methods have two arguments, `locales` and `options`, which allow specification of the language that has specific formatting and customizing that format. Both of these arguments are optional. If neither is supplied, the time zone and language of the user's system will be used for formatting the date and the default values for the `options` will be used.
+
+Two other methods are similar to `Date.toLocaleDateString()`: [`Date.toLocaleString()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleString) and [`Date.toLocaleTimeString()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleTimeString). `Date.toLocaleString()` has a similar formatted date string output to `Date.toLocaleDateString()`, except it adds the time if no options are passed. The `Date.toLocaleTimeString()` method only returns the time portion of the date.
+
+You can use any of these methods to format a date. If you are formatting many dates, use `Intl.DateTimeFormat()`, as it allows you to create an `Intl.DateTimeFormat` object that you can format multiple times using the [`format()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/format) method. You only define the `locales` and `options` once.
+
+```javascript
+const date = new Date(Date.UTC(2022, 10, 22, 9, 0, 0));
+const date2 = new Date(Date.UTC(2022, 11, 22, 9, 0, 0));
+const options = {
+  weekday: "long", year: "numeric", month: "long", day: "numeric",
+};
+
+console.log(date.toLocaleDateString("en-ZA", options)); // Tuesday, 22 November 2022
+console.log(date.toLocaleDateString("ko", options));
+// 2022년 11월 22일 화요일
+
+const intDateFormat = new Intl.DateTimeFormat("en-ZA", options);
+console.log(intDateFormat.format(date)); // Tuesday, 22 November 2022
+console.log(intDateFormat.format(date2)); // Thursday, 22 December 2022
+```
+
+### The `locales` Argument
+
+The first argument for the methods, [`locales`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#locales_argument), is a string representing the language, script, or region subtag, or an array of these strings. You can find a list of these strings in the [IANA language subtag registry](https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry). This list is periodically updated and implementations may not always be up to date with the list. Some examples include:
+
+- `"en"`: English (language)
+
+- `"zh-Hans-CN"`: Chinese (language) written in simplified characters (script) as used in China (region)
+
+### The `options` Argument
+
+The second argument,  [`options`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl#options_argument), is an object that's used to modify the output format. If it is undefined or not provided, default values are used for all properties. There are many properties available, which you can see in the [`Intl.DateTimeFormat()` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat). These include: `dateStyle`, `timeStyle`, `calendar`, `dayPeriod`, `numberingSystem`, `timeZone`, `era`, `year`, `month`, `day`, `hour`, `minute`, and `second`. Here's an example formatted date that uses the `dateStyle` and `timeStyle` properties:
+
+```javascript
+const date = new Date(Date.UTC(2022, 10, 22, 9, 0, 0));
+const dtf = new Intl.DateTimeFormat("de-DE", { dateStyle: "short", timeStyle: "long" });
+console.log(dtf.format(date)); // 22.11.22, 11:00:00 GMT+2
+```

@@ -1,0 +1,68 @@
+---
+title: 'Difference between `@staticmethod` and `@classmethod` function decorators in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+What is the difference between a function decorated with `@staticmethod` and one decorated with `@classmethod` in Python?
+
+## The Solution
+
+Python programmers who have used classes will know that standard methods inside a class receive the called instance as their first argument. This is conventionally called `self` and must be specified as a parameter, per the [Python principle](https://peps.python.org/pep-0020/) that "explicit is better than implicit". The following code snippet shows an example of this:
+
+```python
+class Greeter:
+
+    def __init__(self, name):
+        self.name = name
+
+    def say_hello(self):
+        print(f"Hello, my name is {self.name}.")
+
+
+alice = Greeter("Alice")
+alice.say_hello()  # will print "Hello, my name is Alice."
+```
+
+Functions decorated by `@staticmethod` or `@classmethod` provide alternatives to this behavior. We can decorate a function with `@staticmethod` to prevent Python from passing an instance of the object to it, as below.
+
+```python
+class Greeter:
+
+    def __init__(self, name):
+        self.name = name
+
+    @staticmethod
+    def say_hello_static(name):  # <-- no self parameter
+        print(f"Hello {name}, how are you?")
+
+
+alice = Greeter("Alice")
+alice.say_hello_static("Bob")  # will print "Hello Bob, how are you?"
+```
+
+This can be useful when we have functionality that logically belongs in a given class, but does not do anything with the instance it's called on.
+
+By contrast, the `@classmethod` decorator will make Python pass the *class* of the instance it's called on as the first argument. By convention, the first parameter of a class method is called `cls`. Class methods can also be called on classes directly.
+
+```python
+class Greeter:
+
+    @classmethod
+    def say_hello_class(cls):  # <-- cls instead of self
+        print(f"Hello, I am a {cls.__name__}.")
+
+
+Greeter.say_hello_class()  # will print "Hello, I am a Greeter."
+
+alice = Greeter()
+alice.say_hello_class()  # will print "Hello, I am a Greeter."
+```
+
+Class methods are useful when we want to define behaviors that affect a class as a whole, rather than single instances. A common use case is creating [factory methods](https://en.wikipedia.org/wiki/Factory_method_pattern).

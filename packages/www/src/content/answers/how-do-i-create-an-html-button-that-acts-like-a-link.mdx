@@ -1,0 +1,125 @@
+---
+title: 'How do I Create an HTML Button That Acts Like a Link?'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+---
+
+
+## The Problem
+
+You have a button that you want to use as a link on your website. How do you make a button, which is usually used to perform an action such as submitting a form or opening a menu, act like a link?
+
+
+## The Solution
+
+You can make a button act like a link or make a link look like a button.
+
+
+### Wrap the Button in a Link Tag
+
+You can wrap a button in an `<a>` tag to make it act like a link:
+
+```html
+<a href="https://sentry.io/answers/">
+  <button>Answers by Sentry</button>
+</a>
+```
+
+
+
+The problem with this solution is that if you run this HTML through the [W3C Markup Validation Service](https://validator.w3.org/), you'll get the following message:
+
+```
+Error: The element button must not appear as a descendant of the a element.
+```
+
+
+
+This code is not good for accessibility. If a user is navigating using their keyboard, the link is focused and then the button is focused. This can be confusing for the user. Also, a button can be triggered by the enter key or space bar when it's in focus. A link that's in focus will only link to the new location if the enter key is pressed. Nothing will happen if the space bar is pressed. If the link looks like a button, the user may expect the space bar to work. You can fix this by adding a space bar event listener to the link and navigating to a new page using the following line of JavaScript code:
+
+```javascript
+window.location.href = "https://sentry.io/answers/";
+```
+
+
+
+This is not ideal, as it requires extra code that you could easily forget to add.
+
+
+
+Also, if you use a link as a button, you should override its role using the ARIA role attribute:
+
+```html
+<button role="link">
+```
+
+
+
+This will ensure that if a user is using a screen reader, the screen reader will announce the element is a link.
+
+
+
+### Styling a Link to Look Like a Button
+
+Another option is not to use a button at all and style the `<a>` tag to look like a button using CSS:
+
+```html
+    <a class="btn" href="https://sentry.io/answers/">
+      Answers by Sentry
+    </a>
+```
+
+
+
+You can add styles using a CSS class, such as the "btn" class in the code above. It could have the following simple styles:
+
+```css
+.btn {
+  text-decoration: none;
+  padding: 0.5rem;
+  border: 1px solid #333333;
+}
+```
+
+
+
+This solution is not great because links and buttons are used for different purposes:
+
+- Links are used to take a user to a new location. This can be a new web page or a different section of the current page.
+- Buttons trigger an action, for example, submitting a form or opening a menu.
+
+
+
+### Add a Button Inside a Form
+
+You can add a button inside a form and add the link URL to the form `action` attribute:
+
+```html
+    <form action="https://sentry.io/answers/">
+      <button type="submit">Answers by Sentry</button>
+    </form>
+```
+
+
+
+You can also set the button's `type` attribute to "reset" and use the `onclick` attribute to change the location:
+
+```html
+    <form>
+      <button type="reset" onclick="location.href='https://sentry.io/answers/'">
+        Answers by Sentry
+      </button>
+    </form>
+```
+
+
+
+Using a button inside a form element works but it's not semantically correct. A form is typically used to submit information.
+
+
+
+### Conclusion
+
+You can make a button that acts like a link or make a link that looks like a button but should avoid doing this. Links and buttons have different roles. If you must choose between the two, for example, if you are implementing a design created by a UX designer, make a link that is styled to look like a button. Using a button as a link can cause issues for users who navigate using their keyboard or who use a screen reader. You can read more about the accessibility concerns of using a button as a link in the following article: [Button versus Link](https://a11y-101.com/design/button-vs-link).

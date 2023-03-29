@@ -1,0 +1,40 @@
+---
+title: 'What is a "slug" in Django?'
+platforms: 
+  - sentry.django
+people: 
+  - Naveera A.
+date:
+  2022-10-21T11:28:03+02:00
+---
+
+## The Problem
+
+You often see the term "slug" in Django tutorials and documentation. What is a "slug"?
+
+## The Solution
+
+Slug is a term from newspaper language. It appears in Django because Django started as a project for a newspaper in Kansas.
+
+A slug is a string that can only include characters, numbers, dashes, and underscores. It is the part of a [URL](https://en.wikipedia.org/wiki/URL) that identifies a particular page on a website, in a human-friendly form.
+
+Imagine if you have a personal blog with the URL `http://mysite.com`. In that blog you have a post with the title 'A day in my life'.
+
+The URL to this post may look like the following:
+
+`http://mysite.com/a-day-in-my-life`
+
+The string `a-day-in-my-life` is the slug, which will take you to the corresponding post's page. Your post may have an ID and you may decide to get to the post's page using the ID, like so:
+
+`http://mysite.com/1`
+
+But it is good practice to use slugs in the URL, as they are more human-friendly and good for the SEO of your site.
+
+In Django, you can use the built-in [SlugField](https://docs.djangoproject.com/en/4.0/ref/models/fields/#slugfield) to add a slug to your model. Like so:
+
+```python
+class Posts(models.Model):
+    title = models.CharField(max_length=255)
+    body = models.TextField()
+    slug = models.SlugField() # <==
+```

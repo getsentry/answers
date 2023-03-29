@@ -1,0 +1,128 @@
+---
+title: 'Convert char to int in C and C++'
+platforms: 
+  - sentry.cpp
+people: 
+  - Dean R.
+---
+
+## The Problem
+
+You have a variable of type `char` that actually represents an integer. For example; `char three = '3'`. You need to convert this `char` to an `int` so that you can use mathematical operations on it (for example, to be able to execute `three + 1` and get `4` as a result).
+
+## The Solution
+
+C and C++ store characters as integers using their underlying ASCII codes, so `'0'` is 48, `'1'` is 49, and so on. The easiest way to convert a single character to the integer it represents is to subtract the value of `'0'`. If we take `'3'` (ASCII code 51) and subtract `'0'` (ASCII code 48), we'll be left with the integer `3`, which is what we want.
+
+You can do this in C as follows:
+
+```c
+#include <stdio.h>
+
+int main() {
+    char three_char = '3';
+    int three_int = three_char - '0';
+    int result = three_int + 1;
+
+    printf("%c + 1 is %d\n", three_char, result);
+}
+```
+
+This will output:
+
+```
+3 + 1 is 4
+```
+
+Or, equivalently, in C++:
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    char three_char = '3';
+    int three_int = three_char - '0';
+    int result = three_int + 1;
+    cout << three_char << " + 1 is " << result << endl;
+    return 0;
+}
+```
+
+## Handling strings
+
+Because `char` is limited to a single character, this is only relevant for the numbers 0-9. If you have a number like "12" stored as a character array or string, you can use the `strtol` (string to long) function that is part of `stdlib` in C.
+
+In C:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    char twelve_str[] = "12";
+    char *output;
+    long result = strtol(twelve_str, &output, 10) + 1;
+    printf("%s + 1 is %ld\n", twelve_str, result);
+}
+```
+
+In C++:
+
+```c++
+#include <iostream>
+
+using namespace std;
+
+int main() {
+    char twelve_str[] = "12";
+    char *output;
+    long result = strtol(twelve_str, &output, 10) + 1;
+    printf("%s + 1 is %ld\n", twelve_str, result);
+}
+```
+
+The `strtol` function takes an output pointer as its second argument. In the example above, we don't need this, and we don't use our `output` variable, but in the case when you have an input string containing both numbers and other characters, the output variable will point to the first character after the parsed long.
+
+The function also takes the base as its third argument, so we use `10` in the example above to indicate that the long should be parsed in base 10.
+
+Note that this function will simply cast your variable to `0` in case of any problems. Therefore, the following code will print `"twelve + 1 is 1"`, as it cannot cast the array "twelve" to an integer, and therefore does the sum `0 + 1`.
+
+```c
+// BAD EXAMPLE
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    char twelve_str[] = "twelve";
+    char *output;
+    long result = strtol(twelve_str, &output, 10) + 1;
+    printf("%s + 1 is %ld\n", twelve_str, result);
+}
+```
+
+You can check for errors by looking at the value of the output variable. For example, if you're expecting your entire input variable to be parsed into the `long`, the following will print an error message if all or part of the input could not be parsed.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    char twelve_str[] = "twelve";
+    char *output;
+    long result = strtol(twelve_str, &output, 10) + 1;
+    if (*output) {
+        printf("Error occurred");
+    } else {
+        printf("%s + 1 is %ld\n", twelve_str, result);
+    }
+}
+```
+
+Also note that the following functions are deprecated and should not be used. They are shortcut functions to `strtol` above, which convert to long, integer, and float respectively, and do not require the output variable or the base to be specified (defaulting to base 10).
+
+* `atol`
+* `atoi`
+* `atof`
+

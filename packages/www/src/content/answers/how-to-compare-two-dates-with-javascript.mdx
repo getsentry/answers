@@ -1,0 +1,78 @@
+---
+title: 'How to compare two dates with JavaScript'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date:
+  2023-01-30T11:28:03+02:00
+---
+
+## The Problem
+
+You want to compare two dates with JavaScript. How can you do this?
+
+## The Solution
+
+To compare two dates, first make a [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) object for each date. The `Date` object is used to represent a single moment in time and has methods for formatting dates and doing time zone conversions.
+
+Next, you can compare the two `Date` objects using comparison operators (`>`, `<`, `=`, and `>=`):
+
+```javascript
+const date1 = new Date("December 15, 2022");
+const date2 = new Date("December 16, 2022");
+
+if (date1 < date2) {
+  console.log("date1 is earlier than date2");
+} else if (date1 > date2) {
+  console.log("date1 is later than date2");
+} else {
+  console.log("date1 and date2 are the same");
+}
+// date1 is earlier than date2
+```
+
+Comparing two `Date` objects does not work when you use equality operators (`==`, `!=`, `===`, or `!==`):
+
+```javascript
+const date1 = new Date("December 15, 2022");
+const date2 = new Date("December 15, 2022");
+if (date1 === date2) {
+  console.log("date1 and date2 are the same");
+} else {
+  console.log("date1 and date2 are not the same");
+}
+// date1 and date2 are not the same
+```
+
+Equality operators don't work when comparing two `Date` objects, because JavaScript objects are compared by reference, not value. Two `Date` variables are not considered to be the same unless they point to the same `Date` object in memory.
+
+When comparing `Date` objects, it's best to first convert the `Date` to a timestamp number or a date string to avoid any issues with equality operators. If the `Date` constructor is called without the `new` operator, it ignores all arguments and returns a string representing the current time. It's the same as calling `new Date().toString()`.
+
+Use the `toString()` method to return a string representation of the `Date` object showing the date and time in the user's time zone. The `toString()` method is a combination of [`toDateString()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toDateString) and [`toTimeString()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toTimeString):
+
+```javascript
+console.log(new Date().toString()); // Mon Dec 19 2022 09:51:24 GMT+0200 (South Africa Standard Time)
+```
+
+To get a numerical representation of the `Date`, you can call the `getTime()` or `valueOf` method. Both methods return the number of milliseconds since January 1, 1970, 00:00:00 UTC.
+
+You can also use other `Date` [instance methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#instance_methods) to convert `Date` objects into formatted strings or numbers for comparing. For example, you can get the year, month, week, day, hour, minutes, or seconds of a `Date`:
+
+```javascript
+const date = new Date("December 22, 2022, 13:42:33");
+const [year, month, week, day, hour, minutes, seconds] = [
+  date.getFullYear(),
+  date.getMonth(),
+  date.getDay(),
+  date.getDate(),
+  date.getHours(),
+  date.getMinutes(),
+  date.getSeconds(),
+];
+console.log(year, month, week, day, hour, minutes, seconds); // 2022 11 4 22 13 42 33
+```
+
+The `getMonth()` method returns the index of the month, which starts at 0. The `getDay()` method returns the index of the week, which starts at 0 on Sunday.
+
+For more complex comparisons, you can use a library such as [`date-fns`](https://date-fns.org/), which has multiple utility functions to help make comparisons easier.
