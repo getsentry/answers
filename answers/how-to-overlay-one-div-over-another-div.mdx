@@ -1,0 +1,51 @@
+---
+title: 'How do I overlay one div over another div?'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to overlay a `<div>` over another `<div>`. For example, you have two `<div>` elements in a container:
+
+```html
+<div class="container">
+  <div class="item item1">item 1</div>
+  <div class="item item2">item 2</div>
+</div>
+```
+
+You want the second item to be on top of the first item. How do you do this?
+
+## The Solution
+
+You can set the [`position`](https://developer.mozilla.org/en-US/docs/Web/CSS/position) of the `<div>` that you want to be the overlay to `absolute`. This removes the item 2 `<div>` from the normal document flow so that no space is created for item 2 in the page layout. Set the position of the container to `relative` so that you can position item 2 relative to the container. You can then position item 2 using the [`top`](https://developer.mozilla.org/en-US/docs/Web/CSS/top), [`right`](https://developer.mozilla.org/en-US/docs/Web/CSS/right), [`bottom`](https://developer.mozilla.org/en-US/docs/Web/CSS/bottom), and [`left`](https://developer.mozilla.org/en-US/docs/Web/CSS/left) CSS properties so that it is placed on top of item 1:
+
+```css
+.container {
+  position: relative;
+}
+
+.item {
+  width: 150px;
+  height: 150px;
+  border: 1px solid black;
+}
+
+.item1 {
+  background: blue;
+}
+
+.item2 {
+  top: 20px;
+  left: 40px;
+  position: absolute;
+  background: red;
+}
+```
+
+We moved item 2 20px from the top and 40px from the left of the container that item 2 is positioned relative to. This places item 2 on top of item 1. If you have multiple items, you can change the stacking order of items using the [`z-index`](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/Adding_z-index) property. A new [stacking context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context) is created by an element when the element has a `position` value of `relative` or `absolute` and the `z-index` value is not `auto`, which is the default value. The stacking order of elements is relative to their stacking context. Note that new stacking contexts can also be created by specific CSS properties such as `flex`, `grid`, `opacity`, `transform`, and `filter`, as described [here](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context#description).

@@ -1,0 +1,62 @@
+---
+title: 'Map function for objects (instead of arrays)'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have an object that you want to map over. Suppose you want to map over the following object and double each value:
+
+```js
+const myObject = { a: 2, b: 4, c: 6 };
+```
+
+With an array, you can use the [`map()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map) function to call a function on every element of an array to change the values and return a new array, leaving the original array unchanged. JavaScript does not have a map function for objects. How do you create one?
+
+## The Solution
+
+The two solutions described below involve converting an object's keys or keys and values into an array so that JavaScript array methods can be used to iterate through the values, which allows us to change them. The array is then converted back into an object.
+
+### The Object Map Function
+
+You can create an object map function that takes in the object that you want to map over and a map function. In the example code below, the map function that's passed into the `objectMap` function as an argument doubles the value of the input:
+
+```js
+function mapFn(value) {
+  return value * 2;
+}
+
+function objectMap(obj, fn) {
+  const newObject = {};
+  Object.keys(obj).forEach((key) => {
+    newObject[key] = fn(obj[key]);
+  });
+  return newObject;
+}
+
+console.log(objectMap(myObject, mapFn)); // { a: 4, b: 8, c: 12 }
+```
+
+The `objectMap` function first creates an empty object. An array of the keys of the passed-in object is created using the [`Object.keys()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys) method. This array is mapped over using the [`forEach()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach) array method. For each value, which is a key of the `obj` argument, we create a key-value pair for `newObject`. We pass the value into the map function argument, `fn`, to change the values as needed. We then return the `newObject` that's created.
+
+### The `Object.entries()` Method
+
+Alternatively, you can use the [`Object.entries()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries) method to convert the `obj` argument to a nested array where the first element of each nested array is an object key and the second element of each nested array is an object value. You can then use the array [`map()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map) function to change the value of each element using the map function argument. The [`Object.fromEntries()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries) method is then used to convert this array of key-value pairs into an object:
+
+```js
+function mapFn(value) {
+  return value * 2;
+}
+
+function objectMap(obj, fn) {
+  return Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => [key, fn(value)])
+  );
+}
+
+console.log(objectMap(myObject, mapFn)); // { a: 4, b: 8, c: 12 }
+```

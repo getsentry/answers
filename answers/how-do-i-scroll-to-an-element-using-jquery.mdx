@@ -1,0 +1,52 @@
+---
+title: 'How do I scroll to an element using jQuery?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to scroll to an element when a certain event occurs. A common use case is when you want to add a “scroll back to top” button to your website. How do you do this using jQuery?
+
+## The Solution
+
+Let's say that you have a button with an `id` of "scrollBtn" that you want to use to scroll to the header with an `id` of "header1" when the button is clicked. Using jQuery, you can get the button and header element, attach a "click" event listener to the button and then use the jQuery [`animate()`](https://api.jquery.com/animate/) method to scroll the page to the header when the button is clicked:
+
+```javascript
+import $ from 'jquery';
+
+const scrollToBtn = $('#scrollBtn');
+const scrollToEl = $('#header1');
+scrollToBtn.click(() => {
+  $('html').animate(
+    {
+      scrollTop: scrollToEl.offset().top,
+    },
+    800 //speed
+  );
+});
+```
+
+The `animate()` method takes in four arguments: `properties`, `duration`, `easing`, and `complete`. The `properties` argument is the only required argument. It's an object of CSS properties, as well as some non-CSS style properties such as [`scrollTop`](https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollTop) and [`scrollLeft`](https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollLeft), as well as custom properties, and their values that will be animated. The `animate()` method will change these properties and animate the transition. The `duration` argument is a string or number that determines how long the animation will run in milliseconds. The `easing` argument is a string that determines the easing function to use for the animation. The default easing is "swing", which has a slower transition at the start and end of the animation than in the middle of the animation. The other easing is "linear", which has a consistent transition speed. You can use other transitions using jQuery plugins such as [jQuery UI](https://api.jqueryui.com/easings/).
+
+The `scrollTop` property of the HTML element is used to set the number of pixels that the page is scrolled vertically. We call the jQuery [`offSet()`](https://api.jquery.com/offset/) method on the header to get its `top` property. This is the distance between the header and the top of the page. This is where we scroll to.
+
+You can also scroll to an element using vanilla JavaScript:
+
+```javascript
+const scrollToBtn = document.getElementById('scrollBtn');
+const scrollToEl = document.getElementById('header1');
+
+scrollToBtn.addEventListener('click', () => {
+  scrollToEl.scrollIntoView({
+    behavior: 'smooth',
+  });
+});
+```
+
+The easy-to-read [`scrollIntoView()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView) method is used to scroll to an element so that it's visible. It has an optional argument that can be a boolean or an object. The optional `alignTop` argument is a boolean. If set to `true`, the top of the element to scroll to will be aligned with the top of the visible area of the scrollable ancestor. This is the default value. If set to `false`, the bottom of the element to scroll to will be aligned to the bottom of the visible area of the scrollable ancestor.
+
+The optional `scrollIntoViewOptions` argument is an object with the following properties: `behavior`, `block`, and `inline`. The `behavior` property defines the transition animation. The value can be `auto` or `smooth`. The default value is `auto`.

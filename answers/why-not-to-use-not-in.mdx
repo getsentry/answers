@@ -1,0 +1,53 @@
+---
+title: "Problems When Using 'for-in' with Arrays"
+platforms:
+  - sentry.nodejs
+people:
+  - Evan Hicks
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+The `for-in` operator in Node and JS itself is a little misleading and can cause hard to debug issues if you don't understand the gotchas when using it. Certainly `for-in` should never be used when iterating over an Array. This is because `for-in` is not actually guaranteed to return the properties in the correct order. That can be an especially large problem when iterating over an Array.
+
+## The Solution
+
+Node/JS are blessed with lots of different solutions for this problem. The first is the `for-of` operator, which actually returns the values of the array itself and guaranteed to be in the correct order.
+
+```javascript
+const a = [1, 2, 3];
+for (let x of a) {
+  console.log(x);
+}
+// 1
+// 2
+// 3
+```
+
+There is also the [`Array.forEach`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach) method, and it's related helper functions like [`some`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some) and [`every`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every).
+
+```javascript
+a.forEach((x, idx) => {
+  console.log(idx, x);
+});
+```
+
+However, sometimes the simplest solution is best, using a basic for loop. This has some added utility, such as being a little easier to break out of, and allowing for functionality like looping in reverse. If you initialize your variables with `let` in the for loop itself, then there is the additional benefit of having those values closed within their particular run through the loop. That makes examples below possible, as each listener will be bound with the correct value.
+
+```javascript
+for (let i = 0; i < a.length; i++) {
+    someElement.addEventListener('click', e => {
+        console.log('i is', i);
+    })
+})
+```
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how Node.js application monitoring works, take a look at the following articles:
+
+- [Database Performance Monitoring in Node](https://blog.sentry.io/support-for-database-performance-monitoring-in-node)
+- [Debug your Node.js projects with source maps](https://blog.sentry.io/debug-node-source-maps)
+- [Getting started with the Node.js SDK (docs)](https://docs.sentry.io/platforms/node)

@@ -1,0 +1,113 @@
+---
+title: 'How do I vertically center text with CSS?'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to center text vertically using CSS, how do you do this?
+
+## The Solution
+
+Multiple methods can be used to center text vertically.
+
+### Using Flexbox
+
+Say you have a `<p>` tag element containing text in a container element:
+
+```html
+<div class="container">
+  <p>text</p>
+</div>
+```
+
+You can make the container a [`flexbox`](https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Flexbox) and center the text vertically using the [`align-items`](https://developer.mozilla.org/en-US/docs/Web/CSS/align-items) property:
+
+```css
+.container {
+  display: flex;
+  align-items: center;
+  width: 150px;
+  height: 150px;
+  border: 1px solid black;
+}
+```
+
+### Using Grid
+
+You can use CSS [grid](https://developer.mozilla.org/en-US/docs/Web/CSS/grid) to center text in a container in a similar way to using flexbox. The difference is that you set the `display` property to `grid`:
+
+```css
+.container {
+  display: grid;
+  align-items: center;
+  width: 150px;
+  height: 150px;
+  border: 1px solid black;
+}
+```
+
+### Using absolute positioning and CSS transforms
+
+You can set the [`position`](https://developer.mozilla.org/en-US/docs/Web/CSS/position) of the text element to `absolute` relative to the text container and then center the text vertically using the `top` and `transform`  CSS properties:
+
+```css
+* {
+  margin: 0;
+}
+
+.container {
+  width: 150px;
+  height: 150px;
+  border: 1px solid black;
+  position: relative;
+}
+
+.container p {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+```
+
+The margin of all elements is set to 0 to remove the default margin on elements such as the `<p>` tag, which affects centering text vertically using this method. We move the text element 50% from the top of the container element. This makes the top of the text vertically centered in the container. To make the middle of the text the vertical center, we use the [`translateY()`](https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function/translateY) CSS function of the [`transform`](https://developer.mozilla.org/en-US/docs/Web/CSS/transform) CSS property to move the text element up by 50% of its height.
+
+### Using vertical alignment
+
+To vertically align text in an inline, inline-block, or table-cell element, you can use the [`vertical-align`](https://developer.mozilla.org/en-US/docs/Web/CSS/vertical-align) property. An example of where this is useful is when you have a button with text and an icon that you want to vertically align:
+
+```html
+<button class="button">
+  <span class="icon">&#128190;</span>
+  <span class="button-text">Save</span>
+</button>
+```
+
+If the icon and text have a different size, you can vertically align them using the `vertical-align` property:
+
+```css
+.button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.icon {
+  vertical-align: middle;
+  font-size: 1.5rem;
+}
+
+.button-text {
+  vertical-align: middle;
+  margin-left: 0.3rem;
+}
+```
+
+### Other methods
+
+There are other methods that you can use such as setting the line height to the same height as the text container height or making the padding top and bottom equal if the text container height is fixed. These methods are not as flexible as the methods described above.

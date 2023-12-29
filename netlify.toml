@@ -1,3 +1,0 @@
-[build]
-  command = "./netlify_build.js"
-  environment = { NODE_VERSION = "16.15.0" }

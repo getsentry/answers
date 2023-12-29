@@ -1,0 +1,56 @@
+---
+title: 'HTML text input - allow only numeric input'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have an `input` element, you want to restrict the input to numeric input only. How do you do this?
+
+## The Solution
+
+You can set the `type` attribute of the `input` element to ["number"](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number). The `input` element will not allow non-numerical inputs to be added and it has built-in validation.
+
+An `input` with a type of "number" has extra attributes including `min`, `max`, and `step`. You can set the minimum and maximum values for the input using [`min`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number#min) and [`max`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number#max).
+
+You can restrict the input further by setting the [`step`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number#step) attribute, which determines how the value increases or decreases when a user clicks the browser-provided stepper arrows of the `input`:
+
+```html
+<input type="number" value="4.4" min="2.2" max="11" step="2.2" />
+```
+
+You can set a default value using the `value` attribute.
+
+You may notice that you can type the letter "e" into an `input` with a type of "number". This is because the number `input` can accept [floating-point numbers](https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#valid-floating-point-numbers).
+
+Note that you should only use an `input` with a type of "number" for incremental numbers. Don't use it for inputs for phone numbers or credit cards, for example. For phone numbers, you can use [`<input type="tel">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/tel):
+
+```html
+<input
+  type="tel"
+  id="phone"
+  name="phone"
+  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+  required
+/>
+```
+
+For other non-incremental number inputs, use an input type of "text" and use the [`inputmode`](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes#inputmode) attribute set to "numeric". The `inputmode` attribute indicates to the browser the type of virtual keyboard to use when editing the input on a mobile device. You can restrict text input to number characters using a regular expression in the [`pattern`](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/pattern) attribute. The below code shows a basic input for a credit card number:
+
+```html
+<input
+  type="text"
+  inputmode="numeric"
+  pattern="[0-9\s]{13,19}"
+  autocomplete="cc-number"
+  maxlength="19"
+  placeholder="xxxx xxxx xxxx xxxx"
+/>
+```
+
+For real-world use of credit card input, you'll need JavaScript for better validation. For example, checking if a credit card number is valid using [Luhn's algorithm](https://en.wikipedia.org/wiki/Luhn_algorithm) and using a regular expression to check that the pattern of the input matches the possible prefixes and lengths of the allowed credit cards. You can also use a JavaScript library such as [Credit Card Validator](https://github.com/braintree/card-validator) for validation.

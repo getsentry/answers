@@ -1,0 +1,37 @@
+---
+title: 'Convert a list to a string in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I convert a list to a string in Python?
+
+## The Solution
+
+We can do this using Python's [`str.join()`](https://docs.python.org/3/library/stdtypes.html#str.join) method. This method takes an iterable, such as a list, and returns a new string containing the iterable's elements, concatenated with the original string as a separator. Consider the following examples:
+
+```python
+fullname = " ".join(["John","Smith"])
+print(fullname)  # will output "John Smith"
+
+firstname = "".join(["J","o","h","n"])
+print(firstname)  # will output "John"
+
+fullname_alt = ", ".join(["Smith","John"])
+print(fullname_alt)  # will output "Smith, John"
+```
+
+If the list contains any non-string items, this method will raise a [TypeError](https://docs.python.org/3/library/exceptions.html#TypeError), so we may need to cast items to strings before using it. We can do this with a [list comprehension](https://docs.python.org/3/tutorial/datastructures.html?highlight=list%20comprehension#list-comprehensions):
+
+```python
+my_numbers = [13, 7, 42]
+my_string = " ".join([str(number) for number in my_numbers])
+
+print(my_string) # will output "13 7 42"
+```

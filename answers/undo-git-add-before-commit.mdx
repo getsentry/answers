@@ -1,0 +1,50 @@
+---
+title: 'Undo git add before commit'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+I've accidentally staged extra files in my Git repository. How do I undo a `git add` before running `git commit`?
+
+## The Solution
+
+To unstage files, use [`git reset`](https://git-scm.com/docs/git-reset). Without arguments, this will unstage all changes to all files. To unstage a specific file, provide its name as an argument (e.g. `git reset exclude.md`).
+
+For example, let's say we've staged changes for a couple of `.md` files in our repository, and we want to exclude one of them. First, we run [`git status`](https://git-scm.com/docs/git-status), and get the following output:
+
+```
+On branch dev
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+	new file:   exclude.md
+	new file:   include.md
+```
+
+Then we run `git reset exclude.md` to unstage `exclude.md`. Our `git status` output will now look like this:
+
+```
+On branch dev
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+	new file:   include.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	exclude.md
+```
+
+`exclude.md` has been unstaged and will no longer be in our next commit.
+
+As per the instructions in the `git status` output, we could also have used `git rm --cached exclude.md` to unstage the file.

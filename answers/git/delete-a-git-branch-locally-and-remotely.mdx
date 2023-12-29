@@ -1,0 +1,39 @@
+---
+title: 'Delete a Git branch locally and remotely'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I delete a Git branch locally and remotely?
+
+## The Solution
+
+First, ensure that the repository is not currently on the branch to be deleted:
+
+```sh
+git checkout main
+```
+
+To delete a local branch that has been fully merged, you can use `git branch -d`:
+
+```sh
+git branch -d branch-to-delete
+```
+
+To delete a local branch that has not been fully merged (i.e. force delete), you must use `git branch -D`:
+
+```sh
+git branch -D branch-to-delete
+```
+
+To delete a remote branch, use `git push --delete`. Assuming that the remote is named `origin`, you would use the command:
+
+```sh
+git push origin --delete branch-to-delete
+```

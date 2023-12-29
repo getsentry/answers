@@ -1,0 +1,16 @@
+---
+title: 'Comments in JSON'
+platforms:
+  - sentry.javascript.browser
+people:
+  - David Y.
+date: 2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+Can comments be used in JSON?
+
+## The Solution
+
+The short answer is no. The [JSON specification](https://www.json.org/json-en.html) does not include comments, and they cannot be used in JSON files (i.e. files with a `.json` extension). Comments were removed from the JSON specification to prevent developers from using them to specify parser directives, which complicated the data format.

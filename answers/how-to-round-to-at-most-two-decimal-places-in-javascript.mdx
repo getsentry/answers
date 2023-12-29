@@ -1,0 +1,49 @@
+---
+title: 'How to round to at most two decimal places in JavaScript'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to round a number to two decimal places, at most. How do you do this?
+
+## The Solution
+
+The [`Math.round()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round) method rounds a number to the nearest integer. You can use it along with some arithmetic to round a number to a specific number of decimal places. To round a number to two decimal places at most, multiply the number by 10 to the power of 2. This moves the decimal place to the position where you want rounding to occur. Then round the number to the nearest integer using `Math.round()` and divide the answer by 10 to the power of 2:
+
+```javascript
+const num = 1.151;
+console.log(Math.round(num * 10 ** 2) / 10 ** 2); // 1.15
+```
+
+You may occasionally get rounding errors using this method. For example, if you round `1.005` to two decimal places, you would expect to get an answer of `1.01`:
+
+```javascript
+const num = 1.005;
+console.log(Math.round(num * 10 ** 2) / 10 ** 2); // 1
+```
+
+However, the answer that you would get is `1`. This is because of floating point math and because a computer stores data in binary format. This causes the number `1.005` to be stored as `1.004999999888241291046142578125`, which causes the number to be rounded down to `1`.
+
+Note that there is a limit to the precision with which a number with decimals can be stored. The [ECMAScript standard](https://www.ecma-international.org/ecma-262/5.1/#sec-8.5) defines a set size limit for the JavaScript `Number` type.
+
+This rounding problem can be fixed using exponential notation:
+
+```javascript
+const num = 1.005;
+console.log(Number(`${Math.round(`${num}e2`)}e-2`)); // 1.01
+```
+
+If the number is already in exponential notation, you'll need to convert it to a `Number` first. You can do this using the [`toFixed()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toFixed) method:
+
+```javascript
+const num = (1.0449433327097e5).toFixed(20);
+```
+
+The popular [Lodash utility library](https://lodash.com/) uses this exponential notation trick for its [`createRound()`](https://github.com/lodash/lodash/blob/2da024c3b4f9947a48517639de7560457cd4ec6c/.internal/createRound.js#L8) function.
+
+If you are rounding negative numbers, be careful to note that `-0.5` rounds to `-0` and not `-1`. If the fractional portion of a number is exactly `0.5`, `Math.round` rounds the number to the next integer in the direction of +∞ (positive infinity).

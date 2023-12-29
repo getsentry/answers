@@ -1,0 +1,45 @@
+---
+title: 'Select multiple columns in Python Pandas'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I select multiple columns from an existing DataFrame and create a new DataFrame with them?
+
+## The Solution
+
+We can do this by creating a list of the column names we want and passing them to the [DataFrame constructor method](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html), along with the original DataFrame. The code below shows an example:
+
+```python
+import pandas
+
+# Our main DataFrame
+main = pandas.DataFrame([["apple", 1, 2], ["orange", 3, 4], ["pear", 5, 6]],
+                        columns=["product", "cost_price", "sale_price"])
+print(main)
+print("\n")
+
+# Our smaller DataFrame
+subset = pandas.DataFrame(main, columns=["product", "sale_price"])
+print(subset)
+```
+
+This code will produce the following output:
+
+```
+  product  cost_price  sale_price
+0   apple           1           2
+1  orange           3           4
+2    pear           5           6
+
+  product  sale_price
+0   apple           2
+1  orange           4
+2    pear           6
+```

@@ -1,0 +1,43 @@
+---
+title: 'Delete a file from a Git repository'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I delete a file from a Git repository?
+
+## The Solution
+
+We can do this using [`git rm`](https://git-scm.com/docs/git-rm):
+
+```bash
+git rm unwanted-file.txt
+```
+
+This command will delete the file and stage its deletion to be included in the next commit. If we want to remove a directory, we must include the `-r` (recursive) flag, as with the standard `rm` command.
+
+If we want only to stage the file's deletion without also deleting it from our local filesystem, we can use the [`--cached`](https://git-scm.com/docs/git-rm#Documentation/git-rm.txt---cached) flag:
+
+```bash
+git rm --cached unwanted-file.txt
+```
+
+Note that any files removed this way will still be visible in previous commits. If the file we want to remove contains sensitive content, we will need either to create a new Git repository with a fresh history or to rewrite the history of our current repository using [`git filter-branch`](https://git-scm.com/docs/git-filter-branch):
+
+```bash
+git filter-repo -f --index-filter 'git rm --cached --ignore-unmatch unwanted-file.txt'
+```
+
+Note that rewriting the commit history in this way is dangerous and will permanently alter your repository. Additionally, `git filter-branch` is a slow operation, especially for large repositories with many commits. Double-check that the name of the file to be removed is correct before running this command.
+
+After our commit history has been rewritten, we will need to force push the changes to remote repositories using a command such as the following:
+
+```bash
+git push --force -u origin main
+```

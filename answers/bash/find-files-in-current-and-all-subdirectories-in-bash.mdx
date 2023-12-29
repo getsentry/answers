@@ -1,0 +1,23 @@
+---
+title: 'Find files in current and all subdirectories in Bash'
+platforms: 
+  - sentry.bash
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I recursively find all files in current folders and subfolders based on wildcard matching using Bash?
+
+## The Solution
+
+We can accomplish this using the [`find`](https://en.wikipedia.org/wiki/Find_(Unix)) command:
+
+```bash
+find . -type f -name "A*"
+```
+
+In the above command, `.` specifies the current directory, `-type f` match files only, and `-name` specifies the filename to search for. This command will recursively search the current directory and its subdirectories for all files that have names starting with "A". Note that this will be a case-sensitive search. To perform a case-insensitive search, use `-iname` instead.

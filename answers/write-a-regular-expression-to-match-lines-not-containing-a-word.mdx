@@ -1,0 +1,47 @@
+---
+title: 'Write a regular expression to match lines not containing a word'
+platforms: 
+  - sentry.linux
+people: 
+  - David Y.
+date: 
+  2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I write a regular expression to match lines not containing a specific word?
+
+## The Solution
+
+You can do this using a [negative lookahead assertion](https://www.regular-expressions.info/lookaround.html). The [PCRE](https://www.pcre.org/) regular expression below will match any line that does not contain the word "word":
+
+```
+/^((?!word).)*$/gm
+```
+
+Here's what it does:
+
+* `/`: Start regular expression.
+* `^`: Match the beginning of a line.
+* `(`: Start [capture group](https://www.regular-expressions.info/brackets.html) 1.
+* `(?!word)`: Negative lookahead assertion. If "word" is found, discard the current match, otherwise continue evaluating the expression.
+* `.`: Match any character.
+* `)`: End capture group 1.
+* `*`: Match 0 or more of capture group 1.
+* `$`: Match the end of the line.
+* `/`: End regular expression
+* `g`: Global flag. Find all matches in the string, not just the first one.
+* `m`: Multiline flag. Use `^` and `$` to match the start and end of a line, rather than the start and end of the whole string.
+
+Notably, this expression will not match empty lines. If this behavior is desired, we can add the `s` (dotall) flag, which will make `.` match all characters including newlines:
+
+```
+/^((?!word).)*$/gms
+```
+
+If the `s` flag is not supported by your regex implementation, you can replace `.` with `[\s\S]` (`\s` matches whitespace characters, and `\S` matches everything except whitespace characters).
+
+```
+/^((?!word)[\s\S])*$/gm
+```

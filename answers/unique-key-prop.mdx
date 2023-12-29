@@ -1,0 +1,53 @@
+---
+title: "Warning: Each Child in a List Should Have a Unique 'key' Prop"
+description: 'When creating a list in the UI from an array with JSX, you should add a key prop to each child and to any of its children.'
+excerpt: 'Learn what causes"Warning: Each child in a list should have a unique ''key'' prop."'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Nisanthan Nanthakumar
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+```
+Warning: Each child in a list should have a unique "key" prop
+```
+
+```html
+<ul>
+  {["Item1", "Item2", "Item3"].map(item =>
+  <li>{item}</li>
+  )}
+</ul>
+```
+
+## The Solution
+
+When creating a list in the UI from an array with JSX, you should add a `key` prop to each child and to any of its' children.
+
+Ex: `<li key="uniqueId1" >Item1</li>`
+
+React uses the `key` prop create a relationship between the component and the DOM element. The library uses this relationship to determine whether or not the component should be re-rendered.
+
+It is not recommended to use the index of the array as the `key` prop if you know the array will not be static. If the `key` is an index, reordering an item in the array changes it. Then React will get confused and re-render the incorrect element.
+
+Keys do not have to be unique globally. They just need to be unique across sibling elements.
+
+```html
+<ul>
+  {["Item1", "Item2", "Item3"].map(item =>
+  <li key="{item}">{item}</li>
+  )}
+</ul>
+```
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how JavaScript application monitoring works, take a look at the following articles:
+
+- [Capture and report JavaScript errors with window.onerror](https://blog.sentry.io/client-javascript-reporting-window-onerror)
+- [4 reasons why your source maps are broken](https://blog.sentry.io/4-reasons-why-your-source-maps-are-broken)
+- [Getting started with a JavaScript SDK (docs)](https://docs.sentry.io/platforms/javascript)

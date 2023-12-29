@@ -1,0 +1,26 @@
+---
+title: 'Limit floats to two decimal points in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I round a floating point number to two decimal places?
+
+## The Solution
+
+We can do this using Python's [`round()`](https://docs.python.org/3/library/functions.html#round) function, which rounds a given number to a specified number of decimal places. For example:
+
+```python
+my_number = 9.489999999999
+rounded = round(my_number, 2)
+
+print(rounded) # will output "9.49"
+```
+
+Due to the [limitations of floating point arithmetic](https://docs.python.org/3/tutorial/floatingpoint.html#tut-fp-issues), the `round()` may sometimes produce unexpected results. If this is undesirable, consider using the [`decimal`](https://docs.python.org/3/library/decimal.html) module as a replacement for floating point numbers.

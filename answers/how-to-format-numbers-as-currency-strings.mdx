@@ -1,0 +1,58 @@
+---
+title: 'How to format numbers as currency strings'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to format a number as a currency string to display to a user. How do you do this?
+
+## The Solution
+
+You can create an [`Intl.NumberFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) object to format a number as a currency string. To create the object, call the `Intl.NumberFormat()` constructor. This object allows for language-sensitive number formatting.
+
+The `Intl.NumberFormat()` constructor has two optional arguments: `locales` and `options`. The `locales` argument is a language tag string or an array of language tag strings. If you don't pass in a `locales` string, the browser detects the preferred language of the user. The `options` object has multiple properties that can be set. For creating a currency string, set the formatting `style` property to "currency" and set the `currency` property to the ISO 4217 currency code for the currency. You can find a list of the currency codes [here](https://www.six-group.com/en/products-services/financial-information/data-standards.html#scrollTo=currency-codes).
+
+Here's an example of how to format a number as a currency string:
+
+```javascript
+const { format } = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
+
+console.log(format(101.04)); // $101.04
+console.log(format(99.99)); // $99.99
+```
+
+You can also set the [`currencyDisplay`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#currencydisplay) property of the `options` object to change how the currency is displayed. The default value is "symbol" but if you change it to "name", the localized currency name is displayed. You can also control the number of decimal places by using the [`maximumFractionDigits`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#maximumfractiondigits) property:
+
+```javascript
+const { format } = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 1,
+  currencyDisplay: 'name',
+});
+
+console.log(format(101.04)); // 101.0 US dollars
+console.log(format(99.99)); // 100.0 US dollars
+```
+
+If you need to round the fractional digits of the currency to the nearest fractional increment, for example 0.1, you can use the [`roundingIncrement`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#using_roundingincrement) property:
+
+```javascript
+const { format } = new Intl.NumberFormat('en-Za', {
+  style: 'currency',
+  currency: 'ZAR',
+  maximumFractionDigits: 2,
+  roundingIncrement: 10,
+});
+
+console.log(format(84.34)); // R 84,30
+console.log(format(22.35)); // R 22,40
+```

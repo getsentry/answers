@@ -1,0 +1,69 @@
+---
+title: 'Concatenate two lists in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I concatenate two lists in Python? In other words, how can I join two or more lists together to make one big list?
+
+## The Solution
+
+We can do this using Python's built-in operator overloading. When used with lists, the `+` operator will concatenate them, as shown below:
+
+```python
+list1 = ["Apples", "Oranges", "Bananas"]
+list2 = ["Pears", "Grapes", "Pineapples"]
+
+combined = list1 + list2
+print(combined)
+
+# output: ['Apples', 'Oranges', 'Bananas', 'Pears', 'Grapes', 'Pineapples']
+```
+
+Alternatively, we can use `list.extend()`, which will modify the first list:
+
+```python
+list1 = ["Apples", "Oranges", "Bananas"]
+list2 = ["Pears", "Grapes", "Pineapples"]
+
+list1.extend(list2)
+print(list1)
+
+# output: ['Apples', 'Oranges', 'Bananas', 'Pears', 'Grapes', 'Pineapples']
+```
+
+To concatenate three or more lists, we can also use the `+` operator:
+
+```python
+list1 = ["Apples", "Oranges", "Bananas"]
+list2 = ["Pears", "Grapes", "Pineapples"]
+list3 = ["Tangerines", "Apricots"]
+list4 = ["Pomegranates", "Watermelons", "Raspberries"]
+
+combined = list1 + list2 + list3 + list4
+print(combined)
+
+# output: ['Apples', 'Oranges', 'Bananas', 'Pears', 'Grapes', 'Pineapples', 'Tangerines', 'Apricots', 'Pomegranates', 'Watermelons', 'Raspberries']
+```
+
+However, when combining more than two lists, [`itertools.chain()`](https://docs.python.org/3/library/itertools.html#itertools.chain) is more performant. Note that this method outputs an `itertools.chain` object, which must be typecast to a list, as shown below:
+
+```python
+from itertools import chain
+
+list1 = ["Apples", "Oranges", "Bananas"]
+list2 = ["Pears", "Grapes", "Pineapples"]
+list3 = ["Tangerines", "Apricots"]
+list4 = ["Pomegranates", "Watermelons", "Raspberries"]
+
+combined = list(chain(list1, list2, list3, list4))
+print(combined)
+
+# output: ['Apples', 'Oranges', 'Bananas', 'Pears', 'Grapes', 'Pineapples', 'Tangerines', 'Apricots', 'Pomegranates', 'Watermelons', 'Raspberries']
+```

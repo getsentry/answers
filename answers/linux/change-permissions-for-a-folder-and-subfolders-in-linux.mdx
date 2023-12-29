@@ -1,0 +1,28 @@
+---
+title: 'Change permissions for a folder and subfolders in Linux'
+platforms: 
+  - sentry.linux
+people: 
+  - David Y.
+date: 
+  2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+In Linux, how do I change the permissions on a folder, its subfolders, and its files?
+
+## The Solution
+
+You can do this using the [`chmod`](https://en.wikipedia.org/wiki/Chmod) `-R` or `--recursive` flag, which will apply the operation to all files and subdirectories. For example, to allow all users to read files and enter (i.e. execute) subdirectories in `myfolder`, we could use the following command:
+
+```bash
+chmod -R a+rX myfolder
+```
+
+* `a`: all users.
+* `+`: add the following permissions.
+* `r`: read permission.
+* `X`: execute permission, but only for directories.
+
+To learn more about `chmod`, open its [manual page](https://en.wikipedia.org/wiki/Man_page) by entering `man chmod`.

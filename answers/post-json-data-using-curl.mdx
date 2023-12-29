@@ -1,0 +1,36 @@
+---
+title: 'POST JSON data using cURL'
+platforms: 
+  - sentry.bash
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I send a POST request containing JSON data using [cURL](https://curl.se/)?
+
+I have tried the following request:
+
+```sh
+curl -X POST \
+  -d '{"user_id": 1, "verified": true}' \
+  https://example.com/api/method
+```
+
+However, this returns an HTTP [`415 Unsupported Media Type`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/415) error.
+
+## The Solution
+
+Most web endpoints that accept JSON data will expect to receive requests with the `Content-Type: application/json` header. By default, cURL adds the header `Content-Type: application/x-www-form-urlencoded` when data is provided with a request. Therefore, we need to manually specify this header in our cURL request using the `-H/--header` flag:
+
+```sh
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"user_id": 1, "verified": true}' \
+  https://example.com/api/method
+```
+
+More information about cURL can be found by perusing its manual page, which is accessible on [the cURL website](https://curl.se/docs/manpage.html) or through the command `man curl`.

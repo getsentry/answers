@@ -1,0 +1,28 @@
+---
+title: 'Which href value should I use for empty JavaScript links, "#" or "javascript:void(0)"?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to create an empty link. Which `href` value should you use: `""`, `"#"`, or `"javascript:void(0)"`?
+
+## The Solution
+
+Links are used to take a user to a new location, like a new web page or a different section of the current page. You should avoid using empty links, but you may want to use an empty link during development so that you can see what the link will look like but you don't yet know what the `href` value will be.
+
+It's best to avoid `javascript:` URLs, as these can expose your website to cross-site scripting (XSS) attacks. Inline code like `javascript:` URLS may be blocked by your [content security policy(csp)](https://web.dev/csp/) to reduce XSS vulnerabilities, so while the `"javascript:void(0)"` URL is not vulnerable to XSS attacks, a dynamic `href` value that can use a `javascript:` URL will be vulnerable.
+
+If you use a link in a React app that has an `href` value of `"javascript:void(0)"`, you'll get the following warning in your browser dev tools:
+
+```
+Warning: A future version of React will block javascript: URLs as a security precaution. Use event handlers instead if you can. If you need to generate unsafe HTML try using dangerouslySetInnerHTML instead. React was passed "javascript:void(0)".
+```
+
+React gives a warning for all `javascript:` URLs used as a [security precaution](https://github.com/facebook/react/issues/16382).
+
+Setting the `href` value of the link to `""` or `"#"` is a better alternative. An `href` value of `""` will refresh the current page; an `href` value of `"#"` will navigate to the top of the page and `"#"` will be added to the URL.

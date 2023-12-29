@@ -1,0 +1,46 @@
+---
+title: 'Extract a substring from a string in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I extract a substring from a string in Python?
+
+## The Solution
+
+We can extract a substring from a string using Python's slice notation. The syntax is as follows:
+
+```python
+substring = my_string[start:end]
+```
+
+The variable `substring` will include all characters in the string, starting at the `start` index up to but not including the `end` index. Strings in Python are 0-indexed, so we must count characters from 0 to the length of the string minus 1. We can omit the `start` value to begin at index 0 or the `end` value to continue until the end of the string.
+
+Consider the following examples:
+
+```python
+my_string = "Hello world!"
+
+substring = my_string[1:5]  # will be "ello"
+substring = my_string[:5]  # will be "Hello"
+substring = my_string[6:]  # will be "world!"
+```
+
+We can also use regular expressions to extract a substring using the `re` module in Python. You can use the `re.search()` function to search the string for a specific pattern. The method returns a match object if a match is found. You can then use the `.group()` method on the match object to extract the matching substring. For example, to extract the price from a string:
+
+```python
+import re
+
+string = "The price is $20.45"
+match = re.search(r'\d+(\.\d{1,2})?', string)
+substring = match.group()
+print(substring) # will output 20.45
+```
+
+The regular expression pattern `\d+(\.\d{1,2})?` will match one or more digits followed by an optional decimal point and one or two digits, which corresponds to the price in the string. The `match.group()` method will return the matching substring.

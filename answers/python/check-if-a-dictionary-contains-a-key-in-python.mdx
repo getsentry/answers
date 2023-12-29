@@ -1,0 +1,27 @@
+---
+title: 'Check if a dictionary contains a key in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I check whether a Python dictionary contains a given key?
+
+## The Solution
+
+You can do this using Python's `in` operator. When used with a dictionary, this will check its keys. For example:
+
+```python
+prices = { "Apples": 1, "Oranges": 2 }
+
+if "Oranges" in prices:
+    print('prices dictionary contains key "Oranges"')
+
+if "Pineapples" not in prices:
+    print('prices dictionary does not contain key "Pineapples"')
+```

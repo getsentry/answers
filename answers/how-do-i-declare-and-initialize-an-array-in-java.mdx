@@ -1,0 +1,198 @@
+---
+title: 'How do I declare and initialize an array in Java?'
+platforms: 
+  - sentry.java
+people: 
+  - Gareth D.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+
+## The Problem
+
+How do I declare and initialize an array in Java?
+
+## The Solution
+
+The easiest way to declare and initialize an array of a primitive type such as `int` in Java is by using the following syntax.
+
+```java
+int[] myArray = new int[]{1, 2, 3};
+```
+
+This does a few things at once.
+
+* The `int[] myArray` says that we want to declare a new variable called `myArray` that has the type of an array of integers.
+* `new int[]` says we want to immediately allocate memory to store data in this array.
+* `{1,2,3}` is the data we want to store in the array. Java will count the elements in our initial array and automatically initialize the array with enough memory for three `int`s.
+
+Here's a runnable example:
+
+```java
+class Main {
+
+    public static void main(String[] args) {
+
+        // declare the variable and allocate memory
+        int[] myArray = new int[]{1, 2, 3};
+        for (int i = 0; i < 3; i++) {
+            System.out.println(myArray[i]);
+        }
+    }
+}
+```
+
+Which will print out:
+
+```
+1
+2
+3
+```
+
+If you don't want to hard code the data immediately when you initialize the array, you can instead create an empty array (with all values initialized to zero) as follows.
+
+```java
+int[] myArray = new int[3];
+```
+
+Here, you have to explicitly give the size of the array. In our example, we've created an array that can store 3 `int`s, all of which are zero.
+
+Here's a runnable example of dynamically setting the values in an array.
+
+
+```java
+class Main {
+
+    public static void main(String[] args) {
+
+        // declare the variable and allocate memory
+        int[] myArray = new int[3];
+        myArray[1] = 100;
+        for (int i = 0; i < 3; i++) {
+            System.out.println(myArray[i]);
+        }
+    }
+}
+```
+
+Which will print:
+
+```
+0
+100
+0
+```
+
+### Other Types of Arrays
+
+You can use the same syntax to create arrays to store other objects. In the example below, we use `Integer` instead of `int`, which is very similar to the above code but initializes the default values to `null` instead of `0`.
+
+```java
+class Main {
+
+    public static void main(String[] args) {
+
+        // declare the variable and allocate memory
+        Integer[] myArray = new Integer[3];
+        myArray[1] = 100;
+        for (int i = 0; i < 3; i++) {
+            System.out.println(myArray[i]);
+        }
+    }
+}
+```
+
+The code prints:
+
+```
+null
+100
+null
+```
+
+## Initialize a two-dimensional (2D) array in Java
+
+You can create a 2D array in Java by adding a second set of square brackets, for example:
+
+```java
+int[][] myArray = new int[4][2];
+```
+
+This will create an array with four rows and two columns. Here's a runnable example:
+
+```java
+class Main {
+
+    public static void main(String[] args) {
+
+        // declare the variable and allocate memory
+        int[][] myArray = new int[4][2];
+        myArray[2][1] = 1;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 2; j++) {
+                System.out.print(myArray[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+}
+```
+
+This prints the following (we set the value of the third row and second column to 1, and the rest of the values all have the default 0).
+
+```
+0 0
+0 0
+0 1
+0 0
+```
+
+## Initialize a Multidimensional Array in Java
+
+You can initialize more dimensions by adding more square brackets, for example:
+
+```java
+int[][][] myArray = new int[4][2][3];
+```
+
+Arrays with three or more dimensions are harder to visualize, but here's a runnable example that prints it out as four sets of 2-by-3 arrays.
+
+```java
+class Main {
+
+    public static void main(String[] args) {
+
+        // declare the variable and allocate memory
+        int[][][] myArray = new int[4][2][3];
+        myArray[2][1][2] = 1;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 2; j++) {
+                for (int k = 0; k < 3; k++) {
+                    System.out.print(myArray[i][j][k] + " ");
+                }
+                System.out.println();
+            }
+            System.out.println("____");
+        }
+    }
+}
+```
+
+This will print:
+
+```
+0 0 0
+0 0 0
+____
+0 0 0
+0 0 0
+____
+0 0 0
+0 0 1
+____
+0 0 0
+0 0 0
+____
+```

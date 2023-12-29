@@ -1,0 +1,33 @@
+---
+title: 'Convert a string containing a date into datetime in Python'
+platforms:
+  - sentry.python
+people:
+  - David Y.
+date: 2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I convert a string containing a date to a `datetime` object in Python? The format looks like this:
+
+```
+Feb 2 2020  2:05PM
+```
+
+## The Solution
+
+The `datetime` object includes a method called [`strptime()`](https://docs.python.org/3/library/datetime.html#datetime.datetime.strptime), which parses strings according to a provided format and returns a matching timezone-naive `datetime` object. A format is a string assembled from [format codes](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes).
+
+To convert the string in our problem, our code might look like this:
+
+```python
+from datetime import datetime
+
+my_datetime_string = 'Feb 2 2020  2:05PM'
+datetime_format = '%b %d %Y %I:%M%p'
+
+my_datetime = datetime.strptime(my_datetime_string, datetime_format)
+
+print(my_datetime) # will produce "2020-02-02 14:05:00"
+```

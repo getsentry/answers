@@ -1,0 +1,62 @@
+---
+title: "Set the select option 'selected' by value using jQuery"
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have a `<select>` element with options that you want to select using jQuery. For example, you may have a button that you want to use to select a specific option:
+
+```html
+<select id="select1">
+  <option value="milk">milk</option>
+  <option value="sugar">sugar</option>
+  <option value="eggs">eggs</option>
+</select>
+<button id="btnSugar">Select sugar</button>
+```
+
+How do you do this?
+
+## The Solution
+
+Using jQuery, you can get the `select` and `button` elements, and then use the jQuery [`.val()`](https://api.jquery.com/val/) method to set the value of the `select` element:
+
+```javascript
+import $ from 'jquery';
+
+const selectEl = $('#select1');
+const btnSugar = $('#btnSugar');
+
+selectEl.on('change', () => {
+  console.log('changed');
+});
+
+btnSugar.on('click', () => {
+  selectEl.val('sugar').change();
+});
+```
+
+When a `select` element's value changes because a user selected a different value from the menu of options, a "change" event occurs on the `select` element. Changing the select's value using the jQuery `.val()` method does not trigger this "change" event. If you need to trigger the "change" event, you can trigger it manually using the jQuery [`.change()`](https://api.jquery.com/change/#change-handler) method.
+
+You can also set the value of a `select` element using vanilla JavaScript:
+
+```javascript
+const selectEl = document.getElementById('select1');
+const btnSugar = document.getElementById('btnSugar');
+
+selectEl.addEventListener('change', () => {
+  console.log('changed');
+});
+
+btnSugar.addEventListener('click', () => {
+  selectEl.value = 'sugar';
+  selectEl.dispatchEvent(new Event('change'));
+});
+```
+
+Setting a `select` element's value using its [`value`](https://developer.mozilla.org/en-US/docs/Web/APIAttr/value) property does not trigger the "change" event on the `select` element, like the jQuery `.val()` method. To manually call the "change" event using vanilla JavaScript, you can use the [`dispatchEvent()`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent) method to send a "change" [`Event`](https://developer.mozilla.org/en-US/docs/Web/API/Event) object to the `select` element.

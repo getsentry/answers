@@ -1,0 +1,36 @@
+---
+title: 'How to disable text selection highlighting (css)'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to disable text selection for some text. How do you do this using CSS?
+
+## The Solution
+
+You may have a `p` tag containing text that you want to make unselectable.
+
+```html
+<p class="unselectable">
+  Unselectable text.
+</p>
+```
+
+You can add a CSS class to it and use the [`user-select`](https://developer.mozilla.org/en-US/docs/Web/CSS/user-select) CSS property to disable text selection by setting its value to "none":
+
+```css
+.unselectable {
+  -webkit-user-select: none; /* Safari */
+  user-select: none;
+}
+```
+
+The `user-select` property requires a vendor prefix for the Safari browser.
+
+You can also set the value to "all" so that all of the text is selected when a user clicks on the text. The browser compatibility of `user-select` can be seen in [this table](https://developer.mozilla.org/en-US/docs/Web/CSS/user-select#browser_compatibility).

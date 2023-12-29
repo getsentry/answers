@@ -1,0 +1,45 @@
+---
+title: 'How do I auto-resize an image to fit a "div" container?'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have a `<div>` container with its own width and height. For example, your HTML might look like this:
+
+```html
+<div class="container">
+  <img src="cat.jpg" alt="a cat">
+</div>
+```
+
+How do you make the image fill its container?
+
+## The Solution
+
+First, we make the image fill its container by setting its width and height to 100%:
+
+```css
+.container img {
+  height: 100%;
+  width: 100%;
+}
+```
+
+This makes the image fit, but it will distort the image if the image and container don't have the same aspect ratio. To fix this, we can use the [`object-fit`](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit) CSS property on the `<img>` element to determine how the image should be resized to fill its container.
+The `object-fit` property can be set with one of five values; the two commonly used values when you want to retain an image's aspect ratio are "contain" and "cover".
+
+```css
+.container img {
+  object-fit: contain;
+/* or
+  object-fit: cover; */
+} 
+```
+
+If you set the value to "contain", the image will fill the width and height of the container and maintain its aspect ratio. If the image and container have different aspect ratios, some background of the container `<div>` will be visible. If you set the value to "cover",  the image will maintain its aspect ratio and cover the container completely, cropping the image as needed.

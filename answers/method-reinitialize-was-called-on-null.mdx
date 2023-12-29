@@ -1,0 +1,90 @@
+---
+title: 'NoSuchMethodError: The Method was Called on null — Flutter'
+description: 'How to fix the Flutter Android Gradle tool issue: NoSuchMethodError: The method ‘reinitialize’ was called on null.'
+excerpt: 'Learn what causes "Flutter Android Gradle tool issue: NoSuchMethodError: The method ''reinitialize'' was called on null."'
+platforms:
+  - sentry.flutter
+people:
+  - Bruno Garcia
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+Flutter Android Gradle tool issue: NoSuchMethodError: The method 'reinitialize' was called on null
+
+```flutter
+NoSuchMethodError: The method 'reinitialize' was called on null.
+Receiver: null
+Tried calling: reinitialize()
+#0      Object.noSuchMethod (dart:core-patch/object_patch.dart:53:5)
+#1      _AndroidBuilderImpl.buildAab (package:flutter_tools/src/android/android_builder.dart:125:18)
+<asynchronous suspension>
+#2      BuildAppBundleCommand.runCommand (package:flutter_tools/src/commands/build_appbundle.dart:77:26)
+#3      FlutterCommand.verifyThenRunCommand (package:flutter_tools/src/runner/flutter_command.dart:615:18)
+<asynchronous suspension>
+#4      FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:515:33)
+<asynchronous suspension>
+#5      AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:146:29)
+#6      _rootRun (dart:async/zone.dart:1126:13)
+#7      _CustomZone.run (dart:async/zone.dart:1023:19)
+#8      _runZoned (dart:async/zone.dart:1518:10)
+#9      runZoned (dart:async/zone.dart:1465:12)
+#10     AppContext.run (package:flutter_tools/src/base/context.dart:145:18)
+#11     FlutterCommand.run (package:flutter_tools/src/runner/flutter_command.dart:505:20)
+#12     CommandRunner.runCommand (package:args/command_runner.dart:197:27)
+#13     FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:413:21)
+<asynchronous suspension>
+#14     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:146:29)
+#15     _rootRun (dart:async/zone.dart:1126:13)
+#16     _CustomZone.run (dart:async/zone.dart:1023:19)
+#17     _runZoned (dart:async/zone.dart:1518:10)
+#18     runZoned (dart:async/zone.dart:1465:12)
+#19     AppContext.run (package:flutter_tools/src/base/context.dart:145:18)
+#20     FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:364:19)
+#21     CommandRunner.run.<anonymous closure> (package:args/command_runner.dart:112:25)
+#22     new Future.sync (dart:async/future.dart:224:31)
+#23     CommandRunner.run (package:args/command_runner.dart:112:14)
+#24     FlutterCommandRunner.run (package:flutter_tools/src/runner/flutter_command_runner.dart:250:18)
+#25     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:63:22)
+#26     _rootRun (dart:async/zone.dart:1126:13)
+#27     _CustomZone.run (dart:async/zone.dart:1023:19)
+#28     _runZoned (dart:async/zone.dart:1518:10)
+#29     runZoned (dart:async/zone.dart:1502:12)
+#30     run.<anonymous closure> (package:flutter_tools/runner.dart:61:18)
+<asynchronous suspension>
+#31     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:146:29)
+#32     _rootRun (dart:async/zone.dart:1126:13)
+#33     _CustomZone.run (dart:async/zone.dart:1023:19)
+#34     _runZoned (dart:async/zone.dart:1518:10)
+#35     runZoned (dart:async/zone.dart:1465:12)
+#36     AppContext.run (package:flutter_tools/src/base/context.dart:145:18)
+#37     runInContext (package:flutter_tools/src/context_runner.dart:64:24)
+#38     run (package:flutter_tools/runner.dart:50:10)
+#39     main (package:flutter_tools/executable.dart:65:9)
+#40     main (file:///Users/travis/build/bruno-garcia/crashy/flutter/packages/flutter_tools/bin/flutter_tools.dart:8:3)
+#41     _startIsolate.<anonymous closure> (dart:isolate-patch/isolate_patch.dart:305:32)
+#42     _RawReceivePortImpl._handleMessage (dart:isolate-patch/isolate_patch.dart:174:12)
+```
+
+## The Solution
+
+Make sure the Android tools of the correct version in available. For example:
+
+```flutter
+android {
+    compileSdkVersion 29
+    buildToolsVersion '29.0.0'
+}
+```
+
+In this case, make sure you've install Android Build Tools 29.0.0, otherwise Flutter will fail with the error above.
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how Flutter application monitoring works, take a look at the following articles:
+
+- [Native support for our Android SDK](https://blog.sentry.io/adding-native-support-to-our-android-sdk)
+- [How slow is slow?](https://blog.sentry.io/how-slow-is-slow)
+- [Get started with the Flutter SDK](https://docs.sentry.io/platforms/flutter)

@@ -1,0 +1,66 @@
+---
+title: 'Does Python Have a Ternary Conditional Operator?'
+platforms:
+  - sentry.python
+people:
+  - James W.
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+You know that some programming languages make use of a ternary operator to shorten if-else code blocks, but does Python support this kind of syntax? If so, what is the structure of a Python ternary operator?
+
+## The Solution
+
+The ternary operator is used to shorten the code needed to write if-else blocks.
+
+The syntax of ternary operators naturally differs between languages, but in most cases, the operator handles three arguments: the comparison, the result if true, and the result if false.
+
+A normal if-else block takes at least four lines of code. For example, 
+
+```python
+if x > y:
+  z = x
+else:
+  z = y
+```
+
+The ternary operator lets you shorten an if-else block into a single line of code.
+
+### The Python Ternary Operator
+
+The Python ternary operator follows this syntax:
+
+```python
+x if condition else y
+```
+
+The operator checks a condition, and returns `x` if the condition is true or `y` if it's not.
+
+Here is an example of a ternary operator use case:
+
+```python
+x = 10
+y = 5
+
+z = x if x > y else y
+
+print("z = " + str(z))
+```
+
+**Output:**
+
+```
+z = 10
+```
+
+The ternary operator above checks if `x` is greater than `y`, and if it is, assigns the value of `x` (10) to the variable `z`.
+
+### Further reading
+
+If you’re looking for information on Python application monitoring, check out these links from our blog:
+ - [Debugging Python Errors](https://blog.sentry.io/debugging-python-errors)
+ - [Getting Started with a Python SDK (docs)](https://docs.sentry.io/platforms/python/)
+ - [How Sentry Helps Grofers Meet Unprecedented Delivery Demand](https://sentry.io/customers/grofers/)

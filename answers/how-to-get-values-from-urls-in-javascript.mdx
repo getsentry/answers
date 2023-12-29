@@ -1,0 +1,110 @@
+---
+title: 'How to get values from URLs in JavaScript'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have a URL with parameters, which are known as query string parameters. For example, your query string may have a type, page, and sort parameter:
+
+```
+https://www.example.com/store?type=sale&sort=price_descending&page=43
+```
+
+The query string part of the URL starts with a "?" character. Each parameter is separated by a "&" character. How do you get these query parameter values using JavaScript?
+
+## The Solution
+
+You can get the query string parameters in the browser using JavaScript and Web APIs. You can also get query string parameters on the backend using Node.js.
+
+### Getting URL Query Parameters in the Browser
+
+You can use the [`URLSearchParams`](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams) interface [Web API](https://developer.mozilla.org/en-US/docs/Web/API) to work with URL query strings. The `URLSearchParams()` constructor takes in a query string as an argument and returns a `URLSearchParams` object that has methods to work with query strings. You can use the [`window.location.search`](https://developer.mozilla.org/en-US/docs/Web/API/Location/search) property to access the query string of the current page and pass it as an argument to the `URLSearchParams()` constructor:
+
+```javascript
+const searchParams = new URLSearchParams(window.location.search);
+```
+
+To check if a query parameter exists you can use the [`has()`](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/has) method, which returns a boolean indicating if a parameter exists:
+
+```javascript
+console.log(searchParams.has('sort')); // true
+```
+
+You can get the value of the query parameter using the [`get()`](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/get) method:
+
+```javascript
+console.log(searchParams.get('sort')); // price_descending
+```
+
+The `get()` method returns the first value found for the given query parameter. So if there is a duplicate query parameter, only the value of the first one will be returned. You can use the [`getAll()`](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/getAll) method to return all values for a given query parameter.
+
+You can loop through query parameters using various methods such as
+[`for...of`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of):
+
+```javascript
+for (const param of searchParams) {
+  console.log(param);
+}
+```
+
+Using the example URL above, `https://www.example.com/store?type=sale&sort=price_descending&page=43`, this loop will return the following arrays with the keys and values of the parameters:
+
+```
+["type", "sale"]
+["sort", "price_descending"]
+["page", "43"]
+```
+
+You can also use the following methods to loop through the query parameters:
+
+- [`URLSearchParams.entries()`](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/entries)
+- [`URLSearchParams.keys()`](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/keys)
+- [`URLSearchParams.values()`](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/values)
+- [`URLSearchParams.forEach()`](https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/forEach)
+
+One thing to note is that the `URLSearchParams()` constructor interprets plus signs ("+") as spaces, which can be an issue in certain cases. You can avoid this issue by encoding the URL string using the [`encodeURIComponent()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent) function. This will change the "+" character to the [UTF-8](https://developer.mozilla.org/en-US/docs/Glossary/UTF-8) encoding of the character, which is `%2B`.
+
+### Getting URL Query Parameters Using Node.js
+
+If you are using [Express.js](https://expressjs.com/), which is a popular web framework for Node.js, you can use the [`req.query`](https://expressjs.com/en/api.html#req.query) object to get query strings:
+
+```javascript
+app.get('/', (req, res) => {
+  console.log(req.query);
+});
+```
+
+If there are no query string parameters, `req.query` will return an empty object. If there are query parameters, an object containing each parameter and its value will be returned:
+
+```javascript
+app.get('/', (req, res) => {
+  console.log(req.query); // { type:  "sale ", sort:  "price_descending ", page:  "43" }
+});
+```
+
+You can use a `for...in` loop to loop through the query parameters object to get the query parameter values:
+
+```javascript
+for (const key in req.query) {
+  console.log(key, req.query[key]);
+}
+```
+
+Using the example URL `https://www.example.com/store?type=sale&sort=price_descending&page=43`, this loop will log the following strings:
+
+```
+type sale
+sort price_descending
+page 43
+```
+
+Other methods can also be used to loop through the query parameters object:
+
+- [`Object.entries()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries)
+- [`Object.keys()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys)
+- [`Object.values()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/values)

@@ -1,0 +1,55 @@
+---
+title: 'Using Props to Initialize State of Component'
+platforms:
+  - sentry.react
+people:
+  - Evan Hicks
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+Where the props are used to set the initial state of the Component is a general anti-pattern of React. This implies that the state of the component is tied to the props of the component. The issue with doing this is that the constructor is only ever called once in the life cycle of the component. Since the props can change many times during that lifecycle, that implication is broken.
+
+```react
+class MyComponent extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            name: props.name,
+        }
+    }
+}
+```
+
+## The Solution
+
+This is an anti-pattern that should be avoided, and the state should be updated in the `componentWillReceiveProps` lifecycle method instead. That way the state and the props can stay in step with each other.
+
+```react
+class MyComponent extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            name: "",
+        }
+    }
+
+    componentWillReceiveProps(props) {
+        this.setState({
+            name: props.name,
+        })
+    }
+}
+```
+
+This pattern can be used if the props are explicitly meant to initialize the state once, and after that the component will manage its own state.
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how React application monitoring works, take a look at the following articles:
+
+- [Debug tough front end errors by giving Sentry more clues](https://blog.sentry.io/debug-tough-front-end-errors-sentry-clues)
+- [See how Aumni keeps errors out of userland](https://sentry.io/customers/aumni)
+- [Getting started with the React SDK (docs)](https://docs.sentry.io/platforms/javascript/guides/react)

@@ -1,0 +1,24 @@
+---
+title: 'Remove element from a list by index in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I remove an element from a list by index in Python? In other words, how can I remove the Nth element from a list?
+
+## The Solution
+
+We can accomplish this using Python's [`del`](https://docs.python.org/3/tutorial/datastructures.html#the-del-statement) statement. This will mutate the list in place. For example, to remove an element with index 1, we can do the following:
+
+```python
+products = ["Apples", "Oranges", "Pears"] # list has items 0, 1, and 2
+
+del products[1] # remove item 1 ("Oranges")
+print(products) # will print ["Apples", "Pears"]
+```

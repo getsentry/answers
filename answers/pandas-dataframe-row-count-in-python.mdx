@@ -1,0 +1,28 @@
+---
+title: 'Pandas DataFrame row count in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I get the number of rows of a Pandas DataFrame in Python?
+
+## The Solution
+
+We can do this in one of two main ways:
+
+1. Using Python's built-in [`len()`](https://docs.python.org/3/library/functions.html#len) function:
+    ```python
+    row_count = len(my_dataframe)
+    ```
+2. Using the [`DataFrame.shape`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.shape.html) property, which contains a tuple of the row and column count:
+    ```python
+    row_count = my_dataframe.shape[0]
+    ```
+
+The `len()` function is usually the faster of the two solutions, but `shape` may be useful in circumstances where we also need the column count.

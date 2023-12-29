@@ -1,0 +1,56 @@
+---
+title: 'Uncaught ReferenceError: $ is not defined?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+Say you use the global jQuery variable (`$`) to check if a form checkbox input is checked:
+
+```js
+const isItemChecked = $('#itemInput').is(':checked');
+```
+
+And you get the following error:
+
+```
+Uncaught ReferenceError: $ is not defined
+```
+
+This is a JavaScript error that occurs when you try to access a variable or call a function that has not been defined. Why is `$` not defined?
+
+## The Solution
+
+The jQuery library attaches the global variables `jQuery` and `$` to the browser [window](https://developer.mozilla.org/en-US/docs/Web/API/Window). The `$` variable is the same as the `jQuery` variable; it's a shortened alias for simplicity.
+
+When the jQuery library has not been added to your application, `$` will be undefined. Here are two common fixes: one for when you download the jQuery library from a CDN and one for when you get the jQuery library from npm.
+
+### Add jQuery library script from CDN before your app script
+
+The jQuery global variable `$` will be undefined if you import the jQuery library using a `script` tag that's added after the `script` tag for your application code, which uses the `$` variable:
+
+```html
+<script src="myApp.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+```
+
+To fix this, import the jQuery library first:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+<script src="myApp.js"></script>
+```
+
+Be sure that the URL path to the jQuery library is correct and that the library is downloaded.
+
+### Import `$` from the jQuery npm library
+
+If you are using the [jQuery npm package](https://www.npmjs.com/package/jquery), make sure that you import the jQuery global variable (`$`) before using it:
+
+```js
+import $ from 'jquery';
+```

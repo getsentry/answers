@@ -1,0 +1,47 @@
+---
+title: 'Check out a remote branch in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I check out a remote branch in Git?
+
+## The Solution
+
+The `git fetch` command is used to download branches from a remote repository. If the repository has a single remote, running `git fetch` will download all branches. If the repository has multiple remotes, we must specify which remote to download from, e.g. `git fetch origin`.
+
+Once `git fetch` has executed, we can get a list of all remote and local branches with the command:
+
+```sh
+git branch -a
+```
+
+In the output of this command, remote branches will be formatted as `remotes-/<remote>/<branch>` and local branches as `<branch>`. For example:
+
+```
+main
+remotes/origin/new-feature
+remotes/another-remote/new-feature
+```
+
+Once remote branches have been fetched, we can use `git checkout` as we would with a local branch:
+
+```sh
+git checkout new-feature
+```
+
+This will create a new branch in our local repository that tracks the remote branch.
+
+If you're fetching from multiple remote repositories that have branches with the same name, a more verbose `git checkout` command will be required:
+
+```sh
+git checkout -b new-feature origin/new-feature
+```
+
+This version of the command explicitly tells Git to create a new branch (`-b`) named `new-feature` that tracks the remote branch `origin/new-feature`.

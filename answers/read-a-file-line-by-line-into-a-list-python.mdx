@@ -1,0 +1,35 @@
+---
+title: 'Read a file line by line into a list Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+In Python, how do I read a file and store each line in a list?
+
+## The Solution
+
+We can read the lines of a file into a list by [opening the file](https://docs.python.org/3/library/functions.html#open) and looping through it using a [list comprehension](https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions):
+
+```python
+with open('myfile.txt') as f:
+    lines = [line.rstrip() for line in f]
+```
+
+The `with` syntax ensures that the file will be closed once our list is assembled. [`rstrip()`](https://docs.python.org/3/library/stdtypes.html#str.rstrip) is a string method that removes trailing whitespace and newlines.
+
+Note that for sufficiently large files, this operation could become slow and memory intensive, and, depending on the purpose of our script, it may be more efficient to apply a function to each line as it's read in rather than storing each line in a list for later manipulation. For example:
+
+```python
+with open('myfile.txt') as f:
+    for line in f:
+        process(line)
+
+def process(line):
+    # insert line processing code here
+```

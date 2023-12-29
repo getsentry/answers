@@ -1,0 +1,46 @@
+---
+title: "TypeError 'str' Object Does Not Support Item Assignment"
+description: 'When you run the code below, Python will throw the runtime exception "TypeError: ''str'' object does not support item assignment." This happens because in Python strings are immutable, and can’t be changed in place.'
+platforms:
+  - sentry.python
+people:
+  - Evan Hicks
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+When you run the code below, Python will throw the runtime exception `TypeError: 'str' object does not support item assignment`.
+
+```python
+text = "hello world"
+if text[0].islower():
+    text[0] = text[0].upper()
+```
+
+This happens because in Python strings are immutable, and can't be changed in place.
+
+## The Solution
+
+The solution is to use one of Python's built in functions for string manipulation. In this particular case, `capitalize()` is what you'll need.
+
+```python
+text = "hello world"
+text = text.capitalize()
+```
+
+Note that `capitalize` creates a new string and returns that new string. That's why we have to assign that new string to the `text` variable. In the example below, `text` would remain unchanged, and `capital` would have the result of capitalizing the `text` variable.
+
+```python
+text = "hello world"
+capital = text.capitalize()
+```
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how Python application monitoring works, take a look at the following articles:
+
+- [Debugging Python errors](https://blog.sentry.io/debugging-python-errors)
+- [How Grofers meets unprecedented delivery demand](https://sentry.io/customers/grofers)
+- [Getting started with a Python SDK (docs)](https://docs.sentry.io/platforms/python)

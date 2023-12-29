@@ -1,0 +1,41 @@
+---
+title: setState is an Asynchronous Function
+platforms:
+  - sentry.react
+people:
+  - Evan Hicks
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+To update the state of a component, you use the setState method. However it is easy to forget that the setState method is asynchronous, causing tricky to debug issues in your code. The setState function also does not return a Promise. Using async/await or anything similar will not work.
+
+```react
+handleButtonClicked = evt => {
+    this.setState({name: evt.currentTarget.value})
+    this.props.callback(this.state.name) // Will send the old value for name
+}
+```
+
+## The Solution
+
+When the state is actually set can vary. Usually it happens on the next render, but it can sometimes be batched for performance. The setState function takes an optional callback parameter that can be used to make updates after the state is changed.
+
+```react
+handleButtonClicked = evt => {
+    this.setState({name: evt.currentTarget.value}, () => {
+        this.props.callback(this.state.name)
+    })
+}
+```
+
+This function will get called once the state has been updated, and the callback will receive the updated value of the state.
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how JavaScript error reporting works, take a look at the following articles:
+
+- [Debug tough front end errors by giving Sentry more clues](https://blog.sentry.io/debug-tough-front-end-errors-sentry-clues)
+- [How Aumni keeps errors out of user land](https://sentry.io/customers/aumni)

@@ -1,0 +1,97 @@
+---
+title: 'How are parameters sent in an HTTP POST request?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to send data, using a [POST](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST) request, to your server that will cause a change on your server. For example, you want to add or modify an item to your database. How do you do that?
+
+## The Solution
+
+A POST request is similar to a [PUT](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT) request, but a `PUT` request is [idempotent](https://developer.mozilla.org/en-US/docs/Glossary/Idempotent). This means that the effect of multiple `PUT` requests is the same as one `PUT` request. Two identical `PUT` requests to add an item to a database will result in one item being added to the database. Two identical `POST` requests to add an item to a database may result in two items being added to the database.
+
+In a POST request, you pass data in the request body. The type of data in the body is indicated by the [`Content-Type`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type) header of the request.
+
+A POST request is often sent using an HTML form or a [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) request. In a form that has its HTTP method set to "POST", the content type of the POST request that's made when the form is submitted is determined by the [`enctype`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#attr-enctype) attribute of the `<form>` element. The possible values for the `enctype` are:
+
+- `application/x-www-form-urlencoded`: This is the default value. The keys and values of the form data are encoded in key-value pairs that are separated by `'&'`, with a `'='` between the key and the value. Non-alphanumeric characters are [URL encoded](https://en.wikipedia.org/wiki/URL_encoding). The format is the same as the query strings format in a GET request.
+
+  The following form will send an email and password to the server when the form is submitted:
+
+  ```html
+  <form action="https://www.example.com/api/auth/login" method="POST">
+    <div>
+      <label for="email">Email</label>
+      <input id="email" name="email" value="" />
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" value="" />
+    </div>
+    <div>
+      <button>Log in</button>
+    </div>
+  </form>
+  ```
+
+  The POST request will have the data added to the request body:
+
+  ```
+  POST / HTTP/2.0
+  Host: example.com
+  Content-Type: application/x-www-form-urlencoded
+  Content-Length: 34
+
+  email=bob@example.com&password=123
+  ```
+
+  No data will be appended to the URL. Note that you should never send sensitive data in the query string of a GET request because the data will be displayed in the URL. If you need to send sensitive data or a large amount of data, use a POST request. Some browsers limit the sizes of URLs and many servers limit the length of URLs that they accept.
+
+- `multipart/form-data`: This is used for sending binary data, like an image file. Each form data value is sent as a block of data ("body part"), with a user agent-defined delimiter ("boundary") separating each part. The keys are given in the `Content-Disposition` header of each part. Here's an example of the body of a POST request that uses the `multipart/form-data` content type:
+
+  ```
+  POST / HTTP/2.0
+  Host: example.com
+  Content-Type: multipart/form-data; boundary=aBoundaryString
+
+  --boundary
+  Content-Disposition: form-data; name="name"
+
+  (value for name)
+  --boundary
+  Content-Disposition: form-data; name="profile-pic"; filename="bob.jpg"
+  Content-Type: image/jpeg
+
+  (value for profile-pic)
+  --boundary
+  ```
+
+- `text/plain`: This is used for debugging.
+
+The value of `enctype` can be overridden by the [`formenctype`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button#attr-formenctype) attribute on the [`<button>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button), [`<input type="submit">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/submit), or [`<input type="image">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/image) elements.
+
+When a `POST` request is sent using a method other than an HTML form, the body can be of any type. For fetch requests, the `Content-Type` of 'application/json' is commonly used to send JSON data to a server:
+
+```javascript
+const login = await fetch('https://www.example.com/api/auth/login', {
+  method: 'POST',
+  body: JSON.stringify({
+    email: 'bob@example.com',
+    password: '123',
+  }),
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+if (login.ok) {
+  console.log('Login successful');
+} else {
+  throw new Error('Login failed.');
+}
+```

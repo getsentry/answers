@@ -1,0 +1,48 @@
+---
+title: 'How to align a div to the middle (horizontally / width) of the page?'
+platforms:
+  - sentry.html
+people:
+  - Matthew C.
+date: 2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have a `div` element that you want to center horizontally in the middle of a page. For example, you want to center a `div` with a class of "item" horizontally in another `div` with a class of "container" that is the width of the page:
+
+```html
+<body>
+  <div class="container">
+    <div class="item">horizontally centered</div>
+  </div>
+</body>
+```
+
+How do you do this?
+
+## The Solution
+
+One way to do this is to use [Flexbox](https://developer.mozilla.org/en-US/docs/Glossary/Flexbox) and center the `div` item horizontally using the [`justify-content`](https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content) CSS property:
+
+```css
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.item {
+  width: 100px;
+}
+```
+
+Alternatively, you can set the horizontal `margin` of the `div` item to `auto`:
+
+```css
+.item {
+  width: 100px;
+  margin: 0 auto;
+}
+```
+
+When the margin is set to `auto`, the browser determines what margin to use. In this case, it centers the `div`.

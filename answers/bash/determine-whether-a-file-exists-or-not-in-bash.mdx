@@ -1,0 +1,43 @@
+---
+title: 'Determine whether a file exists or not in Bash'
+platforms: 
+  - sentry.bash
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I determine whether a file exists in Bash? Conversely, how can I test that it does not exist?
+
+## The Solution
+
+We can check whether a file exists using the [`test`](https://en.wikipedia.org/wiki/Test_(Unix)) command-line utility:
+
+```bash
+if test -f /path/to/file; then
+  echo "File exists."
+fi
+```
+
+To check whether a file does not exist, we can negate the condition with the NOT logical operator, `!`:
+
+```bash
+if ! test -f /path/to/file; then
+  echo "File does not exist."
+fi
+```
+
+Because the `test` command is used frequently in Bash expressions, we can write it as `[]` rather than typing out `test`:
+
+```bash
+if ! [ -f /path/to/file ]; then
+  echo "File does not exist."
+fi
+```
+
+The `-f` flag tests whether the provided filename exists and is a regular file. To test for directories instead, we can use the `-d` flag. To test for both files and directories, we can use the `-e` flag.
+
+More information about `test` can be found on its manual page, accessible by typing `man test` into the terminal.

@@ -1,0 +1,33 @@
+---
+title: 'Find all files containing a specific string'
+platforms: 
+  - sentry.linux
+people: 
+  - David Y.
+date: 
+  2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+Using Linux, how can I find all files containing a specific string of text?
+
+## The Solution
+
+You can do this using [`grep`](https://en.wikipedia.org/wiki/Grep), a search utility built into most distributions of Linux. For example, to search for the string "hello world" in the files stored under `/home/alice`, you can use this command:
+
+```sh
+grep -rnw "hello world" /home/alice
+```
+
+* `-r` means search recursively, so `grep` will exhaustively search through all subdirectories in `/home/alice`.
+* `-n` means provide the line numbers of matches.
+* `-w` means match whole words. This means that the search will not match constructions like "ghello worldy".
+
+This command should provide output like the following, specifying the file, the line number, and the matched line:
+
+```
+/home/alice/helloworld.py:3:print("hello world")
+```
+
+To learn more about `grep`, open its [manual page](https://en.wikipedia.org/wiki/Man_page) by entering `man grep`.

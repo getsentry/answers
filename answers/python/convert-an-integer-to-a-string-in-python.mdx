@@ -1,0 +1,24 @@
+---
+title: 'Convert an integer to a string in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I convert an integer to a string in Python?
+
+## The Solution
+
+We can do this using Python's built-in [`str()`](https://docs.python.org/3/library/functions.html#func-str) function.
+
+```python
+my_integer = 100
+my_string = str(my_integer) # my_string will equal "100"
+```
+
+This function works by calling the [`__str__()`](https://docs.python.org/3/reference/datamodel.html#object.__str__) method on the provided object.

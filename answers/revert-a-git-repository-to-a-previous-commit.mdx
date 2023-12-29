@@ -1,0 +1,39 @@
+---
+title: 'Revert a Git repository to a previous commit'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I revert a Git repository to a previous commit?
+
+## The Solution
+
+In Git, the word "revert" has a special meaning. You can use the [`git revert`](https://git-scm.com/docs/git-revert) command to return your repository's files to a previous state without rewriting the commit history. This is done by creating new commits that do the opposite of existing commits, i.e. removing lines and files that were added and adding lines and files that were removed.
+
+To revert the most recently created commit, you can specify its hash or use `HEAD`:
+
+```sh
+git add .
+git commit -m "This commit is a mistake"
+git revert HEAD # will create a new commit doing the opposite of the one above
+```
+
+To revert multiple recent commits, you can specify a range, from oldest to newest. One new commit will be created for each reverted commit.
+
+```sh
+git revert HEAD~3...HEAD # revert the last three commits
+```
+
+`git revert` is a good way to restore a previous state while retaining the repository's edit history. However, in some cases, you may prefer to delete previous commits rather than reverse them. To do this, you can use `git reset --hard`, specifying the commit to return to:
+
+```sh
+git reset --hard HEAD~
+```
+
+This will return the repository's files to their previous state and remove the most recent commit from the current branch's history. For more on `git reset`, take a look at our answer for [undoing Git commits](git-undo-local-commits.mdx).

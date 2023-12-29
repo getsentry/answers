@@ -1,0 +1,71 @@
+---
+title: 'How do I resolve a "Cannot find module" error using Node.js?'
+platforms: 
+  - sentry.nodejs
+people: 
+  - Matthew C.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have a JavaScript dependency in your Node.js project. When you try to import an item from the dependency module, you get the following Node.js error:
+
+```
+Error: Cannot find module '<module name>'
+```
+
+This error occurs when Node.js can't find a module that you imported into your code. The name of the missing module is provided in the error message. How do you fix this error?
+
+## The Solution
+
+This error is caused by a missing dependency, an incorrect file path, an outdated dependency, or corrupt files. The commands shown in the solution are for the npm package manager. There are equivalent commands for Yarn and pnpm.
+
+### Make sure the dependency is installed in the correct place
+
+When a project's Node.js dependencies are installed, they are added to the `node_modules` folder in the root directory of the project. Check the `package.json` file to see if the missing module is in the project's `dependencies` or `devDependencies`. If it is not, install the dependency:
+
+```sh
+npm install <dependency name>
+```
+
+If the dependency is in the `package.json` file, make sure that the `node_modules` folder is in the root folder of the project and that the missing module is in the `node_modules` folder. Also, make sure that the file path in the module import is correct.
+
+### Update the dependency
+
+The issue may be caused by importing from an outdated module. To fix this, update the dependency to the latest version:
+
+```sh
+npm update [<pkg>...]
+```
+
+### Delete and reinstall the dependencies
+
+If all else fails, you can try the following:
+
+1. Delete the `node_modules` folder:
+
+```sh
+rm -rf node_modules
+```
+
+2. Delete the `package-lock.json` file:
+
+```sh
+rm -f package-lock.json
+```
+
+3. Clear the Node.js cache, which may be corrupted:
+
+```sh
+npm cache clean --force
+```
+
+4. Reinstall the dependencies:
+
+```sh
+npm install
+```
+
+If you still have an error, you can try to reinstall Node.js and npm to make sure that you have the latest versions and that any corrupted files are replaced.

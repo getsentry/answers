@@ -1,0 +1,41 @@
+---
+title: 'How to make a div 100% height of the browser window?'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to set the height of a `div` to be the same height as the browser window. How do you do this?
+
+## The Solution
+
+The `height` CSS property sets the height of an element and we use [length units](https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Values_and_units#lengths) to define it. Length units can be absolute (such as pixels) or relative (such as rem). Absolute length units are always the same size, they are not relative to anything else. Relative length units are relative to something else, for example, the `vh` unit is equal to 1% of the viewport's height. 
+
+To make a `div` the same height as the browser window, set the height of the `div` to `100vh`:
+
+```css
+height: 100vh;
+```
+
+
+Note that you may need to remove default margins added by the browser in your global CSS file:
+
+```css
+* {
+	margin: 0;
+}
+```
+
+Setting an element's height to 100vh to fill the browser window works in desktop browsers but it doesn't work quite so well in mobile browsers. This is because the height of the UI of a mobile browser changes as you scroll down a website. In Google Chrome for Android, for example, the navigation bar at the top moves out of view as you scroll down and reappears as you scroll up. This means that the available height of the viewport changes as you scroll. If you set `height` to `100vh`, the `div` will take up more than 100% of the available height of the viewport when the browser's UI is showing and the lowest portion of the `div` will not be visible
+
+If it's important that your `div` takes up 100% of the available screen height, you can find one way to do so in [this article](https://css-tricks.com/the-trick-to-viewport-units-on-mobile/). This solution uses JavaScript to calculate the available height of the viewport using `window.innerHeight` and then sets a CSS custom variable of 1% of the available height. The custom variable can be used to set the height of a `div` to 100% of the available viewport. A `resize` event listener is used to recalculate the available height each time the window is resized or the browser navigation UI moves out of view on scroll.
+
+[New CSS units](https://www.w3.org/TR/css-values-4/) that account for dynamic toolbars in mobile browsers are [beginning to be supported by browsers](https://web.dev/viewport-units/), such as the dynamic viewport height (`dvh`) unit, which will solve the problem described here.
+
+
+

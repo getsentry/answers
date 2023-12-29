@@ -1,0 +1,78 @@
+---
+title: 'Removing Properties from Objects in JavaScript'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Pieter E.
+date:
+  2022-07-06T12:44:12-07:00
+---
+
+## The Problem
+
+You have an object with several properties and you want to remove some of these properties before using the object further.
+
+```javascript
+    let person = {
+        firstName: "John",
+        lastName: "Doe",
+        gender: "Male",
+        age: 34
+    };
+
+    const json = JSON.stringify(person);
+    console.log(json);
+    // => {"firstName":"John","lastName":"Doe","gender":"Male","age":34}
+    // What can we do if we don't want the `age` property in the JSON string? -->
+```
+
+Here the JSON string also contains the `age` property. However, you will be sending the string over the network, and the server on the other end won't be using the `age` property. So you want to remove the `age` property from the `person` object before converting it to a JSON string.
+
+## The Solution
+
+You can use the `delete` operator, which is simpler, or object destructuring, which can remove more than a single property at a time.
+
+### Using the `delete` operator
+
+Use the `delete` operator to remove a property from an object.
+
+```javascript
+    let person = {
+        firstName: "John",
+        lastName: "Doe",
+        gender: "Male",
+        age: 34
+    };
+
+    // Delete the age property first
+    delete person.age;
+    let json = JSON.stringify(person);
+    console.log(json);
+```
+
+The `delete` operator will return if it was successful and always returns `true` - even when a property does not exist. The call will only return `false` when a property is non-configurable - which is the case for properties on built-in objects like the `length` of an `Array`.
+
+### Using object destructuring
+
+The `delete` operator can only remove one property per call. So if you want to delete the `age` and `gender` properties, then you have to make two `delete` calls. As an alternative, you can use object destructuring to remove multiple properties with one call.
+
+```javascript
+    const person = {
+        firstName: "John",
+        lastName: "Doe",
+        gender: "Male",
+        age: 34
+    };
+
+    // Destructure the age and gender
+    const {age, gender, ...personTrimmed} = person;
+    const json = JSON.stringify(personTrimmed);
+    console.log(json);
+```
+
+Note that destructuring is significantly slower than the `delete` operator because it makes a new object copy from the original object. Destructuring is also not supported by any versions of IE.
+### Further Reading
+
+- [Capture and report JavaScript errors with window.onerror](https://blog.sentry.io/client-javascript-reporting-window-onerror)
+- [What the heck is "Script error"?](https://blog.sentry.io/what-is-script-error)
+- [How to write bulletproof function wrappers in JavaScript](https://blog.sentry.io/wrap-javascript-functions)

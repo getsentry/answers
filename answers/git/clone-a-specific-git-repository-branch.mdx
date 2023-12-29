@@ -1,0 +1,43 @@
+---
+title: 'Clone a specific Git repository branch'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I clone a branch on a repository? Is there a way to only download that branch?
+
+## The Solution
+
+We can accomplish this by using [`git clone`](https://git-scm.com/docs/git-clone) with the [`-b`/`--branch`](https://git-scm.com/docs/git-clone#Documentation/git-clone.txt--bltnamegt) flag. For example, to clone the `1.x` branch of `sentry-cli`:
+
+```sh
+git clone -b 1.x https://github.com/getsentry/sentry-cli
+```
+
+Once the repository is downloaded, we can check the branch by running these commands:
+
+```sh
+cd sentry-cli
+git status
+```
+
+We should receive the following output:
+
+```
+On branch 1.x
+Your branch is up to date with 'origin/1.x'.
+
+nothing to commit, working tree clean
+```
+
+In the background, `git clone` will fetch all the repository's branches and then check out the one we've specified. If we only want to fetch one branch, we can add the flag [`--single-branch`](https://git-scm.com/docs/git-clone#Documentation/git-clone.txt---no-single-branch) to our `git clone` command.
+
+```sh
+git clone -b 1.x https://github.com/getsentry/sentry-cli --single-branch
+```

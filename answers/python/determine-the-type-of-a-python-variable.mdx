@@ -1,0 +1,36 @@
+---
+title: 'Determine the type of a Python variable'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I determine a Python variable's type?
+
+## The Solution
+
+We can determine a Python variable's type using the built-in function [`type()`](https://docs.python.org/3/library/functions.html#type). This will work for built-in types as well as our own classes. Some examples are given below:
+
+```python
+my_integer = 1
+print(type(my_integer)) # will print "<class 'int'>"
+
+my_float = 1.1
+print(type(my_float)) # will print "<class 'float'>"
+
+my_string = "Hello world!"
+print(type(my_string)) # will print "<class 'str'>"
+
+class MyClass:
+    pass
+
+my_class_instance = MyClass()
+print(type(my_class_instance)) # will print "<class '__main__.MyClass'>"
+```
+
+As per the Python documentation, the function [`isinstance()`](https://docs.python.org/3/library/functions.html#isinstance) should be used when testing whether a variable is of a specific class, as it takes subclasses into account, which `type()` does not.

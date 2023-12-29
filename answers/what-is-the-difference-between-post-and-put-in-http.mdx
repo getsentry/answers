@@ -1,0 +1,24 @@
+---
+title: 'What is the difference between POST and PUT in HTTP?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+You can send data to a server using an HTTP request that uses the `POST` or `PUT` method. When should each HTTP method be used?
+
+## The Solution
+
+The HTTP request [`POST`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST) method sends data to a server in a request body. HTML form data is typically sent to the server using a `POST` request. The server can use this data to add the sent data to a database.
+
+The HTTP `PUT` method is used to create a new resource or replace a resource. It's similar to the `POST` method, in that it sends data to a server, but it's [idempotent](https://developer.mozilla.org/en-US/docs/Glossary/Idempotent). This means that the effect of multiple `PUT` requests should be the same as one `PUT` request.
+
+For example, you may have a book review app that has an `/add-book` API route that you could send book data to. The sent book data can then be added to a database on the server. Making multiple `POST` requests to this API will create multiple book entries in the database.
+
+Your book review app may also have an `/edit-book/id` API route that allows you to edit a book by its ID. API requests to this route would be suited to `PUT` requests that will replace the book information in the database with the data in the request payload. Multiple `PUT` requests to edit the book data will result in the same data change as one `PUT` request to edit the data.
+
+Note however that these definitions are only defined by the HTTP specifications for [POST](https://www.rfc-editor.org/rfc/rfc9110.html#POST) and [PUT](https://www.rfc-editor.org/rfc/rfc9110.html#PUT). In reality, it is up to software engineers to implement POST and PUT into applications as recommended by the specification, and a correct implementation is not always guaranteed.

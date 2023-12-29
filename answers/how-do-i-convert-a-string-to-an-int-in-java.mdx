@@ -1,0 +1,134 @@
+---
+title: 'How do I convert a String to an int in Java?'
+platforms: 
+  - sentry.java
+people: 
+  - Gareth D.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I convert a String to an int in Java?
+
+## The Solution
+
+The two easiest ways to convert a string to an integer in Java are to use `Integer.parseInt()` or `Integer.valueOf()`.
+
+Here is an example of each. Note that both could throw a `NumberFormatException` if the input string contains characters that cannot be converted to an integer, so your code should handle this in a `try...catch` block.
+
+### Using `Integer.valueOf`
+
+```java
+class Main {
+
+    public static void main(String[] args) {
+        String validString = "123";
+        String invalidString = "123x";
+        Integer number;
+
+        try {
+            number = Integer.valueOf(validString);
+            System.out.println("Converted integer: " + number);
+
+            number = Integer.valueOf(invalidString);
+            System.out.println("Converted integer: " + number);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid integer input");
+        }
+    }
+}
+```
+
+This will output the following.
+
+```
+Converted integer: 123
+Invalid integer input
+```
+
+In the above example, `validString` is successfully converted as it contains only numerical characters. The `invalidString` variable contains a non-numeric character and cannot be converted, so we instead see the output from the `catch` block.
+
+### Using `Integer.parseInt()`
+
+The code below has only three differences from the previous example. We use `int number;` instead of `Integer number` to declare our variable that will hold the result, and we changed both instances of `valueOf` to `parseInt`. The output and other functionality are otherwise identical.
+
+```java
+class Main {
+
+    public static void main(String[] args) {
+        String validString = "123";
+        String invalidString = "123x";
+        int number;
+
+        try {
+            number = Integer.parseInt(validString);
+            System.out.println("Converted integer: " + number);
+
+            number = Integer.parseInt(invalidString);
+            System.out.println("Converted integer: " + number);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid integer input");
+        }
+    }
+}
+```
+
+## Choosing Between `Integer` and `int`
+
+Modern Java versions running on modern systems are very efficient and there should be practically no performance difference between using primitive `int` and declaring new `Integer` objects, so you should consider convenience over performance in nearly all cases. Although initializing new `Integer` objects will take up some extra memory, this will be trivial unless you are keeping vast amounts in memory simultaneously.
+
+Instead, you might consider factors such as:
+
+* If you need to store the result in a database, then `Integer` is nullable which might be useful.
+* `Integer` includes other helper methods, which you might need if you do further processing after the conversion.
+* The primitive `int` can behave more predictably and manipulating `int` variables sometimes requires less code.
+
+For example, consider the following:
+
+```java
+class Main {
+
+    public static void main(String[] args) {
+        String s1 = "1000";
+        String s2 = "1000";
+        Integer n1 = Integer.valueOf(s1);
+        Integer n2 = Integer.valueOf(s2);
+        System.out.println("n1 == n2: " + String.valueOf(n1 == n2));
+    }
+}
+```
+
+Even though both `s1` and `s2` represent the same number (1000), this prints out:
+
+```
+n1 == n2: false
+```
+
+This is because `n1` and `n2` are different objects with different memory addresses.
+
+Confusingly, the following code—which is identical except that it uses the value "100" instead of "1000"—behaves differently:
+
+```java
+class Main {
+
+    public static void main(String[] args) {
+        String s1 = "100";
+        String s2 = "100";
+        Integer n1 = Integer.valueOf(s1);
+        Integer n2 = Integer.valueOf(s2);
+        System.out.println("n1 == n2: " + String.valueOf(n1 == n2));
+    }
+}
+```
+
+This prints:
+
+```
+n1 == n2: true
+```
+
+This difference in behavior is because Java caches smaller integer values for efficiency, so in the second example, both values are saved as the same object.
+
+Using `parseInt()` and `int` primitives can avoid issues like this, giving you `n1 == n2: true` in both cases. However, using `Integer` has the benefit of the helper methods it contains and the ability to deal with null values.

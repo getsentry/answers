@@ -1,0 +1,104 @@
+---
+title: 'How can I get query parameters from the URL?'
+platforms:
+  - sentry.nextjs
+people:
+  - Lazar Nikolov
+date: 2023-03-22T07:48:24.522-07:00
+---
+
+## The Problem
+
+Next.js allows us to create dynamic routes, which are routes that can accept
+parameters. For example, we can create a route that accepts a `userId` parameter
+and renders a user profile page for that user. But, how do we get the `userId`
+parameter from the URL?
+
+## The Solution
+
+### Client-side
+
+To obtain the query parameters from the URL, you can use the `useRouter` hook.
+The hook is imported from different packages depending on the version of Next.js
+and whether you use the `app` directory or the `pages` directory.
+
+- If you're using the `pages` directory, or the Next.js version is 12 or earlier,
+  import the hook from `'next/router'`;
+- Otherwise, import the hoook from `'next/navigation'`;
+
+After you import the hook, you can use it to get the query parameters from the
+URL like so:
+
+```javascript
+// pages/users/[userId].js
+
+function UserProfile() {
+  const router = useRouter();
+  const { userId } = router.query;
+
+  return <div>User ID: {userId}</div>;
+}
+```
+
+> Have in mind that the `router.query` object is empty on the initial render,
+> because Next.js hasn't fetched the data yet. You can use the `router.isReady`
+> property to check if the data is ready.
+
+### Server-side
+
+Since you can't use the `useRouter` hook on the server-side, you can obtain
+the query parameters from the `ctx` argument of the `getServerSideProps` method.
+The `ctx` argument is an object that contains the request and response objects,
+as well as other useful information.
+
+If the previous page was rendered on the server-side, here's how you would get
+the `userId` parameter:
+
+```javascript
+// pages/users/[userId].js
+
+export async function getServerSideProps(ctx) {
+  const { userId } = ctx.query;
+
+  return {
+    props: {
+      userId,
+    },
+  };
+}
+
+function UserProfile({ userId }) {
+  return <div>User ID: {userId}</div>;
+}
+```
+
+### Server Components
+
+At the time of writing this answer, Next.js doesn't support query parameters
+in server components. You can only obtain the query parameters from the
+page that renders the server component:
+
+```javascript
+// app/users/[userId]/page.tsx
+
+import { User } from '../../components/User';
+
+export default function UserProfile({
+  params,
+  searchParams,
+}: {
+  params: { slug: string },
+  searchParams?: { [key: string]: string | string[] | undefined },
+}) {
+  const { userId } = params;
+
+  // ...
+}
+```
+
+### Further Reading
+
+- [`useRouter` on the client-side](https://nextjs.org/docs/api-reference/next/router#userouter)
+- [`useRouter` on the server-side](https://beta.nextjs.org/docs/api-reference/use-router)
+- [Next 13's `page.js`](https://beta.nextjs.org/docs/api-reference/file-conventions/page)
+- [`getServerSideProps`](https://nextjs.org/docs/basic-features/data-fetching/get-server-side-props)

@@ -1,0 +1,88 @@
+---
+title: 'How do I copy to the clipboard in JavaScript?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to copy to the clipboard in JavaScript. Perhaps you want to allow a user to copy a snippet of text or an image when a button is clicked. How do you do this?
+
+## The Solution
+
+If you only need to support modern browsers, use the [`Clipboard` Web API](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API#browser_compatibility). It allows you to asynchronously read from and write to the system clipboard. You can access the system clipboard through the [`Navigator`](https://developer.mozilla.org/en-US/docs/Web/API/Navigator) global interface.
+
+The `Clipboard` API is relatively new and its integration into many browsers is still in progress, due to technical issues and potential security issues. You can see the browser compatibility of the `Clipboard` API methods in this [browser compatibility table](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard#browser_compatibility).
+
+The `Clipboard` API is a replacement for the older Web API [`document.execCommand`](https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand 'document.execCommand') method. It's recommended to not use the `document.execCommand` method as it's depreciated. The method may stop working at any time.
+You can use the [`clipboard-polyfill`](https://github.com/lgarron/clipboard-polyfill) library if you need to support older browsers or `Clipboard` methods in specific browsers. You can also try using this [example fallback function](https://gist.github.com/lgarron/d1dee380f4ed9d825ca7).
+
+The `Clipboard` API is limited to handling text and images in most browsers. Browsers usually sanitize the copied clipboard data as a security measure. For example, to remove embedded `script` elements. In Chrome version 104+, [Web Custom formats](https://chromestatus.com/feature/5649558757441536) are supported, which lets developers write unsanitized data to the clipboard. There are cases where having un-sanitized data in the clipboard is useful:
+
+- The application may deal with sanitization itself.
+- The copied data needs to be identical to the pasted data.
+
+You can read more about this in the following article: [Web custom formats for the Async Clipboard API](https://developer.chrome.com/blog/web-custom-formats-for-the-async-clipboard-api/).
+
+### Copying Text to the Clipboard
+
+The example `copyTextToClipboard` function below takes in text to copy to the clipboard as an argument and then uses the [`clipboard.writeText()`](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard/writeText) method to copy the text to the clipboard:
+
+```javascript
+async function copyTextToClipboard(textToCopy) {
+  try {
+    if (navigator?.clipboard?.writeText) {
+      await navigator.clipboard.writeText(textToCopy);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+```
+
+This async function uses a [`try ...catch`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/try...catch) block to check that `navigator`, `navigator.clipboard`, and `navigator.clipboard.writeText` exist. This checks for browser compatibility. The `writeText()` function returns a Promise that's resolved or rejected depending on whether the passed-in text is copied to the clipboard successfully.
+
+The `copyTextToClipboard` function can be written to return a Promise instead of waiting for the `writeText()` function's Promise to be resolved or rejected:
+
+```javascript
+function copyTextToClipboard(textToCopy) {
+  if (navigator?.clipboard?.writeText) {
+    return navigator.clipboard.writeText(textToCopy);
+  }
+  return Promise.reject('The Clipboard API is not available.');
+}
+```
+
+This function returns a Promise that resolves when the clipboard's contents have been updated.
+
+To call the `writeText()` method, the user has to have recently interacted with the page: [transient user activation](https://developer.mozilla.org/en-US/docs/Web/Security/User_activation) is required. For example, the user clicked a button that calls the `copyTextToClipboard` function. This is a security feature that prevents malicious code from abusing the API. Copying to the clipboard should only occur when a user interacts with a page.
+
+To write text to the clipboard, the page must be served over HTTPS and the experimental "clipboard-write" permission of the [Permissions API](https://developer.mozilla.org/en-US/docs/Web/API/Permissions_API) is needed for [browsers that support the permission](https://developer.mozilla.org/en-US/docs/Web/API/Permissions_API#browser_compatibility). This permission is granted automatically to pages in the active browser tab. The Permissions API can be queried to determine the "clipboard-read" and "clipboard-write" permission status.
+
+### Copying an Image to the Clipboard
+
+The `Clipboard` [`write()`](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard/write) method writes arbitrary data to the clipboard, such as an image. It takes in an array of [`ClipboardItem`](https://developer.mozilla.org/en-US/docs/Web/API/ClipboardItem) objects, which contain data that will be written to the clipboard, as an argument. To write an image to the clipboard, you need to have the image as a [`blob`](https://developer.mozilla.org/en-US/docs/Web/API/blob). You can convert an image `URL`, such as an image from a server, to a `blob` by getting an image using `fetch()` and then calling the [`blob()`](https://developer.mozilla.org/docs/Web/API/Body/blob) method on the response. You can also draw an image to a [canvas](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API) and create an image `blob` using the [`toBlob()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) method of the canvas element.
+
+The `copyImgToClipboard` function below uses `fetch()` and the `blob()` method to copy an image from an image `URL` to the clipboard:
+
+```javascript
+async function copyImgToClipboard(imgUrl) {
+  try {
+    const data = await fetch(imgUrl);
+    const blob = await data.blob();
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        [blob.type]: blob,
+      }),
+    ]);
+    console.log('Image copied.');
+  } catch (err) {
+    console.error(err.name, err.message);
+  }
+}
+```
+
+This function needs to be modified to work in the Safari browser. You can read more about this in the following article: [Unblocking clipboard access](https://web.dev/async-clipboard/#write).

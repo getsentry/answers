@@ -1,0 +1,19 @@
+---
+title: 'Pulling vs. fetching in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+What is the difference between `git pull` and `git fetch`?
+
+## The Solution
+
+The [`git fetch`](https://git-scm.com/docs/git-fetch) command updates the [remote tracking branches](https://git-scm.com/book/en/v2/Git-Branching-Remote-Branches) in a repository. In other words, it pulls the latest versions of the remote repository's branches without applying any changes to local branches.
+
+The [`git pull`](https://git-scm.com/docs/git-pull) command performs a `git fetch` and then a [`git merge`](https://git-scm.com/docs/git-merge) or [`git-rebase`](https://git-scm.com/docs/git-rebase) on the current branch in the local repository. In other words, it updates the repository's remote-tracking branches and then brings the current local branch up to date with its remote version.

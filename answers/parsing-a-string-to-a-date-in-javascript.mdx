@@ -1,0 +1,41 @@
+---
+title: 'Parsing a string to a `Date` in JavaScript'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have a string representing a date that you want to convert to a [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) object. You may want to do this so that you can manipulate the date easily or display the date in various formats. How can you do this?
+
+## The Solution
+
+Call the [`Date()` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date) with the [`new`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/new) operator to create a `Date` object. The `Date()` constructor can be called with a variable number of arguments and different types of arguments. One way to call it is with a `dateString` argument. The `dateString` argument needs to be in the [ISO 8601 format](https://tc39.es/ecma262/#sec-date-time-string-format):
+
+```
+YYYY-MM-DDTHH:mm:ss.sssZ
+```
+
+The string that you want to parse into a `Date` should match this format or a portion of this format. The "T" character separates the date from the time portion of the string. The "Z" character is the UTC offset representation. UTC is [Coordinated Universal Time](https://en.wikipedia.org/wiki/Coordinated_Universal_Time), which is the primary time standard used to regulate times worldwide. It is equivalent to [Greenwich Mean Time](https://en.wikipedia.org/wiki/Greenwich_Mean_Time) (GMT). The "Z" character can also be a "+" or "-" character followed by a time expression to indicate local time ahead of or behind UTC.
+
+This date format includes date-only forms, such as `YYYY-MM`, and date-with-time forms, such as `YYYY-MM-DDTHH:mm:ss`. Date-only strings are formatted as UTC. Date-time strings use the local time zone, so the browser's timezone affects the parsed date.
+
+It's best practice to store dates and manipulate them in UTC format. You can then use different `Date` methods to display the date in UTC or in a user's local time zone, as needed. You can display a date in UTC using the [`toUTCString()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toUTCString) method. You can use the [`toString()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toString) method to display a date in the user's local time zone.
+
+If you can, use the full date and time in your date string.
+
+To parse a date string as UTC, append a "Z" to the end of the date:
+
+```javascript
+const date1 = new Date('2023-01-14T09:00:05.123');
+const date2 = new Date('2023-01-14T09:00:05.123Z');
+
+console.log(date1.toUTCString()); // Sat, 14 Jan 2023 07:00:05 GMT
+console.log(date1.toString()); // Sat Jan 14 2023 09:00:05 GMT+0200 (South Africa Standard Time)
+
+console.log(date2.toUTCString()); // Sat, 14 Jan 2023 09:00:05 GMT
+console.log(date2.toString()); // Sat Jan 14 2023 11:00:05 GMT+0200 (South Africa Standard Time)
+```

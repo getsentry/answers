@@ -1,0 +1,45 @@
+---
+title: 'Change the size of figures drawn with Matplotlib in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I change the size of figures drawn with Matplotlib in Python?
+
+## The Solution
+
+To set the size of a new figure on creation, you can provide the `figsize` keyword argument. This will be a tuple of the desired width and height in inches.
+
+```python
+myfigure = figure(figsize=(18, 10),
+                  # additional arguments...
+                  )
+```
+
+To set the size of a figure that's already been created, use the [`set_size_inches()`](https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.set_size_inches) method. This method takes a new width and height in inches:
+
+```python
+myfigure.set_size_inches(18, 10, forward=True)
+```
+
+The `forward=True` argument will propagate the size change to any currently displayed versions of the figure.
+
+If you only want to change the height or width of a figure, you can use [`set_figwidth()`](https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.set_figwidth) or [`set_figheight()`](https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.set_figheight).
+
+By default, an inch is 100 pixels in length. You can use [`set_dpi()`](https://matplotlib.org/stable/api/figure_api.html#matplotlib.figure.Figure.set_dpi) to change this.
+
+When working with a [plot](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.plot.html) rather than a figure, you can use [`rcParams`](https://matplotlib.org/stable/api/matplotlib_configuration_api.html#matplotlib.rcParams):
+
+```python
+import matplotlib.pyplot as pyplt
+
+pyplt.rcParams["figure.figsize"] = (18, 10)
+```
+
+Note that this will determine the size of all subsequently created plots.

@@ -1,0 +1,24 @@
+---
+title: 'Lowercase a string in Python'
+platforms:
+  - sentry.python
+people:
+  - David Y.
+date: 2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I make a string all lowercase in Python?
+
+## The Solution
+
+We can use Python's built-in `str.lower()`(https://docs.python.org/3/library/stdtypes.html#str.lower) method. This will work regardless of how many uppercase letters the string contains. For example:
+
+```python
+print("HELLO WORLD!".lower())  # will output "hello world!"
+print("Hello World!".lower())  # will output "hello world!"
+print("hello world!".lower())  # will output "hello world!"
+```
+
+If we're making our string all lowercase in order to do case-insensitive matching, we may want to use [`str.casefold()`](https://docs.python.org/3/library/stdtypes.html#str.casefold) instead. This method is a more aggressive form of `str.lower()`, which includes additional substitutions such as "ss" for the German character "ß". The workings of this method are implemented in accordance with section 3.13 of the [Unicode Standard](https://www.unicode.org/versions/latest/).

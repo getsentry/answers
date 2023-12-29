@@ -1,0 +1,65 @@
+---
+title: 'Append vs. extend in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+What is the difference between Python's list methods `append()` and `extend()`?
+
+## The Solution
+
+The `append()` method is used to add an item to the end of a list, whereas the `extend()` method is used to merge a second list (or other iterable) onto the end of a list. Consider the following examples:
+
+```python
+# Use of append
+products = ["Apples", "Oranges", "Bananas"]
+new_product = "Apricots"
+
+products.append(new_product)
+print(products)  # will output ['Apples', 'Oranges', 'Bananas', 'Apricots']
+```
+
+In the code above, a single item was *appended* to the list.
+
+```python
+# Use of extend
+products = ["Apples", "Oranges", "Bananas"]
+new_products = ["Apricots", "Mangoes"]
+
+products.extend(new_products)
+print(products)  # will output ['Apples', 'Oranges', 'Bananas', 'Apricots', 'Mangoes']
+```
+
+In the code above, the list was *extended* with a second list.
+
+Now let's see what happens if we swap the methods:
+
+```python
+# Incorrect use of extend
+products = ["Apples", "Oranges", "Bananas"]
+new_product = "Apricots"
+
+products.extend(new_product)
+print(products)  # will output ['Apples', 'Oranges', 'Bananas', 'A', 'p', 'r', 'i', 'c', 'o', 't', 's']
+```
+
+Here, our use of `extend()` has caused each element (i.e. character) of the `new_product` string to be added to our list individually.
+
+```python
+# Incorrect use of append
+products = ["Apples", "Oranges", "Bananas"]
+new_products = ["Apricots", "Mangoes"]
+
+products.append(new_products)
+print(products)  # will output ['Apples', 'Oranges', 'Bananas', ['Apricots', 'Mangoes']]
+```
+
+Here, our use of `append()` has caused the `new_products` list to be treated as a single item.
+
+In summary, we should use `append()` when we want to add a single item to the end of a list and `extend()` when we want to merge our list with another.

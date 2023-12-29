@@ -1,0 +1,23 @@
+---
+title: 'Rename columns in a Python Pandas DataFrame'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I rename the columns in a Python Pandas DataFrame?
+
+## The Solution
+
+You can use the [`DataFrame.rename()`](http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.rename.html) method to rename columns. Specify `inplace=True` to modify the existing DataFrame rather than creating a new one. For example:
+
+```python
+my_dataframe.rename(columns={'old_column': 'new_column', 'old_column2': 'new_column2'}, inplace=True)
+```
+
+Any columns not renamed will retain their existing names.

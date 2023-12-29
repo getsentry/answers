@@ -1,0 +1,46 @@
+---
+title: 'Select rows from a Python Pandas DataFrame based on column values'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I select rows from a DataFrame in Python Pandas based on column values? In other words, what is the DataFrame equivalent of a `SELECT WHERE` statement in SQL?
+
+## The Solution
+
+This can be achieved using the DataFrame's [`loc`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.loc.html#pandas.DataFrame.loc) property.
+
+To select rows with a specified column value:
+
+```python
+my_value = 3
+results = my_dataframe.loc[my_dataframe["column_name"] == my_value]
+```
+
+To select rows that do not match a specified column value:
+
+```python
+my_value = 3
+results = my_dataframe.loc[my_dataframe["column_name"] != my_value]
+```
+
+To select rows with a column value that matches one of a list of values:
+
+```python
+my_list = [1, 2, 3]
+results = my_dataframe.loc[my_dataframe["column_name"].isin(my_list)]
+```
+
+To select rows with a column value that falls in a range:
+
+```python
+lower_limit = 1
+upper_limit = 3
+my_dataframe.loc[(my_dataframe["column_name"] >= lower_limit) & (my_dataframe["column_name"] <= upper_limit)]
+```

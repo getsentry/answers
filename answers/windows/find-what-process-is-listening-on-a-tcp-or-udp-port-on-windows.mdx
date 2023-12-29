@@ -1,0 +1,32 @@
+---
+title: 'Find what process is listening on a TCP or UDP port on Windows'
+platforms: 
+  - sentry.windows
+people: 
+  - David Y.
+date: 
+  2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I find out which process is listening on a TCP or UDP port on Windows?
+
+## The Solution
+
+We can do this using [`netstat`](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netstat):
+
+1. Open the Start Menu and type "cmd".
+2. Right-click the Command Prompt icon and choose "Run as Administrator"
+3. Enter the following command:
+
+```
+netstat -abno
+```
+
+* `-a` shows all connections and listening ports.
+* `-b` shows the executable responsible for each connection or listening port.
+* `-n` shows the IP address and port numbers numerically.
+* `-o` shows the process ID for each connection or listening port.
+
+Alternatively, you can view details about listening ports with the Resource Monitor GUI. This GUI is accessible from the performance tab of Task Manager, or through running `resmon.exe`.

@@ -1,0 +1,42 @@
+---
+title: "Don't Use NOT IN Operator"
+platforms:
+  - sentry.postgres
+people:
+  - Evan Hicks
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+The NOT IN operator in Postgres seems like a useful opposite to the IN operator, but it is actually recommended by Postgres to not use this operator in your queries. In fact, they recommend you don't use any combination of NOT with IN operators because the NOT IN operator behaves strangely with NULL values., e.g. `NOT (x IN (SELECT...))`.
+
+```sql
+SELECT * FROM foo WHERE col NOT IN (1, NULL);
+```
+
+This query will never return any rows, no matter what values are in the `col` column. This happens because of the way NULL is evaluated with an IN condition. `col IN (1, NULL)` returns either TRUE if `col` is 1, or NULL. If you then apply a NOT to that, NOT(NULL) is still NULL. Since NULL is not TRUE, this query will never have any TRUE values and so no rows will be returned.
+
+```sql
+SELECT * FROM foo WHERE col NOT IN (SELECT other_col FROM bar);
+```
+
+This query will not return any rows if any value from `bar.other_col` is NULL. Even if `other_col` is never NULL, this query can also suffer from extreme performance issues once the dataset gets above a certain size. That means that the performance might be okay in small tests, but once your queries get above a certain size you will likely see performance degrade by orders of magnitude.
+
+## The Solution
+
+The NOT IN operator is fine to use for comparing against static lists.
+
+```sql
+SELECT * FROM foo WHERE col NOT IN (1, 2, 3);
+```
+As long as you are comparing to small lists of constant values, it might even be advisable to use.
+
+### Further Reading
+
+If you're looking to get a deeper understanding on this solution, or application monitoring in general, take a look at the following articles:
+
+- [How to mutate data in a system designed for immuatable data](https://blog.sentry.io/how-to-mutate-data-in-a-system-designed-for-immutable-data)
+- [Database Performance Monitoring in Node](https://blog.sentry.io/support-for-database-performance-monitoring-in-node)
+- [Don't use NOT IN (Wiki)](https://wiki.postgresql.org/wiki/Don't_Do_This#Don.27t_use_NOT_IN)

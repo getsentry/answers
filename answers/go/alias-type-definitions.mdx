@@ -1,0 +1,71 @@
+---
+title: 'Alias Type Definitions do not Inherit Underlying Type Methods'
+platforms:
+  - sentry.go
+people:
+  - Evan Hicks
+date: 2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+Type definitions do not inherit underlying type methods. <br />
+Compile Error: ./prog.go:17:3: b.Print undefined (type Bar has no field or method Print)
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+type Foo struct{}
+
+func (f Foo) Print() {
+	fmt.Println("foo")
+}
+
+type Bar Foo
+
+func main() {
+	b := Bar{}
+	b.Print()
+}
+```
+
+## The Solution
+
+Go does not have traditional inheritance like other languages, therefore the alias type declaration `type Bar Foo` works differently in Go. When you create a new type based on another type, your new type (`Bar`) doesn't inherit the methods from `Foo`, which is why `b.Print` is `undefined`.
+
+The fix:
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+type Foo struct{}
+
+func (f Foo) Print() {
+	fmt.Println("foo")
+}
+
+type Bar struct {
+	Foo
+}
+
+func main() {
+	b := Bar{}
+	b.Print()
+}
+```
+
+This creates a new type `Bar`, and embeds it with an implicit `Foo` object. In this case, when you call a method on a `Bar` object, it will check to see if `Bar` has that method, and if it doesn't, it will check `Foo` for the method and use that.
+
+### Further Reading
+
+- [How slow is slow?](https://blog.sentry.io/how-slow-is-slow)
+- [Sentry's Unified GO SDK](https://blog.sentry.io/introducing-sentrys-unified-go-sdk)
+- [The GO SDK (docs)](https://docs.sentry.io/platforms/go)

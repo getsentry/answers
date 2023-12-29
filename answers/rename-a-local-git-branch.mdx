@@ -1,0 +1,42 @@
+---
+title: 'Rename a local Git branch'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I rename a branch in my local Git repository?
+
+## The Solution
+
+You can use `git branch`'s [`-m`/`--move`](https://git-scm.com/docs/git-branch#Documentation/git-branch.txt--m) flag to rename a branch in our local repository.
+
+To rename the current (i.e. checked out) branch:
+
+```sh
+git branch -m new-branch-name
+```
+
+To rename a specific branch that may not be checked out:
+
+```sh
+git branch -m old-branch-name new-branch-name
+```
+
+To propagate this change to a remote, you can use [`git push`](https://git-scm.com/docs/git-push) to push the new branch and delete the old branch, as below:
+
+```sh
+git push origin -u new-branch-name
+git push origin --delete old-branch-name
+```
+
+If you're using Windows and would like to change only the capitalization in the branch name, use `-M` instead of `-m` to avoid an error.
+
+```sh
+git branch -M my-branch MY-BRANCH
+```

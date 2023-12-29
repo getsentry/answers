@@ -1,0 +1,69 @@
+---
+title: 'Disable / enable an input with jQuery?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to enable or disable an input using jQuery. How do you do this?
+
+## The Solution
+
+You can disable an input using the jQuery [`.attr()`](https://api.jquery.com/attr/) method to set the value of an input's [`disabled`](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/disabled) attribute. To enable the input, you can use the jQuery [`.removeAttr()`](https://api.jquery.com/removeattr/) method.
+
+For example, if you have the following input:
+
+```html
+<input type="checkbox" id="subscribeInput" name="subscribeInput" />
+<label for="subscribeInput">Subscribe</label>
+```
+
+You can use the `disabled` attribute to add disable and enable buttons:
+
+```html
+<button id="enableBtn">Enable subscribe</button>
+<button id="disableBtn">Disable subscribe</button>
+```
+
+Then you can use the jQuery `attr()` method to enable the input when the "Enable subscribe" button is clicked and the `removeAttr()` method to disable the input when the "Disable subscribe" button is clicked:
+
+```javascript
+import $ from 'jquery';
+
+const subscribeInput = $('#subscribeInput');
+const disableBtn = $('#disableBtn');
+const enableBtn = $('#enableBtn');
+
+disableBtn.click(() => subscribeInput.attr('disabled', 'disabled'));
+enableBtn.click(() => subscribeInput.removeAttr('disabled'));
+```
+
+Here we disable the input by setting the value of the `disabled` attribute to `disabled` and enable the input by removing the `disabled` attribute.
+
+If you wanted to disable an input using HTML, you can add the `disabled` attribute like this:
+
+```html
+<input type="checkbox" id="subscribeInput" name="subscribeInput" disabled />
+```
+
+You can also use vanilla JavaScript to enable and disable inputs using the instance methods [`setAttribute()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute) and [`removeAttribute()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/removeAttribute) of the [Element Web API](https://developer.mozilla.org/en-US/docs/Web/API/Element):
+
+```javascript
+const subscribeInput = document.getElementById('subscribeInput');
+const disableBtn = document.getElementById('disableBtn');
+const enableBtn = document.getElementById('enableBtn');
+
+disableBtn.addEventListener('click', () =>
+  subscribeInput.setAttribute('disabled', 'disabled')
+);
+
+enableBtn.addEventListener('click', () =>
+  subscribeInput.removeAttribute('disabled')
+);
+```
+
+Note that when an input is disabled, it's not mutable or focusable, and it's not submitted with a form. If you set the `disabled` attribute of a [`<fieldset>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/fieldset) that contains multiple inputs, all of the inputs in the `<fieldset>` will be disabled.

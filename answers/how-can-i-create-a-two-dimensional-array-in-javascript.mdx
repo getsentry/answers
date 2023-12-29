@@ -1,0 +1,98 @@
+---
+title: 'How can I create a two-dimensional array in JavaScript?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have data that you want to represent as a 2D array. There are various use cases for doing this: perhaps you are making a 2D game, and you want to represent the layout of the game surface using a 2D array. JavaScript only has one-dimensional arrays. To create a 2D array, you can create an array of arrays.
+
+A 2D array is also known as a matrix. It's arranged in a table-like structure that consists of rows and columns. There are other languages, such as C and C++, that have syntax for initializing a 2D array with a specific number of rows and columns.
+
+## The Solution
+
+There are, broadly speaking, two ways of creating a 2D array in JavaScript. You can create an array using [array literal notation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Array#array_literal_notation) or you can create a 1D array and then loop through each item in the array to create nested arrays.
+
+### Using Array Literal Notation
+
+You can create a 2D array directly using array literal notation:
+
+```javascript
+const surface = [
+  ['water', 'water', 'grass', 'grass'],
+  ['water', 'grass', 'grass', 'grass'],
+  ['grass', 'grass', 'water', 'water'],
+  ['grass', 'grass', 'water', 'grass'],
+];
+```
+
+This is the most straightforward way to create an array, but it's not always practical to create an array this way.
+
+### Using a Nested For Loop
+
+You can create a 2D array by using a nested for loop. The first for loop creates the rows and the second nested for loop creates the columns:
+
+```javascript
+const my2DArray = [];
+const rows = 4;
+const columns = 5;
+
+for (let i = 0; i < rows; i++) {
+  my2DArray[i] = [];
+  for (let j = 0; j < columns; j++) {
+    my2DArray[i][j] = j;
+  }
+}
+
+console.log(my2DArray);
+// [
+//   [0, 1, 2, 3, 4],
+//   [0, 1, 2, 3, 4],
+//   [0, 1, 2, 3, 4],
+//   [0, 1, 2, 3, 4],
+// ];
+```
+
+### Using the `Array.from()` Method
+
+The [`Array.from()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from) method creates a shallow-copied array. It takes in an iterable or array-like object to convert to an array as its first argument. The optional second argument, `mapFn`, is a function that's called on every item of the array. Its return value is added to the array. In the example code below, each new row created for the 2D array is an array with a length of 5. The nested arrays are filled with zeros using the [`fill()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill) method.
+
+```javascript
+const rows = 4;
+const columns = 5;
+const my2DArray = Array.from(Array(rows), () => new Array(columns).fill(0));
+console.log(my2DArray);
+// [
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+// ];
+```
+
+This way of creating a 2D array can be useful for initializing a 2D array where all the values are the same.
+
+### Using the `Array.map()` Method
+
+You can also create a 2D array by creating rows using the [`Array()` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/Array) and then creating the nested arrays using the [`Array.map()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map) method:
+
+```javascript
+const rows = 4;
+const columns = 5;
+let my2DArray = Array(rows)
+  .fill()
+  .map(() => Array(columns).fill(0));
+console.log(my2DArray);
+// [
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+// ];
+```
+
+The `Array()` constructor can be called with or without the `new` keyword. Both constructions create an array instance.

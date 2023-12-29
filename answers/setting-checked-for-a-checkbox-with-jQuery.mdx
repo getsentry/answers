@@ -1,0 +1,63 @@
+---
+title: 'Setting "checked" for a checkbox with jQuery'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to check a checkbox using jQuery. You may want to do this so that you can check or uncheck multiple checkboxes at once. How do you do this?
+
+## The Solution
+
+You can use the jQuery [`prop()`](https://api.jquery.com/prop/) method to get a checkbox value or to set one or more checkbox values. For example, you have a form where a user can select whether they want certain food items in an order, such as fries, and a button that checks the corresponding checkbox. Using jQuery, you can get the element, attach a "click" event listener to it, and then check the checkbox using the `prop()` method:
+
+```javascript
+const checkFriesBtn = $('#checkFriesBtn');
+const friesCheckbox = $('#friesCheckbox');
+
+checkFriesBtn.click(() => {
+  friesCheckbox.prop('checked', true);
+});
+```
+
+This sets the `"checked"` property of the checkbox to `true`.
+
+To check a checkbox using vanilla JavaScript, get the element using one of the vanilla JavaScript methods that return an [`Element`](https://developer.mozilla.org/en-US/docs/Web/API/Element) object, such as [`getElementById()`](https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById). Then set the element's `"checked"` property to `true`:
+
+```javascript
+document.getElementById('friesInput').checked = true;
+```
+
+You can also [pass in a function](https://api.jquery.com/prop/#prop-propertyName-function) as an argument to the jQuery `prop()` method to set the value of the property or multiple properties. This is particularly useful for setting multiple properties as in the code example below, which toggles the value of all checkboxes on a page:
+
+```javascript
+const checkAllBtn = $('#checkAllBtn');
+const allCheckboxes = $("input[type='checkbox']");
+
+checkAllBtn.click(() => {
+  allCheckboxes.prop('checked', (i, val) => !val);
+});
+```
+
+The function argument of the `prop()` method toggles all of the checkboxes. You can also uncheck all the checkboxes by returning `false` or check all the checkboxes by returning `true`.
+
+The above code example can be written using vanilla JavaScript:
+
+```javascript
+const checkAllBtnVanillaJS = document.getElementById('checkAllBtnVanillaJS');
+const allCheckboxesVanillaJS = document.querySelectorAll(
+  "input[type='checkbox']"
+);
+
+checkAllBtnVanillaJS.addEventListener('click', () => {
+  allCheckboxesVanillaJS.forEach(
+    (checkbox) => (checkbox.checked = !checkbox.checked)
+  );
+});
+```
+
+In this example, a [`forEach`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach) loop is used to loop through each checkbox and toggle its value.

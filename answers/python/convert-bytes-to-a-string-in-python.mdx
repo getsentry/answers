@@ -1,0 +1,30 @@
+---
+title: 'Convert bytes to a string in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I convert a sequence of bytes to a string using Python?
+
+## The Solution
+
+We can do this using Python's [`bytes.decode()`] method:
+
+```python
+my_byte_sequence = b'Sample'
+my_string = my_byte_sequence.decode()
+```
+
+By default, this method will assume that the bytes sequence is encoded as UTF-8. To convert a bytes sequence with a different [supported encoding](https://docs.python.org/3/library/codecs.html#standard-encodings), we can provide an argument to `decode()`. For example, if our sequence is encoded as ASCII:
+
+```python
+my_ascii_string = my_byte_sequence.decode("ascii")
+```
+
+Note that if the byte sequence contains invalid characters for the specified encoding, a `UnicodeDecodeError` will be raised. In that case, you can try a different encoding.

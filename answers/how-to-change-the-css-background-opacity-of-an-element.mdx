@@ -1,0 +1,95 @@
+---
+title: 'How to change the CSS background opacity of an element'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to change the background opacity of an element. For example, you may want to decrease the opacity of a background image to make any text on the image more readable. The [`opacity`](https://developer.mozilla.org/en-US/docs/Web/CSS/opacity) CSS property sets the opacity of an element. If you decrease the opacity of the background of an element, the opacity of the child elements will be decreased as well. How do you decrease the opacity of the background without affecting the opacity of child elements?
+
+## The Solution
+
+The `opacity` of a parent element is not inherited by child elements. Setting the `opacity` of an element's background to a value below 1 adds the element to a new [stacking context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context). The `opacity` of the parent's background sets the maximum perceived `opacity` of the child elements. The child elements will have an `opacity` relative to the parents' background `opacity`.
+
+Here are three solutions that prevent the child element from having its `opacity` reduced when the `opacity` of the parent element is reduced.  The first solution is for parent elements with a background color, the second and third are for parent elements that have an image as a background.
+
+
+### Setting the alpha channel value of the background color
+
+Set the [`background-color`](https://developer.mozilla.org/en-US/docs/Web/CSS/background-color) property with a [`color value`](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value) that has an alpha channel that allows you to change the transparency of the color.
+
+```css
+.parent {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+```
+
+You can also set the [`background`](https://developer.mozilla.org/en-US/docs/Web/CSS/background) property, which is a shorthand that allows you to set all of the background CSS properties at once.
+
+
+### Using a CSS pseudo-element and absolute positioning for a background image
+
+You can use a [`::before`](https://developer.mozilla.org/en-US/docs/Web/CSS/::before) or [`::after`](https://developer.mozilla.org/en-US/docs/Web/CSS/::after) CSS [pseudo-element](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements) that's absolutely positioned relative to the parent element. You can add a background image to the pseudo-element and change its `opacity`:
+
+```css
+.parent {
+  position: relative;
+}
+
+.parent::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.1;
+  background: url(https://source.unsplash.com/random);
+  z-index: -1;
+}
+```
+
+The `::before` pseudo-element is positioned relative to the parent element. We make it take up the full space of the parent element. We set the [`z-index`](https://developer.mozilla.org/en-US/docs/Web/CSS/z-index) of the  `::before` pseudo-element to -1 so that the background image is positioned behind any of the parent's content. You can change the positioning and styling of the background image using `background` properties such as [`background-position`](https://developer.mozilla.org/en-US/docs/Web/CSS/background-position) and [`background-size`](https://developer.mozilla.org/en-US/docs/Web/CSS/background-size).
+
+
+### Using an image element and absolute positioning for a background image
+
+If you want to use an image from an `<img>` element as the background image, you can also make use of absolute positioning to make the image cover the background of the parent and set its `opacity` without affecting the child elements' opacity:
+
+```html
+<div class="parent">
+  <img
+    class="img-bg"
+    src="https://source.unsplash.com/random"
+    alt="Random image">
+  <div>
+    text
+  </div>
+</div>
+```
+
+
+Set the width and height of the image to 100% so that it covers the parent:
+
+```css
+.parent {
+  position: relative;
+  width: 350px;
+  height: 100px;
+}
+
+.img-bg {
+  opacity: 0.1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+```
+
+The [`object-fit`](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit) property allows you to determine how the image should be resized to fit its container, the parent element.

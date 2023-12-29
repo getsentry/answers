@@ -1,0 +1,25 @@
+---
+title: 'Change the URI for a Git remote'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I change the URI of a remote in my Git repository?
+
+## The Solution
+
+You can do this using [`git remote set-url`](https://git-scm.com/docs/git-remote#Documentation/git-remote.txt-emset-urlem):
+
+```bash
+git remote set-url origin https://github.com/username/repositoryname.git
+```
+
+Substitute `origin` with the name of your remote, if it differs, and the example URL with the new URL you'd like to set.
+
+You can verify the change by running `git remote -v`, which will display the URLs for all remotes.

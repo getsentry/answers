@@ -1,0 +1,63 @@
+---
+title: "Cannot Add Task 'wrapper' as a Task with That Name Already Exists"
+description: 'If you have your gradle wrapper checked-in to source control, you can safely remove the wrapper task from the build.gradle file.'
+excerpt: 'Learn what causes "Error: Android/Gradle/Cannot add task ''wrapper'' as a task with that name already exists."'
+platforms:
+  - sentry.flutter
+people:
+  - Armin Ronacher
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+```
+FAILURE: Build failed with an exception.
+
+* Where:
+Build file '/Users/me/my-app/android/build.gradle' line: 29
+* What went wrong:
+A problem occurred evaluating root project 'android'.
+> Cannot add task 'wrapper' as a task with that name already exists.
+
+* Try:
+Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
+
+BUILD FAILED in 774ms
+Running Gradle task 'bundleRelease'...
+Running Gradle task 'bundleRelease'... Done                         1.8s
+Gradle task bundleRelease failed with exit code 1
+```
+
+## The Solution
+
+Your build.gradle file is defining a task with the name wrapper, likely to pin the gradle version, like:
+
+```
+task wrapper(type: Wrapper) {
+    gradleVersion = '5.6.4'
+}
+```
+
+But you have already the gradle wrapper defined in the `gradle/wrapper/gradle-wrapper.properties` file, like:
+
+```
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-5.6.4-all.zip
+```
+
+If you have your gradle wrapper checked-in to source control, you can safely remove the wrapper task from the build.gradle file. Otherwise, remove the `gradle-wrapper.properties` file.
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how Flutter application monitoring works, take a look at the following articles:
+
+- [Native support for Android SDKs](https://blog.sentry.io/adding-native-support-to-our-android-sdk)
+- [How slow is slow?](https://blog.sentry.io/how-slow-is-slow)
+- [Getting started with the Flutter SDK (docs)](https://docs.sentry.io/platforms/flutter)

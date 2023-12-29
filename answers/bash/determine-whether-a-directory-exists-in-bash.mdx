@@ -1,0 +1,35 @@
+---
+title: 'Determine whether a directory exists in Bash'
+platforms: 
+  - sentry.bash
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I determine whether a directory exists in Bash?
+
+## The Solution
+
+We can check whether a directory exists using the [`test`](https://en.wikipedia.org/wiki/Test_(Unix)) command-line utility, as below:
+
+```bash
+if test -d /path/to/directory; then
+  echo "Directory exists."
+fi
+```
+
+Because the `test` command is used frequently in Bash expressions, we can write it as `[]` rather than typing out `test`:
+
+```bash
+if [ -d /path/to/directory ]; then
+  echo "Directory exists."
+fi
+```
+
+The `-d` flag tests whether the provided name exists and is a directory. To test for regular files instead, we can use the `-f` flag. To test for both files and directories, we can use the `-e` flag.
+
+More information about `test` can be found on its manual page, accessible by typing `man test` into the terminal.

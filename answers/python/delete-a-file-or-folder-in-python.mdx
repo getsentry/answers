@@ -1,0 +1,47 @@
+---
+title: 'Delete a file or folder in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I delete a file or folder in Python?
+
+## The Solution
+
+We can use functions from Python's built-in `os` module to delete files and empty folders.
+
+* [`os.remove()`](https://docs.python.org/3/library/os.html#os.remove) will delete a file.
+* [`os.rmdir()`](https://docs.python.org/3/library/os.html#os.rmdir) will delete an empty folder.
+
+To delete a folder that is not empty, we must use the [`rmtree()`](https://docs.python.org/3/library/shutil.html#shutil.rmtree) function from Python's `shutil` module.
+
+For example:
+
+```python
+import os, shutil
+
+os.remove("unwanted-file.txt")
+os.rmdir("empty-dir")
+shutil.rmtree("nonempty-dir")
+```
+
+Note that these functions will throw errors if the file or directory to be deleted does not exist. We can avoid this by using [`os.path.isfile()`](https://docs.python.org/3/library/os.path.html#os.path.isfile) and [`os.path.isdir()`](https://docs.python.org/3/library/os.path.html#os.path.isdir) to test for their existence before attempting the deletion:
+
+```python
+import os, shutil
+
+if os.path.isfile("unwanted-file.txt"):
+    os.remove("unwanted-file.txt")
+
+if os.path.isdir("empty-dir"):
+    os.rmdir("empty-dir")
+
+if os.path.isdir("nonempty-dir"):
+    shutil.rmtree("nonempty-dir")
+```

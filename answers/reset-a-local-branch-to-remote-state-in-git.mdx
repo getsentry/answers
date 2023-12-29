@@ -1,0 +1,34 @@
+---
+title: 'Reset a local branch to remote state in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I reset the state of a branch in a local Git repository to that of a remote branch?
+
+## The Solution
+
+There are two commands you can use to achieve this. First, download all remote branches with `git fetch`:
+
+```sh
+git fetch origin # <-- name of remote, change if not origin
+```
+
+Second, use [`git reset`](https://git-scm.com/docs/git-reset) to sync the local branch with the remote branch:
+
+```sh
+git reset --hard origin/main
+```
+
+This process will destroy any uncommitted work, as well as any unpushed commits, so caution is advised. Consider making a backup of the local state on a separate branch, before running `git reset`:
+
+```sh
+git commit -a -m "Backup of local work"
+git branch local-work
+```

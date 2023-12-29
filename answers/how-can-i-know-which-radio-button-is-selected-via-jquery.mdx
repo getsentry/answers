@@ -1,0 +1,84 @@
+---
+title: 'How can I know which radio button is selected via jQuery?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have a radio button group in a form. For example, two radio group buttons for selecting a language (English or French):
+
+```html
+<form id="myForm">
+  <fieldset>
+    <legend>Select a language</legend>
+    <div>
+      <input
+        type="radio"
+        id="english"
+        name="language"
+        value="English"
+        checked
+      />
+      <label for="english">English</label>
+    </div>
+    <div>
+      <input type="radio" id="french" name="language" value="French" />
+      <label for="french">French</label>
+    </div>
+  </fieldset>
+</form>
+```
+
+How do you determine which radio button is selected using jQuery?
+
+## The Solution
+
+You can use the jQuery selectors to find and select HTML elements by their attributes such as name, id, class, or type. The selectors all start with a dollar sign and parenthesis: `$()`. To get the value of the selected radio button you can use the following selectors and then get the value of the selected radio button using the [`val()`](https://api.jquery.com/val/) method:
+
+```js
+$("input[type='radio'][name=language]:checked", '#myForm').val();
+```
+
+The [attribute equals selector](https://api.jquery.com/attribute-equals-selector/) (`[name="value"]`) is used to select elements with a `type` of "radio" and a `name` equal to "language". The [`:checked` selector](https://api.jquery.com/checked-selector/) matches all checked elements. The second argument of the [jQuery selector](https://api.jquery.com/jQuery/) is "#myForm". The selectors only check for elements in the form with an `id` of "myForm".
+
+You could add a button to check which radio button is selected:
+
+```html
+<button id="checkRadioBtn">Check radio selection</button>
+```
+
+You can then add the following lines of code to check which radio button is selected by clicking the button:
+
+```js
+import $ from 'jquery';
+
+const checkRadioBtn = $('#checkRadioBtn');
+
+checkRadioBtn.click(() => {
+  const selectedRadioBtn = $(
+    "input[type='radio'][name=language]:checked",
+    '#myForm'
+  ).val();
+  console.log(selectedRadioBtn);
+});
+```
+
+You can also check which radio button is selected using vanilla JavaScript:
+
+```js
+const checkRadioBtn = document.getElementById('checkRadioBtn');
+
+checkRadioBtn.addEventListener('click', () => {
+  const myForm = document.getElementById('myForm');
+  const selectedRadioBtn = myForm.querySelector(
+    "input[type='radio'][name=language]:checked"
+  ).value;
+  console.log(selectedRadioBtn);
+});
+```
+
+You can use the methods of the [`Document`](https://developer.mozilla.org/en-US/docs/Web/API/Document) Web API such as [`getElementById`](https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById) and [`querySelector`](https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector) to select DOM elements and then get the `value` of the checked radio button from its `value` attribute.

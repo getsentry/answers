@@ -1,0 +1,41 @@
+---
+title: 'Git src refspec master does not match any error message'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+When attempting to push commits to a remote branch with Git, you get the following error messages:
+
+```
+error: src refspec master does not match any.
+error: failed to push some refs to '<REMOTE_URL>'
+```
+
+## The Solution
+
+This error message usually indicates that the branch you're attempting to push does not exist. This could happen if you neglect to create an initial commit on a given branch, after you change the name of a branch, or if you misspell the branch name.
+
+To resolve the issue, first check the push command. For example, if you've changed the primary branch name from `master` to `main`, running `git push origin master` will produce this error message, and you should run `git push origin main` instead.
+
+If you're trying to push a branch that hasn't been created yet, you should create it first.
+
+```bash
+git checkout -b my-new-branch
+git add .
+git commit -m "New branch"
+git push -u origin my-new-branch
+```
+
+If your branch contains no commits (check this by seeing whether `git log` produces an error message), create a commit before you can push.
+
+```bash
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+```

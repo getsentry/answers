@@ -1,0 +1,19 @@
+---
+title: 'Force `git pull` to overwrite local files'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+When I run `git pull`, the command fails with an error message indicating that local files will be overwritten. How do I force `git pull` to execute anyway?
+
+## The Solution
+
+The simplest and safest way to do this is by using [`git stash`](https://git-scm.com/docs/git-stash). This command will save and store changes made to a repository's working directory since the most recent commit and return it to the state of that commit. From there, you can call `git pull` to retrieve remote changes.
+
+To reapply the uncommitted work on top of the new commits, run `git stash pop`.

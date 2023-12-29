@@ -1,0 +1,82 @@
+---
+title: 'Modifying State of a Component Directly'
+platforms:
+  - sentry.react
+people:
+  - Evan Hicks
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+The state of a component is managed internally by React. Updating the state of a component directly can have unintended consequences that can be difficult to debug.
+
+```react
+class Counter extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            counter: 0,
+        }
+    }
+
+    increment() {
+        this.state.counter = this.state.counter + this.props.increment
+    }
+}
+```
+
+If the state is updated directly as in the example above, the component will not rerender since the state is compared shallowly. Additionally, the update may be lost if there are other state changes queued asynchronously using setState.
+
+Another common problem is using the current state/props to update the new state.
+
+```react
+class Counter extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            counter: 0,
+        }
+    }
+
+    increment() {
+        this.setState({
+            counter: this.state.counter + this.props.increment
+        })
+    }
+}
+```
+
+This will potentially cause issues due to a potential race condition between other state/prop changes and this particular state update. What happens if the props and/or state change before this state update happens?
+
+## The Solution
+
+The solution for the first example is to always use the `setState` function to ensure state changes are properly queued. For the second problem, React provides a different version of setState that takes a function instead of an object.
+
+```react
+class Counter extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            counter: 0,
+        }
+    }
+
+    increment() {
+        this.setState((prevState, props) => ({
+            counter: prevState.counter + props.increment
+        })
+    }
+}
+```
+
+This will ensure that the state change happens with the correct version of the previous state and props.
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how JavaScript error reporting works, take a look at the following articles:
+
+- [Debug front end errors by giving Sentry more clues](https://blog.sentry.io/debug-tough-front-end-errors-sentry-clues)
+- [See how Aumni keeps errors out of userland](https://sentry.io/customers/aumni)
+- [Getting started with the React SDK (docs)](https://docs.sentry.io/platforms/javascript/guides/react)

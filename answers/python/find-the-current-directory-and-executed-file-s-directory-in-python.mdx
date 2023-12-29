@@ -1,0 +1,42 @@
+---
+title: "Find the current directory and executed file's directory in Python"
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+In a Python script, how can I discover both the directory I executed the script from and the directory in which the script resides?
+
+## The Solution
+
+We can find both of these directories using functions in Python's built-in `os` module. For example:
+
+```python
+import os
+
+# Find the directory we executed the script from:
+execution_dir = os.getcwd()
+
+# Find the directory in which the current script resides:
+file_dir = os.path.dirname(os.path.realpath(__file__))
+
+# Print results
+print(f"Execution dir: {execution_dir}")
+print(f"File dir: {file_dir}")
+```
+
+If we place this script in `/tmp` and run it from our home directory, it will produce the following output:
+
+```
+Execution dir: /home/user
+File dir: /tmp
+```
+
+[`os.getcwd`](https://docs.python.org/3/library/os.html#os.getcwd) returns the current working directory.
+
+[`os.path.dirname`](https://docs.python.org/3/library/os.path.html#os.path.dirname) returns the name of a supplied path, and [`os.path.realpath()`](https://docs.python.org/3/library/os.path.html#os.path.realpath) returns the real path of a provided filename, resolving any shortcuts or symbolic links. [`__file__`](https://docs.python.org/3/reference/import.html#file__) is a built-in constant containing the pathname of the file from which the running Python module was loaded. In some instances, such as when code is executed in an interactive interpreter rather than from a file, this constant may not be set and accessing it will return an exception.

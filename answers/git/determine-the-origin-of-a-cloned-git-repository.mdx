@@ -1,0 +1,37 @@
+---
+title: 'Determine the origin of a cloned Git repository'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I find out which URL a local Git repository was originally cloned from?
+
+## The Solution
+
+By default, a cloned Git repository has a [remote](https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes) named `origin`, which refers to the remote repository from which it was cloned. To obtain the URL of this remote, we can use the following command:
+
+```sh
+git ls-remote --get-url origin
+```
+
+To obtain more information about the remote repository, such as its branches, we can run the following command:
+
+```sh
+git remote show origin
+```
+
+Note that this second command requires the remote repository to be reachable over the network but the first command does not.
+
+If our remote is not called `origin`, we can retrieve the URLs of all remotes using the following command:
+
+```sh
+git remote -v
+```
+
+As remotes can be added, removed, or modified at any time, there is a chance that the remotes in your local repository may not include the remote from which it was originally cloned.

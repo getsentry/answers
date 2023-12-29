@@ -1,0 +1,66 @@
+---
+title: 'Access the index of a for loop'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I access the index when iterating over a sequence inside a for loop?
+
+## The Solution
+
+We can use Python's built-in [`enumerate()`](https://docs.python.org/3/library/functions.html#enumerate) function to do this. For each item in an iterable sequence such as a list, this function will return a tuple containing the item's index and the item itself. Therefore, our code will look like this:
+
+```python
+products = ["Apples", "Oranges", "Bananas"]
+
+for idx, product in enumerate(products):
+    print(f"{idx}: {product}")
+```
+
+This code will produce the following output:
+
+```
+0: Apples
+1: Oranges
+2: Bananas
+```
+
+If we would prefer to start the index from 1 (or any other number), we can specify this using `enumerate()`'s `start` parameter, as below:
+
+```python
+products = ["Apples", "Oranges", "Bananas"]
+
+for idx, product in enumerate(products, start=1):
+    print(f"{idx}: {product}")
+```
+
+This will produce the following output:
+
+```
+1: Apples
+2: Oranges
+3: Bananas
+```
+
+The index can also be accessed without using the `enumerate()` function by iterating over the length of the iterable sequence as below:
+
+```python
+products = ["Apples", "Oranges", "Bananas"]
+
+for idx in range(len(products)):
+    print(f"{idx}: {products[idx]}")
+```
+
+This code will produce the following output:
+
+```
+0: Apples
+1: Oranges
+2: Bananas
+```

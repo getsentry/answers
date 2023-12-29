@@ -1,0 +1,51 @@
+---
+title: UnboundLocalError Local Variable 'index' Referenced Before Assignment
+platforms:
+  - sentry.python
+people:
+  - Evan Hicks
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+The exception `UnboundLocalError: local variable 'index' referenced before assignment` happens in Python when you use a global variable in a function that also defines a local version of the same variable.
+
+```python
+index = 0
+
+def foo():
+    if index == 0:
+        print("ZERO")
+
+    index = 1
+
+foo()
+```
+
+Because index is defined globally as well as inside the `foo()` function, Python throws an exception if you try to use the variable inside `foo` before it's declared.
+
+## The Solution
+
+In this case either move the index declaration up higher in the `foo` function, or rename the variable to avoid the conflict.
+
+```python
+index = 0
+
+def foo():
+    if findex == 0:
+        print("ZERO")
+
+    findex = 1
+
+foo()
+```
+
+### Further Reading
+
+If you're looking to get a deeper understanding of how Python application monitoring works, take a look at the following articles:
+
+- [Debugging Python errors](https://blog.sentry.io/debugging-python-errors)
+- [How Grofers meets unprecedented delivery demand](https://sentry.io/customers/grofers)
+- [Getting started with a Python SDK (docs)](https://docs.sentry.io/platforms/python)

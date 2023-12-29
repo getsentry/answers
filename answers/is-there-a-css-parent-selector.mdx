@@ -1,0 +1,54 @@
+---
+title: 'Is there a CSS parent selector?'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to select the parent of an element to style it. For example, you may have the following two buttons and you want to add extra padding to the button that has an icon:
+
+```html
+<button class="btn">
+  Start game
+  <span class="icon">
+    &#129409;
+  </span>
+</button>
+
+<button class="btn">
+  High Scores
+</button>
+```
+
+You need to select the parent button of the `span` with a class of `"icon"`. How do you do this?
+
+## The Solution
+
+You can use the [`:has()`](https://developer.mozilla.org/en-US/docs/Web/CSS/:has) CSS [pseudo-class](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes) to select a parent element. 
+
+The `:has()` pseudo-class takes a selector or [list of selectors](https://developer.mozilla.org/en-US/docs/Web/CSS/Selector_list#relative_selector_list) as an argument. Add the `:has()` pseudo-class to an element to select it only if it contains an element that matches the passed-in selector argument.
+
+For example, the CSS code below adds padding to the button with a class of `"btn"` if it has an element with a class of `"icon"` inside it:
+
+```css
+.btn:has(.icon) {
+  padding: 0.25rem 0.5rem;
+}
+```
+
+The [browser support](https://caniuse.com/css-has) for the `:has()` selector is quite good; most major browsers support it.
+
+Alternatively, you can use JavaScript to select a parent element and style it:
+
+```javascript
+const icon = document.querySelector('.btn .icon');
+const btn = icon.parentNode;
+btn.style.padding = "0.25rem 0.5rem";
+```
+
+You first select the child element and then get its parent element using the [`parentNode`](https://developer.mozilla.org/en-US/docs/Web/API/Node/parentNode) property.

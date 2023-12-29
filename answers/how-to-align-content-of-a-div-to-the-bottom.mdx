@@ -1,0 +1,59 @@
+---
+title: 'How to align content of a div to the bottom'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have a `<div>` with content, for example, a container with two items:
+
+```html
+<div class="container">
+  <div class="item item1">Item 1</div>
+  <div class="item item2">Item 2</div>
+</div>
+```
+
+You want to align the content of the `div` to the bottom of the container. How do you do this?
+
+## The Solution
+
+You can make the container a flex container and then align the items to the bottom by setting the [`align-items`](https://developer.mozilla.org/en-US/docs/Web/CSS/align-items) property to "flex-end". The container should have a height.
+
+```css
+.container {
+  height: 350px;
+  display: flex;
+  align-items: flex-end;
+}
+```
+
+If you want the main axis of the flex container, which is the direction that the flex items are laid out in, to be going down the page, you can change the [`flex-direction`](https://developer.mozilla.org/en-US/docs/Web/CSS/flex-direction) property to "column" and justify the content to the end of the flexbox:
+
+```css
+  flex-direction: column;
+  justify-content: flex-end;
+```
+
+Note that you can't justify individual flex items by setting `justify-self: flex-end;` because [there is no `justify-self` in Flexbox](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Alignment/Box_Alignment_in_Flexbox#there_is_no_justify-self_in_flexbox).
+
+If you want to move all of the flex items down except the first flex item, you can set the `margin-bottom` of the first item to `auto`:
+
+```css
+.container {
+  height: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+.item1 {
+  margin-bottom: auto;
+}
+```
+
+This will push the other items to the bottom.

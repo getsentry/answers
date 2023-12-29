@@ -1,0 +1,27 @@
+---
+title: 'Discard unstaged changes in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I discard all unstaged changes in my Git repository?
+
+## The Solution
+
+We can do this using [`git restore`](https://git-scm.com/docs/git-restore). To discard changes for all files in our current working directory run the following:
+
+```bash
+git restore .
+```
+
+To discard unstaged changes for a specific file, run the following:
+
+```bash
+git restore path/to/file
+```

@@ -1,0 +1,50 @@
+---
+title: 'Use global variables in Python functions'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I create or use a global variable inside a function? Once I've created a global variable, how do I use it in other functions?
+
+## The Solution
+
+Each function that uses a global variable must declare it with the [`global`](https://docs.python.org/3/reference/simple_stmts.html#the-global-statement) keyword before using it. The code below demonstrates the creation and use of a global counter variable across multiple functions.
+
+```python
+def create_counter():
+    global counter
+    counter = 1
+
+def increment_counter():
+    global counter
+    counter += 1
+
+def print_counter():
+    global counter
+    print(counter)
+
+create_counter()
+print_counter()
+increment_counter()
+print_counter()
+increment_counter()
+print_counter()
+```
+
+When executed, this code will produce the following output:
+
+```
+1
+2
+3
+```
+
+From this, we can tell that all three functions use the same variable.
+
+Note that using global variables in this way can make your code difficult to reason about and debug beyond a certain scale. Global variables are generally considered bad programming practice and should be avoided where possible.

@@ -1,0 +1,107 @@
+---
+title: 'How to submit an AJAX form using jQuery'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to submit form data in an asynchronous HTTP request using JavaScript (AJAX). You may want to do this to add custom client-side form validation.
+Suppose you have the following form, with a name and email input:
+
+```html
+<form>
+  <label for="name">Name</label>
+  <input type="text" id="name" name="name" placeholder="Name" />
+
+  <label for="email">Email</label>
+  <input type="email" id="email" name="email" placeholder="email@example.com" />
+  <button type="submit">Submit</button>
+</form>
+```
+
+How do you submit this form using jQuery?
+
+## The Solution
+
+You can use the jQuery [`ajax()`](https://api.jquery.com/jQuery.ajax/) method to perform an AJAX request:
+
+```javascript
+$('form').submit(function (e) {
+  e.preventDefault();
+  const data = {
+    name: $('#name').val(),
+    email: $('#email').val(),
+  };
+
+  $.ajax({
+    type: 'POST',
+    url: 'http://localhost:1337/api/form',
+    data: JSON.stringify(data),
+    contentType: 'application/json',
+  })
+    .done((data) => {
+      console.log({ data });
+    })
+    .fail((err) => {
+      console.error(err);
+    })
+    .always(() => {
+      console.log('always called');
+    });
+});
+```
+
+Here we select the form element and then bind a submit event handler function to the form using the jQuery [`submit()`](https://api.jquery.com/submit/#submit-eventData-handler) method. We prevent the form from being submitted to the server by calling the [`Event.preventDefault()`](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault) method in the event handler. This allows us to control the form submission with jQuery.
+
+We then get the value of the inputs and use the `ajax()` method to post the data to the server. The body data type in `data` must match the "Content-Type" header.
+
+You can also use the jQuery [`post()`](https://api.jquery.com/jQuery.post/) method to specifically make AJAX POST requests.
+
+After a successful POST request, the `done()` method is called. If an error occurs, the `fail()` method is called. You can use these callback functions for client-side data validation. The `always()` callback runs if the request is successful or if there is an error.
+
+You can also use vanilla JavaScript to make an AJAX request using the [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch):
+
+```javascript
+const form = document.querySelector('form');
+
+async function postData(url = '', data = {}) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('Network response was not OK');
+  }
+
+  return response.json();
+}
+
+form.addEventListener('submit', (e) => {
+  const formInputs = form.getElementsByTagName('input');
+  let formData = {};
+  for (let input of formInputs) {
+    formData[input.name] = input.value;
+  }
+  e.preventDefault();
+  postData('http://localhost:1337/api/form', formData)
+    .then((data) => {
+      console.log({ data });
+    })
+    .catch((err) => {
+      console.error(err);
+    })
+    .finally(() => {
+      console.log('always called');
+    });
+});
+```
+
+A `fetch()` promise will only be rejected if the server can't send a response. This happens when there's a network or CORS error. To check if a response was successful, you need to check the boolean [`Response.ok`](https://developer.mozilla.org/en-US/docs/Web/API/Response/ok) property. The response is successful when the status is in the range of 200-299.

@@ -1,0 +1,26 @@
+---
+title: 'Get the length of a list in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I determine the number of elements in a list in Python?
+
+## The Solution
+
+You can do this using Python's built-in [`len()`](https://docs.python.org/3/library/functions.html#len) function. For example:
+
+```python
+products = ["Apples", "Oranges", "Pears"]
+product_count = len(products)
+
+print(product_count) # will output "3"
+```
+
+The `len()` function works by calling the provided object's [`__len__()`](https://docs.python.org/3/reference/datamodel.html#object.__len__) method. The `len()` function works with other iterable data types in Python as well, such as strings, tuples, and sets.

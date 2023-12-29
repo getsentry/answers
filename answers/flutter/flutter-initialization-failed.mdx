@@ -1,0 +1,71 @@
+---
+title: 'Flutter Initialization Failed'
+platforms:
+  - sentry.flutter
+people:
+  - Manoel Aranda Neto
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+When building an Android APK with a segmented --target-platform argument.
+
+```bash
+
+flutter build apk --target-platform=android-arm
+
+```
+
+```java
+
+FlutterLoader: Flutter initialization failed.
+    java.util.concurrent.ExecutionException: java.lang.UnsatisfiedLinkError: dlopen failed: library "libflutter.so" not found.
+        at java.util.concurrent.FutureTask.report(FutureTask.java:123)
+        at java.util.concurrent.FutureTask.get(FutureTask.java:193)
+        at io.flutter.embedding.engine.f.c.b(Unknown Source:23)
+        at io.flutter.embedding.engine.a.<init>(Unknown Source:158)
+        at io.flutter.embedding.engine.a.<init>(Unknown Source:16)
+        at io.flutter.embedding.android.e.w(Unknown Source:106)
+        at io.flutter.embedding.android.e.h(Unknown Source:7)
+        at io.flutter.embedding.android.d.onCreate(Unknown Source:20)
+        at android.app.Activity.performCreate(Activity.java:8000)
+        at android.app.Activity.performCreate(Activity.java:7984)
+        at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1309)
+        at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:3422)
+        at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:3601)
+        at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:85)
+        at android.app.servertransaction.TransactionExecutor.executeCallbacks(TransactionExecutor.java:135)
+        at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:95)
+        at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2066)
+        at android.os.Handler.dispatchMessage(Handler.java:106)
+        at android.os.Looper.loop(Looper.java:223)
+        at android.app.ActivityThread.main(ActivityThread.java:7656)
+        at java.lang.reflect.Method.invoke(Native Method)
+        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:592)
+        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:947)
+
+```
+When an Android App bundles multiple native libraries for multiple ABIs, the *--target-platform* only splits out Flutter's native library and not the App’s native libraries.
+
+Flutter's build system only includes the *libflutter.so* for the targeted platform to the final APK. But the App's native libraries still contain the native libraries for every platform, so when running an APK in compatible mode (64 bit device using 32 bit APK), it's not able to load Flutter's native library (as it's missing).
+
+## The Solution
+
+```bash
+
+flutter build apk --target-platform=android-arm --split-per-abi
+
+```
+
+The *--split-per-abi* argument should be used as well.
+
+Flutter's build system splits out the App’s native libraries as well (in addition to Flutter's native library), so when running an APK in compatible mode (64 bit device using 32 bit APK), it'd still be able to load the native libraries correctly.
+
+
+### Further Reading
+
+- [How slow is slow?](https://blog.sentry.io/how-slow-is-slow)
+- [Native support for Android SDKs](https://blog.sentry.io/adding-native-support-to-our-android-sdk)
+- [The Flutter SDK (docs)](https://docs.sentry.io/platforms/flutter)

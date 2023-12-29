@@ -1,0 +1,74 @@
+---
+title: "Why don't React Router URLs work when refreshing or writing manually?"
+platforms:
+  - sentry.react
+people:
+  - Gareth D.
+date:
+  2023-1-30T11:28:03+02:00
+---
+
+
+## The problem
+
+When using React Router for client-side routing in your [single page application](https://developer.mozilla.org/en-US/docs/Glossary/SPA) (SPA), you may run into the issue of URL routes not working when a page is refreshed, the URL is written manually, or when the URL is shared. This issue may be due to your browser making a GET request to your server for a route that is not handled on your server. You have client-side routing set up, but you don't have server-side routing set up.
+
+This issue occurs for routes that are not on the home page `/` route. For example, if you navigate to one of your client-side routes, such as the `/contact` page, and then refresh the page, your app will crash and you'll see the following error message on your page:
+
+```
+Cannot GET /contact
+```
+
+
+
+When your app first loads, a GET request is made to your server, which gets the JavaScript code for React and React Router. Once the JavaScript is loaded in your browser, React Router takes control of routing. If you haven't set up server-side routing, the JavaScript code can only be fetched from the `/` route on your server.
+
+React Router handles route changes on the client. It does not make a request to your server on every route change. It uses the browser's [`history` API](https://developer.mozilla.org/en-US/docs/Web/API/History_API) to change the URL for a route client-side and it renders the view for that route. This is different to server-side routing, where a GET request is made to the server on each route change. This causes a page refresh as a new page is fetched.
+
+
+
+## The solution
+
+To fix the issue, it's best to add some logic on your server to handle server-side routing. You can set up server routing for each route or you can re-direct all server requests to the `/` route `index.html` file. You can also set up client-side routing such that it only makes requests to the `/` server route.
+
+
+
+### Hash History
+
+You can use a [hash router](https://reactrouter.com/en/main/routers/create-hash-router) instead of a [browser router](https://reactrouter.com/en/main/routers/create-browser-router) to make all client-side requests go to the same `/` server route. It works by appending a `#` to the end of your URL root. Anything after the `#` won't be sent to the server. So if you send someone a link to `https://www.yourwebsite/#/contact`, the browser will make a GET request to `https://www.yourwebsite/` and the React Router hash router will show the `/contact` page. The React Router docs recommend that you don't use hash URLs. Only use hash URLs if you can't configure your server to direct all traffic to your React Router application.
+
+
+
+### Catch-all server route
+
+If you have control over the server that you are using, setting up a catch-all route is a good solution. You can redirect all requests to the `/` route `index.html` file. It has the same result as the hash history strategy but without the hashes in the client-side URLs. Here's an example of a catch-all route in an Express.js app:
+
+```js
+app.get("/*", function (req, res) {
+  res.sendFile(path.join(__dirname, "dist/index.html"), function (err) {
+    if (err) {
+      res.status(500).send(err);
+    }
+  });
+});
+```
+
+
+
+You may be using a hosting service that supports client-side routing and uses a serverless backend, such as Netlify. In this case, you'll need to configure the app as a SPA so that all requests are re-directed to the `/` route. This setup may be part of a question asked by the hosting service during set up or you may need to change some configuration files yourself. The steps for this should be available in the hosting provider's docs.
+
+
+
+### Setting up server-side routes for client-side routes
+
+You can set up your server to return pages for specific routes that are important for SEO or for all routes. This adds more complexity and you may end up with duplicate code on the client and the server. If SEO is a concern, it may be best to use a React framework that has server-side rendering or static site generation such as [Next.js](https://nextjs.org/), [Remix](https://remix.run/), or [Gatsby](https://www.gatsbyjs.com/).
+
+
+
+### Further reading
+
+If you’re looking to get a deeper understanding of how React application monitoring works, take a look at the following articles:
+
+- [Debugging tough frontend errors by giving Sentry more clues](https://blog.sentry.io/debug-tough-front-end-errors-sentry-clues)
+- [How Aumni keeps errors out of userland](https://sentry.io/customers/aumni)
+- [Getting started with Sentry’s React SDK (docs)](https://docs.sentry.io/platforms/javascript/guides/react)

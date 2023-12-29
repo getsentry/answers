@@ -1,0 +1,59 @@
+---
+title: 'How to get the length of a JavaScript object'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to determine the length of a JavaScript object, which is the number of properties in an object. Properties are also referred to as keys. Regular JavaScript objects don't have a `length` property, which is a property of an array. How do you determine the length of an object?
+
+## The Solution
+
+Convert the object to an array so that you can use the array [`length`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/length) property to determine the number of properties in the object. The `Object.keys()` method is suitable for most use cases.
+
+### Using the `Object.keys()` Method
+
+The [`Object.keys()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys) method takes in an object as an argument and returns an array of the object's properties:
+
+```javascript
+const obj = { name: 'Ben', age: 30, job: 'doctor' };
+const arrFromObj = Object.keys(obj);
+console.log(arrFromObj.length); // 3
+```
+
+This method is relatively new: it was added to the ES6 JavaScript language update. The `Object.keys()` method does not necessarily return all of the properties in an object. It returns an object's own [enumerable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Enumerability_and_ownership_of_properties) string-keyed property names.
+
+You can also use the [`Object.values()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/values) method to return an array of the object's values or the [`Object.entries()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/entries) method to return an array containing the object's key-value pairs. Each key-value pair is added to a nested array.
+
+### Using the `Object.getOwnPropertyNames()` Method
+
+If you need to count non-enumerable properties, you can use the [`Object.getOwnPropertyNames()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyNames) method. It's similar to the `Object.keys()` method in that it returns an array of the properties of an object. The difference is that it also returns non-enumerable properties, except for properties that use a [symbol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) type.
+
+```javascript
+const obj = { name: 'Ben', age: 30, job: 'doctor' };
+const arrFromObj = Object.getOwnPropertyNames(obj);
+console.log(arrFromObj.length); // 3
+```
+
+### Using a For In Loop
+
+You can also use a `for...in` loop to iterate through an object's enumerable properties and then use a variable that increments on each loop to count the number of properties:
+
+```javascript
+const obj = { name: 'Ben', age: 30, job: 'doctor' };
+let length = 0;
+
+for (const key in obj) {
+  length++;
+}
+
+console.log(length); // 3
+```
+
+### Using Other Methods
+
+Various other methods can be used to count properties, enumerable or non-enumerable, of an object as can be seen in this table: [Transversing JavaScript properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Enumerability_and_ownership_of_properties#traversing_object_properties).

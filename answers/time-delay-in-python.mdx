@@ -1,0 +1,25 @@
+---
+title: 'Time delay in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I make a time delay in Python?
+
+## The Solution
+
+We can do this using the [`sleep()`](https://docs.python.org/3/library/time.html#time.sleep) function in Python's built-in [`time`](https://docs.python.org/3/library/time.html) module. This function will pause execution by a provided number of seconds. For example:
+
+```python
+from time import sleep
+
+print("Waiting 1 minute...")
+sleep(60)
+print("1 minute has passed.")
+```

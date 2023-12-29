@@ -1,0 +1,67 @@
+---
+title: 'Resolve merge conflicts in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I resolve merge conflicts in a Git repository?
+
+## The Solution
+
+Merge conflicts usually arise when changes are made to the same lines of the same files on different branches – these can be different named branches in the same repository or branches with the same name on different remotes. When a merge conflict occurs, you will see a message from Git resembling the following:
+
+```
+Auto-merging main.py
+CONFLICT (content): Merge conflict in main.py
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+Depending on how different the branches we're merging are, there may be multiple files with multiple conflicts per file. To resolve conflicts, we need to go through each one and tell Git how to treat it. Git marks changes by editing the relevant parts of each conflicting file as below:
+
+```
+<<<<<<< HEAD
+print("Yo world!")
+=======
+print("Hi world!")
+>>>>>>> otherbranch
+```
+
+The text below HEAD will be the content of the file on our current branch, and the text below the row of equals signs will be the content of the file on the branch we're merging into our current branch.
+
+To resolve the conflict, we need to delete the lines containing the branch names and the equals signs. Usually, this means choosing the content of one branch or the other to retain, but Git does not force us to do this. In rare circumstances, we might want to combine the changes or make a new change. As long as all merge conflict demarcations are removed, Git will consider the merge resolved.
+
+We can resolve conflicts manually by editing each of the files that Git tells us are in conflict, or we can use a merge tool such as [vimdiff](https://git-scm.com/docs/vimdiff/en) by running `git mergetool`. If we use vimdiff, we'll be shown a multi-pane vim screen that resembles the following:
+
+```
+  ╔════════════════════╦═══════════════════════╦════════════════════╗
+  ║                    ║                       ║                    ║
+  ║ print("Yo world!") ║ print("Hello world!") ║ print("Hi world!") ║
+  ║                    ║                       ║                    ║
+  ╠════════════════════╩═══════════════════════╩════════════════════╣
+  ║                                                                 ║
+  ║ <<<<<<< HEAD                                                    ║
+  ║ print("Yo world!")                                              ║
+  ║ =======                                                         ║
+  ║ print("Hi world!")                                              ║
+  ║ >>>>>>> otherbranch                                             ║
+  ║                                                                 ║
+  ║                                                                 ║
+  ╚═════════════════════════════════════════════════════════════════╝
+```
+
+In the top three panes, we can see the content on our current branch, the content as it was before our branches diverged, and the content on the branch we're merging in. The pane at the bottom shows our merged state and can be edited. To resolve the merge conflict, we can edit the bottom pane manually, or we can issue one of the following Vim commands:
+
+1. `:diffg LO`: Choose the changes from our current branch.
+2. `:diffg BA`: Choose the changes from before the branches diverged.
+3. `:diffg RE`: Choose the changes from the branch we're merging in.
+
+Once we're done resolving conflicts, we can save and exit with `:wqa`.
+
+Whether we've resolved conflicts manually in our normal editor or by using a merge tool, we will still need to finalize the merge. Git automatically stages the changes for merged files, so we just need to create a new commit (`git commit -m "Merge resolution"`).
+

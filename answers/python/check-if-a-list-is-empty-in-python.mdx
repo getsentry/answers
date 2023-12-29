@@ -1,0 +1,24 @@
+---
+title: 'Check if a list is empty in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I check if a list is empty in Python?
+
+## The Solution
+
+[The Python style guide, PEP-8, recommends](https://peps.python.org/pep-0008/#programming-recommendations) checking whether a list (or other sequence) is `False` to determine that it is empty. For example:
+
+```python
+empty_list = []
+
+if not empty_list:
+    print("The list is empty.")
+```

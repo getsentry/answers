@@ -1,0 +1,53 @@
+---
+title: 'Split string on delimiter in Bash'
+platforms: 
+  - sentry.bash
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+I have the following string stored in a Bash variable:
+
+```
+string="Doe, Jane;Smith, John;Bloggs, Joe"
+```
+
+How can I split this string on the `;` delimiter in Bash?
+
+## The Solution
+
+To split the string in this variable, we can temporarily set Bash's input field separator variable (`IFS`) to the desired delimiter while reparsing it into an array [`read -ra`](https://en.wikipedia.org/wiki/Read_(Unix)). For example:
+
+```bash
+string="Doe, Jane;Smith, John;Bloggs, Joe"
+
+IFS=";" read -ra names <<<"$string"
+
+for name in "${names[@]}"; do
+  echo "$name"
+done
+```
+
+This code will produce the following output:
+
+```
+Doe, Jane
+Smith, John
+Bloggs, Joe
+```
+
+In our `read` command, the `-a` flag creates an array, and the `-r` flag prevents backslashes from escaping any characters in the string.
+
+A simpler way to achieve this would be to use the [`cut`](https://en.wikipedia.org/wiki/Cut_(Unix)) command, but this requires us to know the number of elements in the string, which may not be possible in all cases. The code below produces the same output using `cut` instead of `IFS`:
+
+```bash
+string="Doe, Jane;Smith, John;Bloggs, Joe"
+
+for index in {1..3}; do
+  echo "$string" | cut -d ";" -f $index
+done
+```

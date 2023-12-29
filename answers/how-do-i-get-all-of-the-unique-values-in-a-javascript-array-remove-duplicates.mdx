@@ -1,0 +1,69 @@
+---
+title: 'How do I get all of the unique values in a JavaScript array (remove duplicates)?'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Matthew C.
+date: 2023-02-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have an array that should only have unique values. How do you remove duplicates?
+
+## The Solution
+
+There are various ways to remove duplicate values in an array. The simplest, most easy-to-read solution is to use the ES6 `Set` object.
+
+### Using `Set` and spread syntax
+
+You can remove duplicates from an array by creating a new [`Set`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) object using the `Set()` constructor. You pass in an iterable, such as an array:
+
+```javascript
+const arr = [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 5];
+const set = [...new Set(arr)];
+console.log(set); // [1, 2, 3, 4, 5]
+```
+
+To convert the `Set` object back to an array, you can use the [spread syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax) to spread the iterable `Set` object into an array literal.
+
+### Using `.filter()` and `.indexOf()`
+
+Alternatively, you can use the [`filter()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter) method, which filters elements from the array that pass the test of the `callbackFn` argument. The element passes the test if the `callbackFn` returns a [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) value. In the example code below, the test `callbackFn` uses the [`indexOf()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf) method to return the first index of the item in the array:
+
+```javascript
+const arr = [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 5];
+const uniqueArr = arr.filter((item, index) => arr.indexOf(item) === index);
+console.log(uniqueArr); // [1, 2, 3, 4, 5]
+```
+
+Only the first occurrence of an item in the array will pass the test `callbackFn` by returning `true`.
+
+### Using a For Loop and `.indexOf()`
+
+The function below removes duplicate values from an array by looping through each value of the array and adding the item to a helper array, `uniqueArr`, if it does not exist in the helper array already. The function uses the `indexOf()` method to check for duplicates. If a value does not exist in `uniqueArr` then the `indexOf()` method will return `-1`.
+
+```javascript
+function removeArrDuplicates(array) {
+  const uniqueArr = [];
+
+  for (let i = 0; i < array.length; i++) {
+    if (uniqueArr.indexOf(array[i]) === -1) {
+      uniqueArr.push(array[i]);
+    }
+  }
+  return uniqueArr;
+}
+
+const arr = [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 5];
+const uniqueArr = removeArrDuplicates(arr);
+console.log(uniqueArr); // [1, 2, 3, 4, 5]
+```
+
+You can also use a [`for...of`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of) loop instead of a regular for loop for the function above.
+
+### Performance
+
+The method using `.filter()` and `.indexOf()` to remove duplicates from an array as well as the for loop and `.indexOf()` method use nested loops so they'll be less performant than the method that uses `Set()` and the spread syntax. Using the `Set()` method and spread syntax is the best choice in terms of performance, conciseness, and readability.
+
+The performance difference between the different methods is unlikely to be significant in most applications unless you are dealing with very large arrays.

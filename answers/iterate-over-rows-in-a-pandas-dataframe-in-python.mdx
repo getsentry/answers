@@ -1,0 +1,41 @@
+---
+title: 'Iterate over rows in a Pandas DataFrame in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-03-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I iterate over the rows of a Python Pandas DataFrame, accessing its elements by their column names?
+
+## The Solution
+
+Iterating over rows is [considered bad practice in Pandas](https://pandas.pydata.org/pandas-docs/stable/user_guide/basics.html#iteration), as it becomes quite slow for large DataFrames. It is worth considering whether the problem we're aiming to solve with iteration over rows could instead be solved using one of the following approaches:
+
+* Vectorization: applying the same operation simultaneously to the entire DataFrame. The Pandas documentation provides [an overview of basic vectorization functionality](https://pandas.pydata.org/pandas-docs/stable/user_guide/basics.html#essential-basic-functionality).
+* [`DataFrame.apply`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.apply.html#pandas-dataframe-apply): this method will execute a provided function over the rows or columns of a DataFrame.
+
+If neither of these solutions is appropriate and iterating over the rows of our DataFrame cannot be avoided, we can use `DataFrame.itertuples()`. This function returns rows as [named tuples](https://docs.python.org/3/library/collections.html#collections.namedtuple). For example:
+
+```python
+import pandas
+
+prices_df = pandas.DataFrame({'cost_price': [1, 2], 'sale_price': [2, 4]},
+                             index=['apple', 'orange'])
+
+for row in prices_df.itertuples():
+    print(f"An {row.Index} costs ${row.cost_price} and sells for ${row.sale_price}.")
+```
+
+This will print the following:
+
+```
+An apple costs $1 and sells for $2.
+An orange costs $2 and sells for $4.
+```
+
+[`DataFrame.iterrows()`](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.iterrows.html#pandas-dataframe-iterrows) can also be used to iterate over DataFrame rows, but is slower than `itertuples()` and does not preserve data types.

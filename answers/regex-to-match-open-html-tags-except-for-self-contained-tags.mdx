@@ -1,0 +1,44 @@
+---
+title: 'Regex to match open HTML tags except for self-contained tags'
+platforms:
+  - sentry.html
+people:
+  - Matthew C.
+date: 2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want a regular expression (regex) to match opening HTML tags such as `<div>`, `<form id="myForm">`, and `<h1>`. The regex should not match self-contained (self-closing) tags such as `<img />`, `<br />`, and `<input />`.
+
+## The Solution
+
+Self-closing tags do not exist in HTML. HTML elements that can't have any child nodes are [void elements](https://developer.mozilla.org/en-US/docs/Glossary/Void_element#self-closing_tags). These elements don't have a closing tag. Self-closing tags, which contain a trailing slash character ("/") before the closing angle bracket, are required for [XML](https://developer.mozilla.org/en-US/docs/Glossary/XML), [XHTML](https://developer.mozilla.org/en-US/docs/Glossary/XHTML), and [SVG](https://developer.mozilla.org/en-US/docs/Glossary/SVG) void elements. Some code formatters add a trailing slash to the start tag of an HTML void element to make them XHTML compatible and to improve readability. Self-closing tags can be used when writing HTML code since the trailing slash character is ignored by HTML parsers. These days HTML is used far more than XHTML: it's the most used markup language for websites.
+
+Various regexes can be used to match open HTML tags and not self-contained tags. For example:
+
+```
+<([a-z]+)(?![^>]*\/>)[^>]*>
+```
+
+This regex does the following:
+
+- `<`: Match the opening angle bracket of an HTML tag.
+- `([a-z]+)`: Match one or more lowercase alphabetical characters.
+- `(?![^>]*\/>)`: Negative lookahead that prevents matching closing tags. If there are zero or more characters other than ">" followed by a "/>" then the regex won't match.
+- `[^>]*>`: The regex will match if the string ends in zero or more characters other than ">" followed by a ">" character.
+
+Using a regex to find HTML tags is not ideal as it can lead to incorrect matches. For example, if you use the above regex for the following HTML string:
+
+```html
+<script>
+  const myString = "<script></script>";
+</script>
+<div class="container">
+  <!-- <img src="cat.jpg" alt="big cat" > -->
+</div>
+```
+
+The regex will match the `<script>` and `<div>` HTML opening tags. However, it will also match two opening tags that are not actual DOM tags: the `<script>` tag string in the `myString` variable and the `<img>` tag in the HTML comment.
+
+A better approach is to use an HTML parser library such as [Cheerio](https://cheerio.js.org/).

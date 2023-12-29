@@ -1,0 +1,23 @@
+---
+title: 'Modify an existing unpushed commit message in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-04-15T11:30:00+02:00
+---
+
+## The Problem
+
+In Git, how do I modify the commit message for a commit I've made but not yet pushed to a remote?
+
+## The Solution
+
+We can use [`git commit --amend`](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt---fixupamendrewordltcommitgt) to edit the latest commit message. Running this command will open an editor containing the existing commit message. We can then change the message, save the file, and close the editor. Behind the scenes, Git will replace our existing commit with a new one containing all the same changes as well as the modified message.
+
+If we don't want to change the existing message in an editor, we can specify the `-m` flag with a new message:
+
+```bash
+git commit --amend -m "Corrected commit message."
+```

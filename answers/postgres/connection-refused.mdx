@@ -1,0 +1,25 @@
+---
+title: 'psql: Could not Connect to Server: Connection Refused'
+description: 'This error occurs because Postgres isn’t listening on the correct port, or there is an issue connecting from your computer to that port.'
+platforms:
+  - sentry.postgres
+people:
+  - Evan Hicks
+date:
+  2022-07-12T09:53:54-07:00
+---
+
+## The Problem
+
+When configuring Postgres initially, this error is quite common: `psql: could not connect to server: Connection refused Is the server running on host "<your host>" and accepting TCP/IP connections on port 5432`. It occurs because Postgres isn't listening on the correct port (5432 is what `psql` expects by default) or there is an issue connecting from your computer to that port.
+
+## The Solution
+
+First, double check that the Postgres process is running where you expect it to be. If you are trying to connect to a Postgres instance on the same host as your terminal, you can run `lsof -p :5432` which will show which, if any, processes are listening on that port. The postgres process should be connected there.
+
+You can also look at the `listen_address` and `port` value in your `postgresql.conf` to make sure Postgres is accepting connections on the address and port you expect. If the connection is still failing, then there might be a permission issue in the `pg_hba.conf` access configuration file. Make sure this is set up correctly to accept connections from your IP. Finally, ensure there are no firewalls or `iptables` on the Postgres server that are blocking connections.
+
+### Further Reading
+
+- [How to mutate data in a system designed for immutable data](https://blog.sentry.io/how-to-mutate-data-in-a-system-designed-for-immutable-data)
+- [Database integrations (docs)](https://docs.sentry.io/platforms/node/performance/database)
