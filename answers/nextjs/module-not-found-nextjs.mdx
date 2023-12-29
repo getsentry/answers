@@ -1,0 +1,68 @@
+---
+title: 'Fixing "Module not found" errors in Next.js'
+platforms:
+  - sentry.nextjs
+people:
+  - Richard Roggenkemper
+date:
+  2023-12-18T14:00:00-07:00
+---
+## Module Error 
+Another common error in Next.js is: Module not found: Can’t resolve ‘moduleName’, e.g.
+
+```
+Module not found: Can't resolve 'fs'
+```
+
+This error usually occurs when you’re importing a module that is not accessible by Next.js. Like with the case of the fs module, it is simply because the module is not available on the client side, and you or a third-party package had tried to access it.
+
+## How to Resolve
+You can resolve this error by making sure to keep all Node.js/server-related code inside of Next.js data fetching APIs — getServerSideProps, getStaticPaths, or getStaticProps.
+
+```javascript
+export function Index({ fileInfo }) {
+  return (
+    <div>
+      {/* page content */}
+    </div>
+  );
+}
+
+export default Index;
+
+export async function getServerSideProps(context) {
+  const fs = require('fs');
+  let fileInfo = fs.readFileSync('path/to/sample.txt');
+
+  return {
+    props: {
+      fileInfo,
+    },
+  };
+}
+```
+
+In cases where the error had occurred because of a package you imported and not because you’re explicitly trying to access a Node.js module, you can modify your Next.js configuration file (next.config.js) to include an entry for webpack like this.
+
+```javascript
+const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
+
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        fs: false,
+      };
+    }
+
+    return config;
+  },
+};
+
+module.exports = nextConfig;
+```
+
+In this code, the isServer property of the options object is checked to determine if the current build is for the server-side or the client-side. If the build is not for the server-side (i.e. if isServer is false), then the fs module is added to the fallback list in the resolve section of the webpack configuration.
+
+This means that when webpack encounters an import for the fs module, it will not attempt to resolve the import, and the fs module will not be bundled with the application. This allows the fs module to be loaded at runtime on the server-side, but not on the client-side.

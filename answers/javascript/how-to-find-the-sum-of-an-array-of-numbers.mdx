@@ -1,0 +1,72 @@
+---
+title: 'How to find the sum of an array of numbers'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to find the sum of an array of numbers. How do you do this with JavaScript?
+
+## The Solution
+
+There are various ways to find the sum of an array of numbers in JavaScript. We'll look at four common ways.
+
+## Using a `for` loop
+
+The most performant method is to use a `for` loop:
+
+```js
+const arr = [23, 34, 77, 99, 324];
+let sum = 0;
+for (let i = 0; i < arr.length; i++) {
+  sum += arr[i];
+}
+
+console.log(sum);
+```
+
+The sum of the array of numbers is calculated by looping through the array and adding the value of each array element to a variable called `sum`.
+
+## Using `reduce()`
+
+Another option is to use the [`reduce()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce) array method:
+
+```js
+const arr = [23, 34, 77, 99, 324];
+const sum = arr.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+console.log(sum);
+
+```
+
+The `reduce()` method calculates the sum of the array of numbers by executing the "reducer" callback function on each element of the array. The `accumulator` argument is the value of the previous call of the function. Its initial value is `0`; the `currentValue` is the value of the array element. For each call of the function, the value of the previous function call is added to the value of the array element. The return value of the `reduce()` method is the final value of the "reducer" callback function after it's been executed on each element of the array. In this case, it calculates the sum of the array numbers.
+
+## Using `forEach()`
+
+The [forEach()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach) array method executes the callback function argument for each element of the array:
+
+```js
+const arr = [23, 34, 77, 99, 324];
+let sum = 0;
+arr.forEach((el) => sum += el);
+console.log(sum);
+```
+
+It uses a `sum` variable, like the `for` loop method, to calculate the sum of the array numbers.
+
+## Using a `for...of` loop
+
+A [for...of](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of) loop can also be used to iterate through the array items and calculate the sum of the array of numbers:
+
+```js
+const arr = [23, 34, 77, 99, 324];
+let sum = 0;
+for (const el of arr) {
+  sum += el;
+}
+console.log(sum);
+```

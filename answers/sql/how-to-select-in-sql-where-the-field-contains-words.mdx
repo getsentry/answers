@@ -1,0 +1,207 @@
+---
+title: "How to SELECT in SQL where the field contains words?"
+platforms: 
+  - sentry.sql
+people: 
+  - Richard C.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+We can SELECT rows with fields containing an exact match in SQL.
+
+```sql
+SELECT * FROM Poem WHERE Line = 'Life is but a dream boat down the stream.';
+```
+
+But how do we perform a more complex search, where a line may contain all or any words or phrases, in different order?
+
+Let's use a simple table with four text rows as an example. This code works on SQL Server, MySQL, and PostgreSQL.
+
+```sql
+CREATE TABLE Poem
+(
+    Line VARCHAR(100)
+);
+
+INSERT INTO Poem (Line)
+VALUES ('Row, row, merrily row your boat,'),
+       ('Dream gently down the stream.'),
+       ('Merrily, merrily, merrily, merrily,'),
+       ('Life is but a dream boat down the stream.');
+```
+
+## The Solution
+
+To use partial matching instead of exact matching in SQL, we use the `LIKE` keyword. Here is an example query and its result.
+
+```sql
+SELECT *
+FROM Poem
+WHERE
+    Line LIKE '%ow%';
+
+-- Row, row, merrily row your boat,
+-- Dream gently down the stream.
+-- Life is but a dream boat down the stream.
+```
+
+The `%` sign is a wildcard, meaning that any text can be on either side of the letters `ow`. So this query will match `down` and `row`, and the rest of the containing line.
+
+If you instead used `LIKE 'ow'`, no results would be returned because no line contains only that word.
+
+### Lines Must Contain All Words
+
+If you're looking to find the lines that contain both `dream` and `boat` you have to use an AND statement.
+
+```sql
+SELECT *
+FROM Poem
+WHERE
+    Line LIKE '%boat%' AND
+    Line LIKE '%Dream%';
+
+-- Life is but a dream boat down the stream.
+```
+
+### Lines Must Contain Any Words
+
+Similarly, you can use OR to find lines that contain at least one of the words you are looking for. The following code will return every line of the poem.
+
+```sql
+SELECT *
+FROM Poem
+WHERE
+    Line LIKE '%merrily%' OR
+    Line LIKE '%down%';
+```
+
+### Collations and Case-Sensitivity
+
+Notice that SQL usually ignores case in fields. Here `Dream` was uppercase in a query but lowercase in the line found.
+
+However, this depends on your SQL installation. In PostgreSQL, you have to use `ILIKE` ("insensitive like") instead of `LIKE`. 
+
+```sql
+SELECT *
+FROM Poem
+WHERE
+    Line ILIKE '%dream%'
+```
+
+If you want to be sure that your column is case-insensitive, you can specify the column's collation explicitly.
+
+SQL Server:
+
+```sql
+CREATE TABLE Poem
+(
+    Line VARCHAR(100) COLLATE Latin1_General_CI_AI
+);
+```
+
+MySQL:
+
+```sql
+CREATE TABLE Poem
+(
+    Line VARCHAR(100) COLLATE "utf8_general_ci"
+);
+```
+
+### Using Full-Text Indexes for Complex Queries
+
+If the table you are querying contains thousands of long lines or you are using multiple AND and OR statements, performance will be very poor. You should rather create a full-text index on the column to improve the query's speed. Using full-text search differs on each database server.
+
+Note that full-text search looks for full words, related words, and other linguistic elements that consider punctuation, as opposed to a string of letters. In other words, the search functions at a higher level than using LIKE and may not give the results you expect.
+
+#### SQL Server
+
+In SQL Server, you need to install the full-text search component on your server and then restart the server. You then create a full-text catalog, which is a container for all your full-text indexes. You also need to ensure that the column you are indexing is UNIQUE and NOT NULL.
+
+Create the table and index it.
+
+```sql
+CREATE TABLE Poem
+(
+    Line VARCHAR(100) NOT NULL
+);
+
+CREATE UNIQUE INDEX idx_Poem_Line ON Poem (Line);
+
+CREATE FULLTEXT CATALOG ft_catalog AS DEFAULT;
+
+CREATE FULLTEXT INDEX ON Poem (Line)
+    KEY INDEX idx_Poem_Line ON ft_catalog;
+
+INSERT INTO Poem (Line)
+VALUES ('Row, row, merrily row your boat,'),
+       ('Dream gently down the stream.'),
+       ('Merrily, merrily, merrily, merrily,'),
+       ('Life is but a dream boat down the stream.');
+```
+
+Query it using CONTAINS.
+
+```sql
+SELECT *
+FROM Poem
+WHERE CONTAINS (Line, 'dream AND down');
+
+-- Dream gently down the stream.
+-- Life is but a dream boat down the stream.
+```
+
+#### PostgreSQL
+
+In PostgreSQL, you create a generalized inverted index (GIN).
+
+```sql
+CREATE TABLE Poem
+(
+    Line VARCHAR(100) NOT NULL
+);
+
+CREATE INDEX idx_poem_line_fts ON Poem USING gin(to_tsvector('english', Line));
+```
+
+Query it using the `@@` operator.
+
+```sql
+SELECT *
+FROM Poem
+WHERE to_tsvector('english', Line) @@ to_tsquery('english', 'dream');
+
+-- Dream gently down the stream.
+-- Life is but a dream boat down the stream.
+```
+
+Both the indexes and queries in PostgreSQL can be complex. You can use full-word and partial-word indexes. Consult the documentation before you decide what index to create.
+
+#### MySQL
+
+In MySQL, you create the index using the `FULLTEXT` keyword.
+
+```sql
+CREATE TABLE Poem
+(
+    Line VARCHAR(100),
+    FULLTEXT INDEX idx_poem_line_fts (Line)
+);
+```
+
+Query it using `MATCH`.
+
+```sql
+SELECT *
+FROM Poem
+WHERE
+    MATCH(Line) AGAINST('down dream');
+
+-- Dream gently down the stream.
+-- Life is but a dream boat down the stream.
+```
+
+If `MATCH` doesn't give you the results you expect, you'll need to research `IN NATURAL LANGUAGE MODE`, `IN BOOLEAN MODE`, stopwords, wildcards, minimum lengths, and punctuation.

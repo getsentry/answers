@@ -1,0 +1,23 @@
+---
+title: 'Fixing Load Failed errors in JavaScript'
+platforms:
+  - sentry.javascript.browser
+people:
+  - Richard Roggenkemper
+date: 2023-12-18T11:00:00-07:00
+---
+
+## What are Load FailedErrors?
+Load Failed errors occur when Fetch API calls fail. There are many causes of these errors such as CORS issues, invalid names, or other problems encountered during the call. Load Failed errors occur on Apple devices (Mac, iPhone, iPad).
+
+Sometimes, 3rd party/tracking services that do not have proper safeguards for their API calls will be the cause of these errors in your application.
+
+## How to fix Load Failed Errors? 
+One of the problems with debugging these types of errors is that the Fetch API does not return a lot of helpful information that can be used to debug. So the first step, is to gather more information about why these errors are occuring. 
+
+To find this additional context, you need to look at the browser console where these requests are being made to see more information about the failed API calls. If you use Sentry, you can [capture console errors](https://docs.sentry.io/platforms/javascript/configuration/integrations/#captureconsole) using our integration. 
+
+Once you know why the error is occuring, you can either fix the source of the problem, or filter out the errors if you don't think they are important. To filter out errors, you can choose from the following methods: 
+- Filter all load failed errors by using [Inbound Filters](https://docs.sentry.io/product/data-management-settings/filtering/#error-message)
+- Filter specific errors. For example, if they are occuring in 3rd party services and you know the URLs that you want to blacklist, you can follow the instructions and sample code in [this GitHub discussion](https://github.com/getsentry/sentry-javascript/issues/7275).
+

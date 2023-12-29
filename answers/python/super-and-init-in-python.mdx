@@ -1,0 +1,44 @@
+---
+title: '`super()` and `__init__()` in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+What does `super()` refer to in Python and why is it often used in `__init__()` methods?
+
+## The Solution
+
+In Python, `super()` is a built-in function used to call methods defined in the parent class. One of the advantages of inheritance in an object-oriented language like Python is avoiding code duplication. Consider the following code:
+
+```python
+MARKUP = 1.5
+
+class Product:
+    def __init__(self, name, cost_price):
+        self.name = name
+        self.cost_price = cost_price
+        self.selling_price = cost_price * MARKUP
+
+class Perishable(Product):
+    def __init__(self, name, cost_price, shelf_life):
+        super().__init__(name, cost_price)
+        self.shelf_life = shelf_life
+```
+
+The line starting with `super().__init__` will execute the `__init__` method of `Product` as if it were a method defined in `Perishable`. This saves us from having to rewrite our pricing code in every child class of `Product`. Whenever we create an instance of `Perishable`, it will have a `name`, `cost_price`, `selling_price`, and `shelf_life`.
+
+In this example, we could replace `super().__init__` with `Product.__init__` and achieve the same thing, but `super()` allows us to write more general code and is necessary for more complex class hierarchies that use [dependency injection](https://medium.com/@suneandreasdybrodebel/pythonic-dependency-injection-a-practical-guide-83a1b1299280) and [multiple inheritance](https://realpython.com/lessons/multiple-inheritance-python/).
+
+In Python 2 code and older Python 3 code, you may encounter lines written like this:
+
+```python
+super(Perishable, self).__init__(name, cost_price)
+```
+
+This is equivalent to calling `super()` in Python 3. While it is more explicit and was the required way to use `super()` in Python 2, it is no longer necessary, will slow down our code, and should thus be avoided.

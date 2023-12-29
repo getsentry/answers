@@ -1,0 +1,119 @@
+---
+title: "How do I perform an IF...THEN in a SQL SELECT?"
+platforms: 
+  - sentry.sql
+people: 
+  - Richard C.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+In all programming languages, you can write an if statement similar to the following.
+
+```python
+if person.age < 21:
+    print('child')
+else:
+    print('adult')
+```
+
+How can we do the same in SQL using a SELECT statement?
+
+Let's use the following table of people and their ages as an example.
+
+```sql
+CREATE TABLE Person
+(
+    Id   INT PRIMARY KEY,
+    Name VARCHAR(255),
+    Age  INT
+);
+
+INSERT INTO Person (Id, Name, Age)
+VALUES (1, 'Amir', 25),
+       (2, 'Sofia', 42),
+       (3, 'Aya', 18),
+       (4, 'Mateo', 30),
+       (5, 'Leila', 8),
+       (6, 'Yara', 35),
+       (7, 'Ndidi', 12),
+       (8, 'Santiago', 50);
+```
+
+## The Solution
+
+The if-else statement is equivalent to WHEN...ELSE in SQL. You also need to begin with `CASE`. Here's an example:
+
+```sql
+SELECT Name,
+       CASE
+           WHEN Age < 21 THEN 'child'
+           ELSE 'adult'
+       END AS Age
+FROM Person;
+```
+
+This code will work in SQL Server, PostgreSQL, and MySQL.
+
+### SQL Server and MySQL Shorthand
+
+If you are using SQL Server version 2012 or later, there is a more concise way of writing the above statement.
+
+```sql
+SELECT
+    Name,
+    IIF (Age < 21, 'child', 'adult') AS Age
+FROM Person;
+```
+
+It also works in MySQL.
+
+```sql
+SELECT
+    Name,
+    IF (Age < 21, 'child', 'adult') AS Age
+FROM Person;
+```
+
+This is similar to the ternary operator in C-style languages.
+```c#
+String age = (age < 21) ? "child" : "adult";
+```
+
+We do not recommend this solution as it cannot be used on all database servers and it takes longer to comprehend when reading, compared to the CASE statement.
+
+### Procedural IF...ELSE Statements in SQL Server
+
+While CASE statements are the appropriate solution for returning rows of data, there is an actual IF ELSE statement in SQL Server too. You can use it for stored procedures or working with logic outside of rows. Here is an example.
+
+```sql
+IF (SELECT COUNT(1) FROM Person) < 100
+    SELECT 'Table is small'
+ELSE
+    SELECT 'Table is big'
+```
+
+For more complex queries, you can wrap multiple statements in BEGIN...END blocks.
+
+```sql
+IF (SELECT COUNT(1) FROM Person) < 100
+BEGIN
+    SELECT 'Table is small'
+END
+ELSE
+BEGIN
+    SELECT 'Table is big'
+END
+```
+
+The code above won't work in other database servers. For PostgreSQL and MySQL, you still have to use CASE.
+
+```sql
+SELECT
+    CASE
+        WHEN (SELECT COUNT(1) FROM Person) < 100 THEN 'Table is small'
+        ELSE 'Table is big'
+    END AS result;
+```

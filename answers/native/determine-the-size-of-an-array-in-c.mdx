@@ -1,0 +1,35 @@
+---
+title: 'Determine the size of an array in C'
+platforms: 
+  - sentry.native.c
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I determine the size of and number of elements in an array in C?
+
+## The Solution
+
+We can use the C [`sizeof`](https://en.wikipedia.org/wiki/Sizeof) operator to discover the size of expressions and data types in bytes. Using `sizeof` on an array will return the array's size in bytes, as below:
+
+```c
+size_t array_size = sizeof(my_array);
+```
+
+The [`size_t`](https://www.gnu.org/software/libc/manual/html_node/Important-Data-Types.html#index-size_005ft) type is used for sizes returned by `sizeof`.
+
+To get the number of elements in our array, we need to divide this value by the size of a single element. Being of the same type, all elements in a C array will also be of the same length, so we can use the first element (`my_array[0]`) to do this:
+
+```c
+size_t list_length = sizeof(my_array) / sizeof(my_array[0]);
+```
+
+In the background, `size_t` is an unsigned integer or unsigned long. Therefore, unless the size of our array is greater than `INT_MAX`, we can safely declare `list_length` as an `int`:
+
+```c
+int list_length = sizeof(my_array) / sizeof(my_array[0]);
+```

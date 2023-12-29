@@ -1,0 +1,29 @@
+---
+title: 'Indentation errors in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+When I attempt to run my Python script, I receive the following error:
+
+```
+IndentationError: unindent does not match any outer indentation level
+```
+
+## The Solution
+
+Python uses indentation to group blocks of code. Top-level code in a Python script will start flush against the left margin, with each inner block being indented by an additional four spaces, [per convention](https://peps.python.org/pep-0008/#indentation). If a block contains unevenly indented code (for example, two spaces before one line and four spaces before another), this confuses the interpreter and results in an `IndentationError` exception. Therefore, it is important to ensure that all statements in each block are prefaced with the same number of spaces.
+
+However, Python code that appears to be correctly indented can also produce `IdentationError` exceptions. This usually arises from the use of both spaces and tabs for indentation, [which Python disallows](https://peps.python.org/pep-0008/#tabs-or-spaces). The Python interpreter expects a single file to be indented with either spaces or tabs throughout, with spaces being officially preferred.
+
+It should be possible to fix this error by replacing each tab with four spaces. This can be done automatically across whole files using the find-replace function in most text editors, or by using the following [`sed`](https://en.wikipedia.org/wiki/Sed) command on a Unix-based system:
+
+```bash
+sed 's/\t/    /g' myscript.py
+```

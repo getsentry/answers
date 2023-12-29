@@ -1,0 +1,45 @@
+---
+title: "How do I remove/chop/slice/trim off the last character in a string using Javascript?"
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I remove the last character from a string in JavaScript?
+
+## The Solution
+
+Strings in JavaScript are [immutable](https://developer.mozilla.org/en-US/docs/Glossary/Immutable), so whenever we want to manipulate one, we must create a new string with our desired changes. Therefore, to remove the last character of a string, we must create a new string that excludes it. Two commonly used methods for this are [`slice`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/slice) and [`substring`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/substring).
+
+### Using `slice`
+
+`slice` allows us to extract a substring by specifying inclusive start and end indices within the original string. Negative numbers are used to count backwards from the end of the string rather than forwards from the start, so `-1` will refer to the second-last character. Consider the following example:
+
+```javascript
+let myString = "Hello world!";
+
+myString = myString.slice(0, -1);
+
+console.log(myString); // will print "Hello world"
+```
+
+### Using `substring`
+
+The `substring` method is similar to `slice` but does not allow us to specify negative indices. Therefore, we must provide the positive index of the end position by subtracting 1 from the length of the string. Note also that the substring returned will stop just before the character at the index specified in the second argument, unlike `slice`, which includes the final character.
+
+```javascript
+let myString = "Hello world!";
+
+myString = myString.substring(0, myString.length - 1);
+
+console.log(myString); // will print "Hello world"
+```
+
+### Comparison
+
+The `slice` method is terser and its syntax will be familiar to Python programmers, but it may be initially confusing to programmers who have not previously encountered it. The `substring` method is more verbose but also more explicit.

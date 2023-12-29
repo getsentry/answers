@@ -1,0 +1,100 @@
+---
+title: 'What is a NullPointerException, and how do I fix it?'
+platforms: 
+  - sentry.java
+people: 
+  - Gareth D.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+You run your Java code and see an error similar to the following.
+
+```
+Exception in thread "main" java.lang.NullPointerException: Cannot invoke "String.length()" because "myString" is null
+```
+
+How do you fix it and prevent similar errors from happening in future?
+
+## The Solution
+
+A `NullPointerException` in Java is one of the most common errors. It means that you are trying to access a part of something that doesn't exist.
+
+For example, in the code below we call `.length()` on `myString`, which would usually return the length of the string. In this case, the string doesn't exist (we set it to `null`), and so this throws a `NullPointerException`.
+
+```java
+public class Main {
+
+    public static void main(String[] args) {
+        String myString = null;
+        int stringLength = myString.length();
+    }
+}
+```
+
+You can fix this by ensuring that your object is not `null` before calling the method. For example:
+
+```java
+public class Main {
+
+    public static void main(String[] args) {
+        String myString = null;
+        if (myString != null) {
+            int stringLength = myString.length();
+        } else {
+            System.out.println("myString is null");
+        }
+    }
+}
+```
+
+Here we first ensure that `myString` is not `null` before calling `length()`.
+
+If it is, we print "myString is null" instead.
+
+Of course, in real-world code it's not normally as simple to identify which variables might be `null`, as they might be passed in from other methods or classes, or be dependent on user input.
+
+You can use some defensive programming techniques to avoid NullPointerExceptions such as always validating user input, and always checking if objects are null before calling their methods.
+
+Sometimes it is also helpful to think about **which** variables might be null. If you are checking a user input variable against a constant, it is better to call the method from the constant instead of from the variable.
+
+```java
+public class Main {
+
+    public static void main(String[] args) {
+        String userInput = null;
+        System.out.println(userInput.equals("MY_VERY_SECRET_PASSWORD"));
+    }
+}
+```
+
+This code throws a `NullPointerException`, and if we're not sure ahead of time what `userInput` will be, we need to handle the case where it is null. We could add a null check as in the previous example, but a simpler way is to restructure the code as follows.
+
+```java
+public class Main {
+
+    public static void main(String[] args) {
+        String userInput = null;
+        System.out.println("MY_VERY_SECRET_PASSWORD".equals(userInput));
+    }
+}
+```
+
+Output:
+
+```
+false
+```
+
+In this case, we **know** that "MY_VERY_SECRET_PASSWORD" is not going to be null, as it is hardcoded, but we are not sure about `userInput`. Because `a.equals(b)` is the same as `b.equals(a)`, we can simply swap the variables and operate on the one we know exists.
+
+## Further reading
+
+* [Avoid NullPointerException in Java](https://sentry.io/answers/avoiding-nullpointer/)
+
+
+
+
+

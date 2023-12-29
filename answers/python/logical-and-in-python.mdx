@@ -1,0 +1,53 @@
+---
+title: 'Logical AND (&&) in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+What is the Python equivalent of the logical AND (&&) operator in an expression? This code does not work:
+
+```python
+initialized = True
+fully_stocked = True
+
+if initialized && fully_stocked:
+    run()
+```
+
+## The Solution
+
+Unlike Java or C, Python uses the word `and` to represent the logical AND.
+
+```python
+initialized = True
+fully_stocked = True
+
+if initialized and fully_stocked:
+    run()
+```
+
+The same is true for other common logical operators. Instead of using `||`, Python uses the word `or` to represent the logical OR.
+
+```python
+initialized = True
+fully_stocked = True
+
+if initialized or fully_stocked:
+    run()
+```
+
+Instead of using `!`, Python uses the word `not` to represent the logical NOT.
+
+```python
+initialized = True
+fully_stocked = True
+
+if not initialized:
+    abort()
+```

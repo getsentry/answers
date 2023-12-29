@@ -1,0 +1,60 @@
+---
+title: 'How do I remove a trailing newline from a string in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+Using Python, how can I remove one or more newline characters at the end of a string, if present?
+
+## The Solution
+
+Python provides the string method [`rstrip`](https://docs.python.org/3/library/stdtypes.html#str.rstrip) for this purpose. By default, it will remove trailing newlines, carriage returns, and spaces.
+
+```python
+my_string = "Hello world! \r\n\n"
+my_string = my_string.rstrip()  # will produce "Hello world!"
+```
+
+We can optionally provide a specific set of characters for `rstrip` to remove. So, to remove only trailing newlines, leaving all other characters intact, we can write the following:
+
+```python
+my_string = "Hello world! \r\n\n"
+my_string = my_string.rstrip("\n") # will produce "Hello world! \r"
+```
+
+We can use any number of characters in any order here and they will be removed from the end of the string. For example:
+
+```python
+my_string = "Hello world! \r\n\n"
+my_string = my_string.rstrip("\n\r !d") # will produce "Hello worl"
+```
+
+Python also provides an [`lstrip`](https://docs.python.org/3/library/stdtypes.html#str.lstrip) method, which performs the same operation on leading characters, and [`strip`](https://docs.python.org/3/library/stdtypes.html#str.strip), which removes leading and trailing characters from the string. For example:
+
+```python
+my_string = "\r\n\n Hello world! \r\n\n"
+my_string = my_string.lstrip() # will be "Hello world! \r\n\n"
+```
+
+```python
+my_string = "\r\n\n Hello world! \r\n\n"
+my_string = my_string.rstrip() # will be "\r\n\n Hello world!"
+```
+
+```python
+my_string = "\r\n\n Hello world! \r\n\n"
+my_string = my_string.strip() # will be "Hello world!"
+```
+
+We can use `lstrip` and `rstrip` together to remove leading and trailing characters while preserving characters in the middle of the string, as below:
+
+```python
+my_string = "\r\n\n Hello world! \r\n\n"
+my_string = my_string.lstrip().rstrip() # will be "Hello world!"
+```

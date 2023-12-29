@@ -1,0 +1,29 @@
+---
+title: 'Apply permissions to a directory and its contents in Linux'
+platforms: 
+  - sentry.linux
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I apply permissions to a directory and all its contents in Linux? For example, I would like to give all permissions (`chmod 777`) to the directory `/var/www/myapp`.
+
+## The Solution
+
+We can do this by providing the `-R`/`--recursive` flag to our `chmod` command:
+
+```bash
+chmod -R 777 /var/www/myapp
+```
+
+Note that `777` permissions will allow any user on the system to read, write and execute all files and directories within `/var/www/myapp`. A slightly safer configuration, which should still work for most web applications, is `755`, which allows all users to read and execute the files and directories, but only the owner to write to them.
+
+```bash
+chmod -R 755 /var/www/myapp
+```
+
+To learn more about `chmod`, type `man chmod` into your terminal.

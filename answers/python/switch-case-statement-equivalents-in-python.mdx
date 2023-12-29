@@ -1,0 +1,159 @@
+---
+title: 'Switch-case statement equivalents in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+Many imperative programming languages support a `switch` or `case` control structure, which allows programmers to specify an arbitrary number of alternative code blocks to execute, depending on the value of a variable or expression. For example (pseudocode):
+
+```
+switch (hour) {
+    case 13:
+        print("It's one o'clock in the afternoon, time for lunch.");
+        break;
+    case 17:
+        print("The workday is finished!");
+        break;
+    case 8:
+        print("Time for breakfast!");
+        break;
+    default:
+        print("An hour of no consequence.");
+        break;
+}
+```
+
+Does Python have something equivalent?
+
+## The Solution
+
+The `match-case` statement was introduced in Python 3.10, providing an official version of this control structure for the first time. The variable or expression provided to `match` is tested against each *pattern* specified in an indented case statement.
+
+We could implement the pseudocode above in Python as follows:
+
+```python
+match hour:
+    case 13:
+        print("It's one o'clock in the afternoon, time for lunch.")
+    case 17:
+        print("The workday is finished!")
+    case 8:
+        print("Time for breakfast!")
+    case _: # equivalent to "default case" -- this will be executed if nothing else matches
+        print("An hour of no consequence.")
+```
+
+The above code uses literal values as match patterns, but `match-case` supports a variety of additional, more complex patterns. Instead of matching literal values, we can use structural patterns to match an object's type or structure:
+
+```python
+match unknown_var:
+    case str():
+        print("It's a string.")
+    case [int(), str()]:
+        print("It's a sequence of two values, an integer and a string.")
+    case {"Apples": 3, "Oranges": 2}:
+       print("It's a dictionary containing at least two known key-value pairs.")
+    case [_, _, _]:
+       print("It's a sequence of three values of any type.")
+```
+
+There are also capture patterns, which allow us to save and use the value of the matched expression:
+
+```python
+match hour:
+    case 13:
+        print("It's one o'clock in the afternoon, time for lunch.")
+    case 17:
+        print("The workday is finished!")
+    case 8:
+        print("Time for breakfast!")
+    case h: # the value of hour is stored in h
+        print(f"The time is {h}")
+```
+
+We can even use structural and capture patterns together:
+
+```python
+def count_products(products):
+    match products:
+        case p:
+            print(f"1 product: {p}")
+        case p, q:
+            print(f"2 products: {p} and {q}")
+        case p, q, r:
+            print(f"3 products: {p}, {q} and {r}")
+
+count_products(["Apples"]) # will print "1 product: Apples"
+count_products(["Apples", "Oranges"]) # will print "2 products: Apples and Oranges"
+count_products(["Apples", "Oranges", "Bananas"]) # will print "3 products: Apples, Oranges, and Bananas"
+```
+
+Patterns can also have `if` clauses, called *guards*. For example:
+
+```python
+def count_products(products):
+    match products:
+        case p, q if p != q:
+            print(f"Different products")
+        case p, q:
+            print(f"Duplicate products")
+
+count_products(["Apples", "Oranges"]) # will print "Different products"
+count_products(["Apples", "Apples"]) # will print "Duplicate products"
+```
+
+We can also use the logical or operator (`|`) to include multiple alternative patterns in a single `case` statement:
+
+```python
+match hour:
+    case 9 | 10 | 11 | 12:
+        print("Workday, before lunch")
+    case 13 | 14 | 15 | 16:
+        print("Workday, after lunch")
+```
+
+Further examples are provided in the [Python 3.10 release notes](https://docs.python.org/3/whatsnew/3.10.html#pep-634-structural-pattern-matching).
+
+### Alternatives to `match-case`
+
+Prior to the introduction of `match-case` in Python 3.10, the following alternatives were often used to emulate switch-case functionality.
+
+#### `if-elif` blocks
+
+```python
+if hour == 13:
+    print("It's one o'clock in the afternoon, time for lunch.")
+elif hour == 17:
+    print("The workday is finished!")
+elif hour == 8:
+    print("Time for breakfast!")
+else:
+    print("An hour of no consequence.")
+```
+
+#### Dictionaries with lambdas
+
+```python
+switch_dict = {
+    13: lambda: print("It's one o'clock in the afternoon, time for lunch."),
+    17: lambda: print("The workday is finished!"),
+    8: lambda: print("Time for breakfast!")
+}
+
+switch_dict[hour]()
+```
+
+While this method is more syntactically similar to the `switch-case` statement in other languages than chained `elif`s, it cannot elegantly support a default case. If such a case is needed, the final line would have to be changed to the following:
+
+```python
+if hour in switch_dict.keys():
+    switch_dict[hour]()
+else:
+    print("An hour of no consequence.")
+```

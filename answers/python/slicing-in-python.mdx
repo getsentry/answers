@@ -1,0 +1,111 @@
+---
+title: 'Slicing in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How does slicing work in Python? What do the following snippets of code do?
+
+1. `my_list[:]`
+2. `my_list[:-1]`
+3. `my_list[::2]`
+4. `my_list[1:9:3]`
+
+## The Solution
+
+Python's slice notation provides a quick way for programmers to extract sections of sequences, such as lists and strings. The syntax for a simple slice is as follows:
+
+```python
+my_list = [0,1,2,3,4,5,6,7,8,9]
+
+start = 1
+stop = 5
+
+sublist = my_list[start:stop] # i.e. my_list[1:5]
+
+print(sublist) # will print "[1, 2, 3, 4]"
+```
+
+Sequences in Python are 0-indexed, and slices are exclusive of the `stop` value, so our code above has produced a sublist containing the values at indices 1 through 4.
+
+If we leave out `start`, the slice will begin at the start of the list, and if we leave out `stop`, the slice will end at the end of the list. Therefore, if we leave out both, we'll get a copy of the whole list, as below:
+
+```python
+my_list = [0,1,2,3,4,5,6,7,8,9]
+
+sublist = my_list[:] # code snippet (1)
+
+print(sublist) # will print "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]"
+```
+
+If we use a negative number as a slice index, Python will count backwards from the end of the sequence. Index -1 refers to the last element and -2 to the second last element. This is useful when dealing with sequences of unknown length. For example, we could use this code to extract the last three elements of our list:
+
+```python
+my_list = [0,1,2,3,4,5,6,7,8,9]
+
+sublist = my_list[-3:]
+
+print(sublist) # will print "[7, 8, 9]"
+```
+
+We can also get a sublist containing all but the last element of `my_list`:
+
+```python
+my_list = [0,1,2,3,4,5,6,7,8,9]
+
+sublist = my_list[:-1] # code snippet (2)
+
+print(sublist) # will print "[0, 1, 2, 3, 4, 5, 6, 7, 8]"
+```
+
+In addition to `start` and `stop`, the slice operator can take an optional `step` argument, which allows us to skip some elements of our list. For example, we can use blank `start` and `stop` arguments with a `step` of 2 to create a sublist with all the values at even indices.
+
+```python
+my_list = [0,1,2,3,4,5,6,7,8,9]
+
+sublist = my_list[::2] # code snippet (3)
+
+print(sublist) # will print "[0, 2, 4, 6, 8]"
+```
+
+We can use different values for `start`, `stop`, and `step` to extract complex sublists, such as the one below:
+
+```python
+my_list = [0,1,2,3,4,5,6,7,8,9]
+
+sublist = my_list[1:9:3] # code snippet (4)
+
+print(sublist) # will print "[1, 4, 7]"
+```
+
+All of the above examples will also work with a string in place of a list. Try replacing the value of `my_list` with "Helloworld" and see what substrings are produced.
+
+When a slice cannot be satisfied, Python will return an empty sequence. For example, we will get an empty list if we try use the slice `[2:]` on a list with only two elements, as below:
+
+```python
+my_list = [0,1]
+
+sublist = my_list[2:]
+
+print(sublist) # will print "[]"
+```
+
+The built-in Python [`slice`](https://docs.python.org/3/library/functions.html#slice) function allows us to create *slice objects*, which we can use in place of slice notation. For example:
+
+```python
+my_list = [0,1,2,3,4,5,6,7,8,9]
+
+my_slice = slice(1,5)
+
+sublist = my_list[my_slice] # i.e. my_list[1:5]
+
+print(sublist) # will print "[1, 2, 3, 4]"
+```
+
+In simple cases, this is more cumbersome than just using slice notation directly, but it may be useful if we need to create different slices programmatically.

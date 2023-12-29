@@ -1,0 +1,48 @@
+---
+title: 'How can I set the default value for an HTML select element?'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+The default value of a `<select>` element when a page first loads is the value of the first `option` element. In the code example below, the `select` element will have a default value of "milk":
+
+```html
+<select>
+  <option value="milk">milk</option>
+  <option value="sugar">sugar</option>
+  <option value="eggs">eggs</option>
+</select>
+```
+
+How do you set a different default value?
+
+## The Solution
+
+You can add the `selected` attribute to the `option` element that you want to make the initial default value:
+
+```html
+<select>
+  <option value="milk">milk</option>
+  <option value="sugar" selected>sugar</option>
+  <option value="eggs">eggs</option>
+</select>
+```
+
+If you want the default value to be an empty string, you can add an extra `option` element as the first `option` element and set its value to an empty string:
+
+```html
+<select>
+  <option disabled selected value="">Select an option</option>
+  <option value="milk">milk</option>
+  <option value="sugar">sugar</option>
+  <option value="eggs">eggs</option>
+</select>
+```
+
+This is useful if you want the user to select a value for themselves and not just use the default value. Adding the `disabled` attribute to the first option makes the option unselectable. You can add [form validation](https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation) to require the user to select an option.

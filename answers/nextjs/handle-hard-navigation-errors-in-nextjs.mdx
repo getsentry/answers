@@ -1,0 +1,48 @@
+---
+title: 'Fixing handleHardNavigation errors in Next.js'
+platforms:
+  - sentry.nextjs
+people:
+  - Stephen Cefali
+date: 2023-12-12T07:48:24.522-07:00
+---
+
+## What are handleHardNavigation Errors?
+
+Handle hard navigation errors occur in Next.js applications when trying to redirect to the same page. These errors show up with the message `Error: Invariant: attempted to hard navigate to the same URL`.
+
+## What causes handleHardNavigation Errors?
+
+When you see the error `Invariant: attempted to hard navigate to the same URL`, it means that that browser tried to load the page of the same URL. There are a number of reasons this might happen:
+
+* Loading a page after a new build ([explanation](https://github.com/vercel/next.js/issues/43088#issuecomment-1403108553))
+* You're using an older version of Next.js ([related issue](https://github.com/vercel/next.js/issues/38171))
+* Your app is redirecting to the same URL in middleware.
+
+
+## How to Resolve
+
+If the problem is that your app is redirecting to the same URL, you have to track down what's causing the redirect and fix that. If that doesn't work, you can try a few workarounds:
+
+## Workarounds
+
+If you can't figure out the exact root cause of the redirect but you want to make the issue go away, you have a few other options:
+
+### Custom 404 Page 
+
+If you are seeing the redirect when handling a 404, you can create a custom page named `[...myErrorPage]` and treat that as your 404 page ([source](https://github.com/vercel/next.js/issues/43088#issuecomment-1408695026))
+
+### Filter out Error
+
+As a last resort, you can filter out these errors from Sentry altogether. To do this, edit your `Sentry.init` as shown below:
+
+```js
+Sentry.init({
+  beforeSend: (event) => {
+    if (event.exception?.values?.[0].value.includes('Invariant: attempted to hard navigate to the same URL')) {
+      return null;
+    }
+    return event;
+  },
+});
+```

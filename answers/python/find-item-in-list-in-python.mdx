@@ -1,0 +1,56 @@
+---
+title: 'Find item in list in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I find an item in a Python list?
+
+## The Solution
+
+To check whether a list contains an item, we can use the Python `in` operator:
+
+```python
+products = ["Apples", "Pears", "Oranges"]
+
+if "Apples" in products:
+    print("Apples for sale!")
+```
+
+To return the index of a given item in a list, see [this answer](python-index-of-list-item).
+
+If we don't want to find a specific item, but a list of items that fulfill some condition (for example, all the odd numbers in a list) we can use a list comprehension, as below:
+
+```python
+my_list = [1, 4, 7, 8, 3] 
+odd_numbers = [n for n in my_list if n%2]
+
+print(odd_numbers) # will print [1, 7, 3]
+```
+
+The list comprehension in `odd_numbers` will go through `my_list` and construct a new list of every item it finds that has a nonzero modulo 2 (that is, produces a remainder when divided by two).
+
+If we want only the first item from our list that satisfies our condition, we change our list comprehension into a call to the Python [`next`](https://docs.python.org/3/library/functions.html#next) function.
+
+```python
+my_list = [1, 4, 7, 8, 3] 
+odd_number = next(n for n in my_list if n%2)
+
+print(odd_number) # will print 1
+```
+
+If `next` does not find a value, it will throw a `StopIteration` exception. To prevent it from doing so, we can provide a default value to return as an additional argument.
+
+```python
+my_list = [4, 8] 
+odd_number = next((n for n in my_list if n%2), None)
+
+print(odd_number) # will print None
+```
+

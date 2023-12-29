@@ -1,0 +1,53 @@
+---
+title: 'Get the current time in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I get the current time in Python?
+
+## The Solution
+
+We can get the current time using the `now` method in Python's built-in `datetime` library. For example:
+
+```python
+from datetime import datetime
+
+current_time = datetime.now()
+```
+
+`current_time` will contain a `datetime` object containing the date and time values for the instant at which the function was called. This can be accessed and displayed in a number of different ways:
+
+```python
+print(current_time)        # will print the full date and time
+print(current_time.time()) # will print the time of day only
+print(current_time.date()) # will print the calendar date only
+```
+
+Note that the `datetime` object stored in `current_time` is not aware of time zones. To get the current time for a specific time zone, we must incorporate `pytz` into our code:
+
+```python
+from datetime import datetime
+import pytz
+
+current_time = datetime.now(pytz.timezone('US/Pacific'))
+
+print(current_time)             # will print the full date and time with time zone offset from UTC
+print(current_time.time())      # will print the time of day only
+print(current_time.date())      # will print the calendar date only
+print(current_time.utcoffset()) # will print the offset from UTC time
+```
+
+Alternatively, if we want to work with [Unix time](https://en.wikipedia.org/wiki/Unix_time) rather than datetime objects, we can use Python's [`time`](https://docs.python.org/3/library/time.html) module. The current Unix time is returned by [`time.time()`](https://docs.python.org/3/library/time.html#time.time):
+
+```python
+import time
+
+print(time.time()) # will print the current Unix time as a floating point number
+```

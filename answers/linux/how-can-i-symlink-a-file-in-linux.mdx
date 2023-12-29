@@ -1,0 +1,29 @@
+---
+title: "How can I symlink a file in Linux?"
+platforms: 
+  - sentry.linux
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I create a symbolic link/symlink/shortcut to a file in Linux?
+
+## The Solution
+
+A symbolic link (symlink for short) is a file that points to another file or directory. It is similar to a shortcut on Windows. We create symlinks using the `ln` command with the `-s` option:
+
+```bash
+ln -s /path/to/existing/file /path/to/symlink
+```
+
+Note that the path for the symlink's target is specified first, followed by the path for the symlink itself.
+
+The `-s` flag tells `ln` to make a symbolic rather than a hard link. Symbolic links are usable across multiple filesystems, whereas hard links are not. For example, a symbolic link on an `ext4` filesystem (commonly used by Linux systems) can refer to a file on an `ntfs` file system (commonly used by Windows systems).
+
+Note that the symlink will no longer work if the original file is moved or renamed.
+
+To find out more about different kinds of links and the `ln` command, consult its manual page by typing `man ln` into your terminal.

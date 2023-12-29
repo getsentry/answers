@@ -1,0 +1,38 @@
+---
+title: Fixing ChunkLoadErrors in JavaScript
+platforms:
+  - sentry.javascript.browser
+people:
+  - Jodi Jang
+date:
+  2023-12-01T09:25:00-07:00
+---
+
+## What are Chunk Load Errors? 
+
+ChunkLoadErrors occur when the JavaScript chunks (bundles) that an application is trying to load encounter issues during the loading process. Some common causes are dynamic imports, version mismatching, and code splitting issues.
+
+## How to Fix Chunk Load Errors? 
+
+Since ChunkLoadErrors can occur due to various reasons, there are multiple ways to fix these errors. 
+
+### Old Files Cannot be Found
+
+When a new deploy occurs, the files are changed. Some users may have the older files downloaded, if they do not refresh their page. This causes the ChunkLoadError since the chunks cannot be found.
+
+There are a few possible solutions if this is the problem: 
+
+- [Do not cache files](https://stackoverflow.com/questions/67652612/chunkloaderror-loading-chunk-node-modules-next-dist-client-dev-noop-js-failed/67659159#67659159)
+- [Do not dynamically import files](https://github.com/vercel/next.js/issues/38507#issuecomment-1641679037)
+- [Use service workers to serve older files after a new deploy](https://stackoverflow.com/questions/60697927/chunkloaderror-loading-chunk-xy-failed-randomly-getting-fatal-on-production/60703365#60703365)
+- Capture the exception and prompt the user to refresh the page 
+
+### Framework-Specific Reasons
+
+#### Next.js: Version is not Compatible
+
+Some users experienced ChunkLoadErrors being resolved in Next.js projects after changing their Next.js version. Many have seen that [downgrading to next@13.3.4](https://github.com/vercel/next.js/issues/38507#issuecomment-1685418834) has solved the Chunk Load Error issues. 
+
+### Filtering Chunk Load Errors
+
+If you use Sentry, you can add an inbound filter for Chunk Load Errors if you do not want to see them. You can manage these filters in **[Project] > Settings > Inbound Filters**.

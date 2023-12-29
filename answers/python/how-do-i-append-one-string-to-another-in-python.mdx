@@ -1,0 +1,57 @@
+---
+title: 'How do I append one string to another in Python?'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+Using Python, how should I append one string to another string and create one large string?
+
+## The Solution
+
+There are a few different ways to do this. The simplest is to take advantage of Python's operator overloading and add strings together, as below:
+
+```python
+firstname = "Jane"
+lastname = "Doe"
+
+fullname = firstname + lastname # will be "JaneDoe"
+```
+
+We can also use the `+=` operator to replace the value of our first variable with the combined string.
+
+```python
+name = "Jane"
+lastname = "Doe"
+
+name += lastname # will be "JaneDoe"
+```
+
+In many cases, we will probably want our two strings to be separated by a space, comma, or other separator. We can achieve this in a couple of different ways, shown below:
+
+```python
+firstname = "Jane"
+lastname = "Doe"
+
+# Adding three strings together:
+fullname = firstname + " " + lastname
+
+# Using str.join():
+fullname = " ".join([firstname, lastname])
+```
+
+Both of these approaches will produce the string "Jane Doe". The second one uses [`str.join`](https://docs.python.org/3/library/stdtypes.html#str.join), a string method that joins the strings in a provided list, separated by the string it's called on. This approach is useful for combining large numbers of strings.
+
+Yet another approach would be to use Python's [f-strings](https://docs.python.org/3/tutorial/inputoutput.html#tut-f-strings). This is useful for building more complex templates that we can slot existing strings into:
+
+```python
+firstname = "Jane"
+lastname = "Doe"
+
+full_address = f"Ms. {firstname} {lastname}, M.A." # will be "Ms. Jane Doe, M.A."
+```

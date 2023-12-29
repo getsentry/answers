@@ -1,0 +1,42 @@
+---
+title: 'Check if a string is empty in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+In Python, what is the most elegant way to check whether a string is empty?
+
+## The Solution
+
+In Python, [empty strings are considered equivalent to `False` for boolean operations](https://docs.python.org/3/library/stdtypes.html#truth-value-testing). Therefore, we can use `not` to check whether a string is empty:
+
+```python
+if not my_string:
+    print("my_string is empty!")
+else:
+    print("my_string is not empty!")
+```
+
+Note that this will only work in contexts where we know for certain that `my_string` contains a string. The expression in our `if` statement above would also evaluate to `True` if `my_string` contained the boolean value `False`, or even an empty list. If we want to ensure that `my_string` is an empty string and not a different false-equivalent value, we should do the following:
+
+```python
+if my_string == "":
+    print("my_string is an empty string!")
+else:
+    print("my_string is not an empty string!")
+```
+
+A string containing only whitespace would not be considered empty by Python. If our code needs to consider `" "` and `""` as equivalently empty strings, we can use [`string.strip`](https://docs.python.org/3/library/stdtypes.html#str.strip) with no arguments to remove whitespace before making the comparison.
+
+```python
+if my_string.strip() == "":
+    print("my_string is an empty string!")
+else:
+    print("my_string is not an empty string!")
+```

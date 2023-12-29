@@ -1,0 +1,29 @@
+---
+title: 'Clone a Git repository to a specific folder'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I clone a Git repository into a specific folder?
+
+## The Solution
+
+The [`git clone`](https://git-scm.com/docs/git-clone) command takes an optional second argument specifying the directory to clone into. For example, the following command will clone a repository named `monorepo` into a folder named `acme-monorepo`:
+
+```bash
+git clone https://githost.com/acme/monorepo acme-monorepo
+```
+
+Alternatively, we can create the folder `acme-monorepo` and use the Bash `.` operator to clone the repository into the current directory, as below:
+
+```bash
+mkdir acme-monorepo
+cd acme-monorepo
+git clone https://githost.com/acme/monorepo .
+```

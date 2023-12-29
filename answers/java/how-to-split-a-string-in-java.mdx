@@ -1,0 +1,162 @@
+---
+title: 'How to split a string in Java'
+platforms: 
+  - sentry.java
+people: 
+  - Kudzanai T.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I split a String in Java?
+
+
+## The Solution
+
+The easiest way to split a string in Java is to use the `String.split()` method.
+
+```java
+public class Main {
+
+    public static void main(String[] arg) {
+        String str = "how:to:split:a:string:in:java";
+        String[] arrOfStr = str.split(":");
+        for (String a : arrOfStr) {
+            System.out.println(a);
+        }
+    }
+}
+```
+
+Output:
+
+```
+how
+to
+split
+a
+string
+in
+java
+```
+
+In the example above, we use `:` as the delimiter, but note that the parameter the `split()` method takes is a regular expression. This means it is easy to do things like split on one or more `:` characters by using `:+`.
+
+```java
+public class Main {
+
+    public static void main(String[] arg) {
+        String str = "how:to::split:::a:string:in:java";
+        String[] arrOfStr = str.split(":+");
+        for (String a : arrOfStr) {
+            System.out.println(a);
+        }
+    }
+}
+```
+
+The output of this example will be the same as the output of the previous example, as the regex ignores the additional colons.
+
+This means that if you want to split a string on a character that has special meaning in regular expressions, you need to escape it. For example, to split a string on a period (`.`), use `str.split("\\.")`.
+
+```java
+public class Main {
+
+    public static void main(String[] arg) {
+        String str = "how.to.split.a.string.in.java";
+        String[] arrOfStr = str.split("\\.");
+        for (String a : arrOfStr) {
+            System.out.println(a);
+        }
+    }
+}
+```
+
+This example also has the same output as the previous examples.
+
+### Edge cases in Java String Splitting
+
+If the split character is not present in the target string, the output will be an array with one element containing the entire string.
+
+```java
+public class Main {
+
+    public static void main(String[] arg) {
+        String str = "how.to.split.a.string.in.java";
+        String[] arrOfStr = str.split("z");
+        for (String a : arrOfStr) {
+            System.out.println(a);
+        }
+    }
+}
+```
+
+Output:
+
+```
+how.to.split.a.string.in.java
+```
+
+If the string consists of only the split character, the output will be an empty array.
+
+```java
+public class Main {
+
+    public static void main(String[] arg) {
+        String str = "::::";
+        String[] arrOfStr = str.split(":");
+        System.out.println(arrOfStr.length);
+    }
+}
+```
+
+Output:
+
+```
+0
+```
+
+Similarly, if you split an array on everything, the output will be nothing.
+
+```java
+public class Main {
+
+    public static void main(String[] arg) {
+        String str = "java";
+        String[] arrOfStr = str.split(".");
+        System.out.println(arrOfStr.length);
+    }
+}
+```
+
+Output:
+
+```
+0
+```
+
+If you split an array on nothing, the output will be everything.
+
+```java
+public class Main {
+
+    public static void main(String[] arg) {
+        String str = "java";
+        String[] arrOfStr = str.split("");
+        for (String a : arrOfStr) {
+            System.out.println(a);
+        }
+    }
+}
+```
+
+Output
+
+```
+j
+a
+v
+a
+```

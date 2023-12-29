@@ -1,0 +1,50 @@
+---
+title: 'Create a new Git branch from an existing branch'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I create a new branch in my Git repository based on an existing branch?
+
+## The Solution
+
+When creating a new branch, Git will automatically use the currently checked-out branch as a base. Let's say our repository has two branches: `main` and `dev`. We want to create a `feature` branch based on the `dev` branch.
+
+If we're already on the `dev` branch, we can go ahead and create a new branch with the following [`git checkout`](https://git-scm.com/docs/git-checkout) command:
+
+```bash
+git checkout -b feature
+```
+
+The `-b` flag creates the new branch `feature`, which is now our repository's current branch.
+
+If we're on the `main` branch, we will need to modify our command to specify `dev` as the base for our new branch:
+
+```bash
+git checkout -b feature dev
+```
+
+Regardless of the branch we started on, our repository will now be on the `feature` branch, which will have an identical history to the `dev` branch. We can now do our work on this branch and commit to it without affecting `dev`.
+
+If we want to push this branch to a remote, we can use the following [`git push`](https://git-scm.com/docs/git-push) command:
+
+```bash
+git push -u origin feature
+```
+
+The [`-u` flag](https://git-scm.com/docs/git-push#Documentation/git-push.txt--u) ensures that `feature` is created in our remote repository and linked to our local `feature` branch.
+
+Once we've completed the work we need to do on the `feature` branch, we can switch back to `dev` and [merge](https://git-scm.com/docs/git-merge) it back in with these commands:
+
+```bash
+git checkout dev
+git merge feature
+```
+
+If no new commits have been made to `dev` since the creation of `feature`, Git will add all of the commits from `feature` to `dev` (this is called [fast-forwarding](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging)). If commits have been made, `git merge` will create a new merge commit joining the branches – in some instances, we may need to [resolve merge conflicts](https://sentry.io/answers/resolve-merge-conflicts-in-git) first.

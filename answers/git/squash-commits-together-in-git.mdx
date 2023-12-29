@@ -1,0 +1,73 @@
+---
+title: 'Squash commits together in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+In a Git repository, how do I squash multiple previous commits together in a single commit?
+
+## The Solution
+
+We can do this using [`git reset`](https://git-scm.com/docs/git-reset) and [`git merge`](https://git-scm.com/docs/git-merge). **This process will discard uncommitted changes**, so we should either do this in a clean repository or run [`git stash`](https://git-scm.com/docs/git-stash) to save our uncommitted changes.
+
+```bash
+git stash
+```
+
+Once we're sure we won't lose anything that hasn't been committed, we can revert the last three commits using `git reset`: 
+
+```bash
+git reset --hard HEAD~3 # replace 3 with the number of commits to squash
+```
+
+After that, we run [`git merge --squash`](https://git-scm.com/docs/git-merge#Documentation/git-merge.txt---squash) with the argument `HEAD@{1}`. This argument refers to the commit we were at just before we ran the last command – i.e. three commits in the future. `git merge --squash` will thus jump from our current position to `HEAD@{1}` and stage all the changes between those positions for a new commit.
+
+```bash
+git merge --squash HEAD@{1}
+```
+
+Next, we must create a new commit.
+
+```bash
+git commit
+```
+
+This command will open our configured commit message editor (usually Vim or vi) with a large commit message containing details of the squashed commits. It should look something like this:
+
+```
+Squashed commit of the following:
+
+    commit b3e6d710b32fe14b1cbb640419a64bc1366dc521
+    Author: John Doe <johndoe@example.com>
+    Date:   Sat May 20 19:21:00 2023 +0200
+
+        Update README.md
+
+    commit 0d07bf5979a60ad54f25edc1d65c0a706b52839a
+    Author: David Yates <johndoe@example.com>
+    Date:   Sat May 20 18:40:45 2023 +0200
+
+        Create README.md
+
+    commit 070cc94d35c1c45fb40c13344583e16f77e76c0b
+    Author: John Doe <johndoe@example.com>
+    Date:   Tue May 16 17:07:48 2023 +0200
+
+        Initial commit
+```
+
+We can edit this message. If your terminal uses vim, press `i` to enter Insert Mode and `Esc` when the edit is finished. Save and exit by entering `:wq`.
+
+The commits have now been squashed into a single commit and we can sync our repository with its remotes using [`git push`](https://git-scm.com/docs/git-push). If any of the remotes already contain the squashed commits, we will need to use the [`--force`](https://git-scm.com/docs/git-push#Documentation/git-push.txt---force) flag when pushing to rewrite its history.
+
+Finally, if any uncommitted changes are saved with `git stash`, we can return those changes to the working directory with the following command:
+
+```bash
+git stash pop
+```

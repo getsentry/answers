@@ -1,0 +1,40 @@
+---
+title: 'What’s the difference between the window `load` event and the document `DOMContentLoaded` event?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to run some JavaScript code after a page has loaded. Should you use the window `load` event or the document `DOMContentLoaded` event to determine when to run the code?
+
+## The Solution
+
+The window [`load` event](https://developer.mozilla.org/en-US/docs/Web/API/Window/load_event) is fired when the entire web page has been loaded. This includes the page DOM and all dependent resources such as scripts, stylesheets, and images.
+
+The document [`DOMContentLoaded` event](https://developer.mozilla.org/en-US/docs/Web/API/Document/DOMContentLoaded_event) is fired when the page DOM has been loaded and all [deferred scripts](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#:~:text=its%20valid%20arguments.-,defer,-This%20Boolean%20attribute) have been loaded and executed.
+
+If your JavaScript code only needs to interact with the DOM, use the `DOMContentLoaded` event. This can be useful if you want to modify the DOM once it's loaded, set up event listeners, or fetch data from an API that will be displayed in the UI. For example, if you're using a UI library, such as [HighCharts](https://www.highcharts.com/), adding the UI element after the `DOMContentLoaded` event improves performance as it does not wait for images or CSS to be loaded before adding the chart UI element to the page:
+
+```js
+document.addEventListener('DOMContentLoaded', ()=> {
+    Highcharts.chart('container', {
+      // add config here
+    });
+});
+```
+
+If your JavaScript code depends on resources like stylesheets and images, then using the window load event is a better option. For example, if you want to start an animation only once all images have been loaded do the following:
+
+```js
+window.onload = function() {
+    // code to run animation.
+    HeaderTextAnimation();
+};
+```
+
+For further reading on the order of events that happen when a page loads, [learn about the Critical Rendering Path on MDN](https://developer.mozilla.org/en-US/docs/Web/Performance/Critical_rendering_path).

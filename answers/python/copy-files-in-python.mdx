@@ -1,0 +1,53 @@
+---
+title: 'Copy files in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I copy files in Python?
+
+## The Solution
+
+We can do this in a few different ways using Python's built-in [`shutil`](https://docs.python.org/3/library/shutil.html) library.
+
+Using [`copyfile`](https://docs.python.org/3/library/shutil.html#shutil.copyfile):
+
+```python
+import shutil
+
+shutil.copyfile("source-directory/file.txt", "destination-directory/file.txt")
+```
+
+Note that we must specify the entire path in the second argument, including the filename. If the destination is not writable by the current OS user, an [`OSError`](https://docs.python.org/3/library/exceptions.html#OSError) exception will be raised. If the file already exists at the destination path, it will be overwritten.
+
+We can also use [`copy`](https://docs.python.org/3/library/shutil.html#shutil.copy):
+
+```python
+import shutil
+
+shutil.copy("source-directory/file.txt", "destination-directory")
+```
+
+As long as `destination-directory` is an existing directory, `copy` will figure that we want to place our file inside `destination-directory` without changing its name. When copying a file this way, its permissions will be preserved, but other metadata, such as creation and modification times, will not. To preserve this metadata, we can use `copy2` instead of `copy`:
+
+```python
+import shutil
+
+shutil.copy2("source-directory/file.txt", "destination-directory")
+```
+
+To copy all files and subdirectories in a given directory, we can use [`copytree`](https://docs.python.org/3/library/shutil.html#shutil.copytree):
+
+```python
+import shutil
+
+shutil.copytree("source-directory", "destination-directory")
+```
+
+Note that if `destination-directory` already exists, a `FileExistsError` exception will be raised. To prevent this, we can pass `dirs_exist_ok=True` to the function as a keyword argument – this will cause `copytree` to merge the source and destination directory trees and overwrite any files with matching names.

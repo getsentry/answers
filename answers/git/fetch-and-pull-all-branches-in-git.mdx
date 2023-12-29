@@ -1,0 +1,39 @@
+---
+title: 'Fetch and pull all branches in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+After cloning a Git repository that has many branches, I can only see a single branch in my local copy. How do I pull all branches from the remote repository and have them show up in the output of `git branch`?
+
+## The Solution
+
+To create local equivalents of all branches in the remote repository, we can run the following bash for loop:
+
+```bash
+for remotebranch in `git branch -r | grep -v HEAD`; do
+  git branch --track ${remotebranch#origin/} $remotebranch
+done
+```
+
+This code loops through all branches in the remote repository and creates local equivalents for them. For example, when the script encounters `origin/dev`, it will create a local `dev` branch which tracks it (note the use of [substitution syntax](https://devhints.io/bash) to remove `origin/`). These branches will now show up in the output of `git branch` and can be checked out, committed to, pulled and pushed.
+
+If we only need to view the remote branches, and not work on them, we can use [`git fetch`](https://git-scm.com/docs/git-fetch) instead:
+
+```bash
+git fetch --all
+```
+
+We will then be able to view the repository state at each of these branches in [detached HEAD state](https://git-scm.com/docs/git-checkout#_detached_head) by running `git checkout origin/remote-branch-name`.
+
+If we only need to work on one or two remote branches, we can create and check out local versions of them manually using the following [`git checkout`](https://git-scm.com/docs/git-checkout) command:
+
+```bash
+git checkout -b local-branch-name origin/remote-branch-name
+```

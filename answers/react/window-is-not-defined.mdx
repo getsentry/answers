@@ -1,0 +1,110 @@
+---
+title: "Window is not Defined"
+platforms:
+  - sentry.react
+  - sentry.nextjs
+people:
+  - Stephen Cefali
+date:
+  2023-12-11T09:53:54-07:00
+---
+
+
+## Window is not Defined
+
+Some of the most common errors in server side rendered React frameworks such as Next.js are the `document is not defined` or `window is not defined` errors. Why does it happen? This error typically appears when you or an installed package try to access the browser's window objects directly in a page component, and it will throw this error because the window object is not yet available while a component is still mounting.
+
+Say we have a sample index.js page in our Next.js application and try to access the browser localStorage like below; we’ll get the window is not defined error.
+
+```javascript
+const Index = () => {
+  window.localStorage.foo = "bar";
+
+  return (
+    <>
+      <div>
+        <h1>Hello world!</h1>
+      </div>
+    </>
+  );
+};
+
+export default Index;
+```
+
+### How to resolve
+
+There are different approaches to resolving this error, one straightforward option is to simply employ react’s useEffect() hook to execute the code block that requires the browser’s window object, so that the code is only executed when the page component had been mounted.
+
+```javascript
+import { useEffect } from "react";
+
+const Index = () => {
+  useEffect(() => {
+    window.localStorage.foo = "bar";
+  }, []);
+
+  return (
+    <>
+      <div>
+        <h1>Welcome to my Blog!</h1>
+      </div>
+    </>
+  );
+};
+
+export default Index;
+```
+
+
+#### Resolving in Next.js
+
+
+If you're using Next.js, there is another possible solution which is to convert the part of our code that requires the browser’s window to a standalone component and import it to our page component using Next.js dynamic import feature. Next’s dynamic import is a feature used to lazy-loading or dynamically load components on demand. However, it includes an additional ssr option that allows you to enable or disable server rendering when using it. 
+
+We can simply set the ssr value to false and will be able to load components or external packages that rely on the browser's window or document.
+
+```javascript
+// components/SampleComponent.js
+
+const SampleComponent = () => {
+  window.localStorage.foo = "bar";
+
+  return (
+    <>
+      <div>
+        <h1>Welcome to my Blog!</h1>
+      </div>
+    </>
+  );
+};
+
+export default SampleComponent;
+```
+
+And dynamically load it in a page.
+
+```javascript
+// pages/index.js
+import dynamic from "next/dynamic";
+
+const DynamicComponent = dynamic(
+  () => import("../components/SampleComponent"),
+  {
+    ssr: false,
+  }
+);
+
+const Index = () => {
+  return (
+    <>
+      <div>
+        <h1>Hello world!</h1>
+        <DynamicComponent />
+      </div>
+    </>
+  );
+};
+
+export default Index;
+```

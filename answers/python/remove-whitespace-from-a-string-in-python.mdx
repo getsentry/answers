@@ -1,0 +1,35 @@
+---
+title: 'Remove whitespace from a string in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I remove all whitespace from a string in Python, on both ends and between words? `str.strip()` only removes whitespace from the ends of the string.
+
+## The Solution
+
+We can remove all space characters from a string using [`str.replace()`](https://docs.python.org/3/library/stdtypes.html#str.replace) to replace them with empty strings:
+
+```python
+my_string = "    Hello     World    !"
+my_string_no_spaces = my_string.replace(" ", "")
+
+print(my_string_no_spaces)  # will print "HelloWorld!"
+```
+
+To remove all whitespace characters – not just regular spaces but also tabs, non-breaking spaces, hair-width spaces, etc. – we can import Python's [Regular Expressions module](https://docs.python.org/3/library/re.html) and use [`re.sub`](https://docs.python.org/3/library/re.html#re.sub) with [`"\s"`](https://docs.python.org/3/library/re.html#regular-expression-syntax), a regular expression that will match any whitespace character. For example:
+
+```python
+import re
+
+my_string = "    Hello     World    !"
+my_string_no_spaces = re.sub("\s", "", my_string)
+
+print(my_string_no_spaces)  # will print "HelloWorld!"
+```

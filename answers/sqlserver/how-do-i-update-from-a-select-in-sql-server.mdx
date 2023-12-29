@@ -1,0 +1,103 @@
+---
+title: "How do I UPDATE from a SELECT in SQL Server?"
+platforms: 
+  - sentry.sqlserver
+people: 
+  - Richard C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+In Microsoft SQL Server, you might know how to update a table like this:
+
+```sql
+UPDATE Product
+SET Price = 600
+WHERE Id = 3;
+```
+
+But how do you update a table with values from other tables? In other words, how do you use a SELECT statement in an UPDATE statement?
+
+## The Solution
+
+Let's create an example database to demonstrate the problem. We have a `Product` table, where each product we sell has a code and price in dollars:
+
+```sql
+CREATE TABLE Product
+(
+    Id    INT PRIMARY KEY,
+    Name  NVARCHAR(255),
+    Code  NVARCHAR(4),
+    Price FLOAT
+);
+
+INSERT INTO Product(Id, Name, Code, Price)
+VALUES (1, 'Table', 'TABL', 100),
+       (2, 'Chair', 'CHAR', 50),
+       (3, 'Desk', 'DESK', 150);
+```
+
+We want to update our `Product` table with new prices from the `PriceUpdate` table below:
+
+```sql
+CREATE TABLE PriceUpdate
+(
+    Id    INT PRIMARY KEY,
+    Code  NVARCHAR(4),
+    Price FLOAT
+);
+
+INSERT INTO PriceUpdate(Id, Code, Price)
+VALUES (89, 'TABL', 110),
+       (98, 'CHAR', 65),
+       (45, 'DESK', 155);
+```
+
+### Use a Join Operation
+
+You probably learned how to use joins when learning to write SELECT statements in SQL. You can use them in an UPDATE statement too. In the following code, we update our `Product` table with the new prices by matching against the `PriceUpdate` table on the shared `Code` column:
+
+```sql
+UPDATE P
+SET
+    P.Price = U.Price
+FROM
+    Product P
+JOIN
+    PriceUpdate U ON P.Code = U.Code;
+```
+
+Note that you have to give both tables an alias (`Product P`) so that SET knows which table you want to update. If your tables have thousands of rows, you'll also want to add an index to both `Code` columns so that your query will run quickly.
+
+### Using Subqueries
+
+Alternatively, you could update using a subquery:
+
+```sql
+UPDATE Product
+SET
+    Price = (SELECT Price FROM PriceUpdate WHERE Code = Product.Code);
+```
+
+In general, you should use joins instead of subqueries. Joins are usually faster, although speed can vary depending on the exact tables and query you are using. If in doubt, always check the query execution plan in SQL Server.
+
+### Use a MERGE Statement
+
+Finally, if you want to do a complex query, combining UPDATE, INSERT, and DELETE, you can use the MERGE statement. It's been available since SQL Server 2008.
+
+```sql
+MERGE INTO
+    Product P
+USING
+    PriceUpdate U
+ON
+    P.Code = U.Code
+WHEN MATCHED THEN
+    UPDATE SET P.Price = U.Price
+WHEN NOT MATCHED THEN
+    INSERT (Code, Price) VALUES (U.Code, U.Price);
+```
+
+In this example, the WHEN NOT MATCHED clause isn't used and can be removed, but you can see how it might be useful. This solution is the most specific to SQL Server, so you'll want to avoid using it if you need to run your queries on MySQL or PostgreSQL in the future.

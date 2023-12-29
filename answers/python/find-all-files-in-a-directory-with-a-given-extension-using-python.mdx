@@ -1,0 +1,43 @@
+---
+title: 'Find all files in a directory with a given extension using Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+Using Python, how can I find all the files in a directory that have a certain extension, e.g. `.txt`?
+
+## The Solution
+
+There are two ways to do this, depending on whether or not we want to search through subdirectories. To get all the files with a given file extension in the current directory, ignoring subdirectories, we can use [`glob.glob()`](https://docs.python.org/3/library/glob.html):
+
+```python
+import glob, os
+
+os.chdir("/directory_to_search") # move to the search directory
+
+txt_files = [f for f in glob.glob("*.txt")] # will produce a list of .txt files
+```
+
+If we want to search subdirectories as well, we must use [`os.walk()`](https://docs.python.org/3/library/os.html#os.walk). This function returns a [generator iterator](https://docs.python.org/3/glossary.html#term-generator-iterator) that can be used in a for loop to methodically traverse a filesystem tree, starting at a given path. For each level of the tree, `os.walk()` will return a three-value tuple, containing:
+
+* The name of the current directory.
+* A list of subdirectory names in the current directory.
+* A list of file names in the current directory.
+
+By looping through the output of `os.walk()`, we can check each file within the top-level subdirectory and add it to our list if it ends in `.txt`:
+
+```python
+import os
+
+txt_files = []
+for root, dirs, files in os.walk("/directory_to_search"):
+    for file in files:
+        if file.endswith(".txt"):
+            txt_files.append(os.path.join(root, file))
+```

@@ -1,0 +1,41 @@
+---
+title: 'Measure elapsed time in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I measure the execution time of my Python code?
+
+## The Solution
+
+We can do this using the [`perf_counter`](https://docs.python.org/3/library/time.html#time.perf_counter) function in Python's built-in [`time`](https://docs.python.org/3/library/time.html) module.
+
+```python
+import time
+
+start = time.perf_counter()
+
+function_to_time()
+
+end = time.perf_counter()
+print(end - start)  # will print the elapsed time in seconds
+```
+
+In most cases, `perf_counter` will give us the results we want, as it measures the real amount of time our system took between calls. However, as operating systems often switch between processes, there is no guarantee that this function will provide an accurate record of the amount of time spent executing only our code. To determine this, we can use [`process_time`](https://docs.python.org/3/library/time.html#time.process_time) instead. This function will ignore any time spent on other processes and should thus give us a more isolated result useful for measuring code efficiency.
+
+```python
+import time
+
+start = time.process_time()
+
+function_to_time()
+
+end = time.process_time()
+print(end - start)  # will print the time spent on this process in seconds
+```

@@ -1,0 +1,38 @@
+---
+title: 'Get unique values from a list in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I get all of the unique values in a Python list? In other words, how do I remove duplicates from a list?
+
+## The Solution
+
+We can get all the unique values in a Python list by converting the list into a [set](https://docs.python.org/3/tutorial/datastructures.html#sets), which is an unordered data structure with no duplicate elements. Consider the code below:
+
+```python
+my_list = [3, 1, 2, 3, 2, 1]
+
+uniques = set(my_list)
+
+print(uniques) # will output {1, 2, 3}
+```
+
+From there, we can convert the set back into a list using `list(uniques)`.
+
+This method does not preserve the list's original order. If the order is important, we will need to use a less orthodox approach to the problem. Like values in sets, Python dictionary keys must be unique, and since version 3.7, Python preserves the insertion order of dictionary keys. Therefore, we can get the unique values in our list by converting its values to dictionary keys using [dict.fromkeys](https://docs.python.org/3/library/stdtypes.html?#dict.fromkeys). From there, we convert back to a list. See below:
+
+```python
+my_list = [3, 1, 2, 3, 2, 1]
+
+uniques = list(dict.fromkeys(my_list))
+
+print(uniques) # will output [3, 1, 2]
+```
+

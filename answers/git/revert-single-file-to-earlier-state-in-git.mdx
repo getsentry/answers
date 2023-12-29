@@ -1,0 +1,33 @@
+---
+title: 'Revert single file to earlier state in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I revert one file to its state in a previous commit without changing anything else in my Git repository?
+
+## The Solution
+
+First, we'll need the commit hash of the commit we want to restore our file from. The commit hash is the long alphanumeric string you may have seen associated with each of your commits – each one is unique and functions as an identifier for the repository state at that time. It looks something like this:
+
+```bash
+070cc94d35c1c45fb40c13344583e16f77e76c0b
+```
+
+While a full commit hash is 40 characters long, Git will allow us to use the first seven characters to refer to it. So the above hash can be shortened to `070cc94`.
+
+We can look at previous commits by running `git log` and temporarily revert our repository's state to them by running `git checkout <hash>`, using either all 40 characters of the hash or the first seven. When we're done looking at the repository in this past state, we can return to a current state by checking out an active branch – e.g. `git checkout main`.
+
+If we have the names of the files to restore and the commit hash to restore them to, we can restore them with a [`git checkout`](https://git-scm.com/docs/git-checkout) command:
+
+```bash
+git checkout 070cc94 -- file-to-restore.txt another/file-to-restore.py
+```
+
+The use of `--` in this command tells Git that rather than checking out the entire repository at this commit (as we would with `git checkout 070cc94` on its own) we only want to check out a subset of files.

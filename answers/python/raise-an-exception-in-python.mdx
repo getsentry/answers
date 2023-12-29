@@ -1,0 +1,131 @@
+---
+title: 'Raise an exception in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I raise/throw an exception in Python so that it will be caught by an `except` block?
+
+## The Solution
+
+We can use Python's [`raise`](https://docs.python.org/3/reference/simple_stmts.html#raise) statement to raise an exception:
+
+```python
+raise Exception("Error message here.")
+```
+
+The above is a simple example to demonstrate the syntax, but will be inappropriate for most practical use cases. Below, we discuss some nuances of exceptions and error handling in Python.
+
+### Exception Hierarchy
+
+Python provides a large number of [default exceptions](https://docs.python.org/3/library/exceptions.html#exception-hierarchy) arranged in a class hierarchy from least to most specific. When catching exceptions, all subclasses will be caught by `except` clauses using their parents. Therefore, the topmost class `Exception` is likely to be missed in favor of an exception that uses one of its subclasses. Consider the code below:
+
+```python
+def divide_by_zero():
+    return 1 / 0  # will fail and raise a ZeroDivisionError
+
+try:
+    divide_by_zero()
+    raise Exception("My custom exception.")
+except Exception as e:
+    print(f"Caught error: {repr(e)}")
+```
+
+Although the `try`/`except` block may have been written to catch our custom exception, it will instead catch the `ZeroDivisionError` raised first, elsewhere in the code. While this does not present an obvious problem in our example code, as we print the exception's error message regardless, this may not be the case for larger projects, where we might choose to do something other than printing the error message in the `except` block. In a sufficiently complex codebase, this over-broad exception catching could make debugging very difficult.
+
+Therefore, we should always raise the most specific exceptions possible and avoid placing a large amount of code in `try` blocks, unless this code contains its own error handling.
+
+### Catching Multiple Exceptions
+
+Where necessary, we can also make use of multiple `except` blocks, as below:
+
+```python
+def divide_by_zero():
+    return 1/0 # will fail and raise a ZeroDivisionError
+
+try:
+    divide_by_zero()
+    raise Exception("My custom exception.")
+except ValueError as e:
+    print(f"Caught value error: {repr(e)}")
+except Exception as e:
+    print(f"Caught custom exception: {repr(e)}")
+```
+
+Note that the `except` blocks above are ordered from most to least specific. This will ensure that all exceptions are caught by the most appropriate handler.
+
+### Exception Arguments
+
+In addition to the error message provided in the first parameter, the `Exception` constructor can be given any number of additional values as arguments. It will store these in a tuple called `args`.
+
+```python
+try:
+    raise Exception("My custom exception.", 1, "a", True)
+except Exception as e:
+    print(e.args) # will print (1, "a", True)
+```
+
+These values may be useful for retrieving specific details about the error that occurred, allowing us to construct complex error-handling logic.
+
+### Custom Exceptions
+
+If none of the built-in exceptions is appropriate, we can create our own exceptions by subclassing `Exception` or any of its subclasses. For example:
+
+```python
+class MyValueError(ValueError):
+    """ Raise when a custom value error occurs."""
+
+def divide_by_zero():
+    return 1/0 # will fail and raise a ZeroDivisionError
+
+try:
+    raise MyValueError("My custom exception.")
+    divide_by_zero()
+except MyValueError as e:
+    print(f"Caught custom value error: {repr(e)}")
+except ValueError as e:
+    print(f"Caught built-in value error: {repr(e)}")
+```
+
+This code will catch the first error in the first `except` block. If we remove the line beginning with `raise MyValueError`, then it will catch the `ZeroDivisionError` produced by the `divide_by_zero()` function.
+
+### Chaining Exceptions
+
+Python 3 introduced the `from` clause to `raise`, which is used for chaining exceptions. This can be useful for debugging.
+
+```python
+def divide_by_zero():
+    return 1 / 0  # will fail and raise a ZeroDivisionError
+
+try:
+    divide_by_zero()
+except Exception as e:
+    raise RuntimeError("Critical failure.") from e
+```
+
+This will produce the following output, showing tracebacks from all chained exceptions:
+
+```
+Traceback (most recent call last):
+  File "/tmp/main.py", line 5, in <module>
+    divide_by_zero()
+  File "/tmp/main.py", line 2, in divide_by_zero
+    return 1/0 # will fail and raise a ZeroDivisionError
+           ~^~
+ZeroDivisionError: division by zero
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/tmp/main.py", line 7, in <module>
+    raise RuntimeError("Critical failure.") from e
+RuntimeError: Critical failure.
+
+shell returned 1
+```

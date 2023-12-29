@@ -1,0 +1,85 @@
+---
+title: "How do I use OR in a CASE statement in SQL Server?"
+platforms: 
+  - sentry.sql
+people: 
+  - Richard C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+You can use a CASE statement to select different values or columns from a table, for example:
+
+```sql
+SELECT Name,
+       CASE
+           WHEN Age < 21 THEN 'child'
+           ELSE 'adult'
+       END AS Age
+FROM Person;
+```
+
+But how can you use a CASE statement with a range of optional values? In other words, how do you use OR in a CASE statement?
+
+Let's use the following table of people and their ages as an example:
+
+```sql
+CREATE TABLE Person
+(
+    Id   INT PRIMARY KEY,
+    Name VARCHAR(255),
+    Age  INT
+);
+
+INSERT INTO Person (Id, Name, Age)
+VALUES (1, 'Amir', 25),
+       (2, 'Sofia', 42),
+       (3, 'Aya', 18),
+       (4, 'Mateo', 30),
+       (5, 'Leila', 8),
+       (6, 'Yara', 35),
+       (7, 'Ndidi', 12),
+       (8, 'Santiago', 50);
+```
+
+## The Solution
+
+Assume we want to return only the ages of Amir or Aya, and set all other ages to -1. There are three ways to do this in SQL. They all work in SQL Server, PostgreSQL, and MySQL.
+
+The neatest way is to put the range of values in a list and use IN. This should be your default option.
+
+```sql
+SELECT Name,
+       CASE
+           WHEN Name IN ('Amir', 'Aya') THEN Age
+           ELSE -1
+       END AS Age
+FROM Person;
+```
+
+You could also specify the name of the column in the CASE statement, which is useful only when you have a lot of different outputs that all depend on the same column input.
+
+```sql
+SELECT Name,
+       CASE Name
+           WHEN 'Amir' THEN Age
+           WHEN 'Aya'  THEN Age
+           ELSE -1
+       END AS Age
+FROM Person;
+```
+
+Finally, you could use OR in the WHEN statement, which is useful only when you want to do complex logic or arithmetic in each part of the OR statement. This wouldn't be possible using the IN syntax above.
+
+```sql
+SELECT Name,
+       CASE
+            WHEN Name = 'Amir' OR
+                 Name = 'Aya'
+            THEN Age
+            ELSE -1
+        END AS Age
+FROM Person;
+```

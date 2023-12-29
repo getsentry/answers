@@ -1,0 +1,50 @@
+---
+title: "Python equivalent of a ternary operator: if-then-else in one line"
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+Many C-like languages include a ternary operator, which is used for expressing simple if-then-else statements in a single line. It usually looks something like this:
+
+```c
+int x = b == true ? 1 : 0 // if b == true, x = 1; else x = 0
+```
+
+Is there a way to do this in Python?
+
+## The Solution
+
+Yes, Python supports inline conditional assignments using a form of the ternary operator, usually called a *conditional expression*. The syntax is as follows:
+
+```python
+x = 1 if b == True else 0
+
+# or
+
+x = 1 if b else 0
+```
+
+In this code, if `b` is true, `x` will be set to `1`, otherwise `x` will be set to `0`.
+
+Similarly, simple if statements can be written on a single line:
+
+```python
+if b == True: x = 1
+```
+
+However, this syntax is unusual and does not allow for the inclusion of an else clause on the same line. Conditional expressions should be preferred for simple assignments, and more complex code should be split across multiple lines.
+
+```python
+if b == True:
+    x = 1
+    print("b is True and x is 1")
+else:
+    x = 0
+    print("b is False and x is 0")
+```

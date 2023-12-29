@@ -1,0 +1,25 @@
+---
+title: 'Revert local changes in Git repository to a previous state'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+I've cloned a repository from a remote and made some changes to it locally. I would like to undo these changes and return the repository to its initial state. How can I do that?
+
+## The Solution
+
+We can remove any uncommitted local changes by running [`git stash`](https://git-scm.com/docs/git-stash). This will return our repository to the state of its most recent commit. If we change our mind later, we can reapply our changes by running `git stash pop`.
+
+If we've committed changes locally, we can undo them by following the steps in [this answer](https://sentry.io/answers/undo-the-most-recent-local-git-commits/).
+
+Finally, there may be some untracked files or directories in our repository (e.g. generated files or build artifacts). To remove these, we can use [`git clean`](https://git-scm.com/docs/git-clean):
+
+```bash
+git clean -fd
+```

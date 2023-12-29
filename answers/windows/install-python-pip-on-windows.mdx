@@ -1,0 +1,49 @@
+---
+title: 'Install Python PIP on Windows'
+platforms: 
+  - sentry.windows
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I install Python's PIP package manager on Windows?
+
+## The Solution
+
+Modern versions of both Python 3 and Python 2 come bundled with PIP, so it should be installed automatically. If it is not available in our installation, we can run [`ensurepip`](https://docs.python.org/3/library/ensurepip.html) to fix this.
+
+To run `ensurepip`, open a command prompt window and execute the following command:
+
+```bat
+py -3 -m ensurepip
+```
+
+If `py` is not available you can use the following command:
+
+```bat
+python -m ensurepip
+```
+
+Once this command has run, PIP should be installed and available. If PIP is already installed, the command will do nothing, so there is no harm in running it if you're not sure.
+
+Keep in mind that, on Windows, PIP must be run with the following command, which uses Python 3 to invoke PIP:
+
+```bat
+py -3 -m pip
+
+\\ or
+python -m pip
+```
+
+Therefore, any time you want to install packages, you will need to provide the full command rather than just typing `pip`. For example:
+
+```bat
+py -3 -m pip install sentry-sdk
+
+\\ or
+python -m pip install sentry-sdk
+```

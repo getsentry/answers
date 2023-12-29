@@ -1,0 +1,50 @@
+---
+title: 'How to Exit Vim'
+platforms: 
+  - sentry.linux
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+You've opened the Vim text editor and you don't know how to close it and return to your terminal.
+
+## The Solution
+
+1. Press Escape to return to Normal mode.
+2. Type `:`. A `:` should appear in the bottom-left corner of the Vim window, alongside a flashing cursor.
+3. To save changes to the current file, type `wq` ("write quit"). To discard changes, type `q!` ("force quit").
+4. Press Enter.
+
+Congratulations on exiting Vim. To get a better understanding of how it works and why exiting it was so unintuitive, read on.
+
+The Vim text editor is based on a program called vi, originally written for Unix systems in 1976. vi operates differently to modern editors because it predates all of them. Most conventions we think of as standard, like copying and pasting with Ctrl+c and Ctrl+v, were not yet conceived of when vi was written. Neither was the mouse or even modern keyboard layouts with arrow keys. Without these means of navigating computers and given the underpowered nature of hardware at the time, vi had to come up with its own ways of allowing users to write and manipulate text.
+
+In a standard modern editor like Windows Notepad or Visual Studio Code, text can be entered as soon as you've opened a file, just by typing. The mouse or arrow keys are used to move the cursor around to edit different parts of the file. Most editors allow word-wise navigation using the arrow keys while holding down Control. Text can be selected by dragging the mouse cursor across it, or (usually) by holding Shift while navigating with the arrow keys.
+
+All this functionality and more is available in Vim, without relying on a mouse or arrow keys. This is made possible through the use of *modes* – global program states that transform what keys on the keyboard do.
+
+Vim starts in Normal mode. The behavior of this mode seems anything but normal to users accustomed to other editors, as it doesn't allow typing. This is because Normal mode is for navigating and applying high-level edits, not for entering text. For that, we need Insert mode, which is most commonly triggered by hitting the i key while in Normal mode.
+
+Once in Insert mode, the text `-- INSERT --` will appear at the bottom of the Vim window, and we will be able to type as in any other editor. Pressing Escape will return Vim to Normal mode.
+
+In Normal mode, the keyboard's letter keys are used for moving around and manipulating text. The h, j, k, and l keys function as arrow keys: h is left, j is down, k is up, and l is right. [Old keyboards included arrows on these letters](https://en.wikipedia.org/wiki/Vi#/media/File:KB_Terminal_ADM3A.svg). Pressing the w key will jump the cursor forward by one word, and b will jump it backward by one word. 
+
+In addition to navigating using keyboard keys, you can apply operations to text, which requires entering a sequence of characters: d starts a delete operation, which can be applied up to the end of the next word (dw), the beginning of the previous word (db), a single letter (dl), or the whole line (dd). Copying (which Vim calls yanking) works in much the same way, with y starting the operation: yw copies to the end of the current word, yy copies the entire line, and so on.
+
+Operations can be prefaced numbers: 3w will jump forward by three words, and 3yy will yank three lines. Vim supports many other ways to move around in and manipulate text, covered by the official tutorial, which is accessible by typing `vimtutor` into the terminal and pressing Enter. Advanced Vim users can construct complex operations out of these simple parts.
+
+Pressing v while in Normal mode will enter Visual mode, which permits text selection. One of Vim's neatest simple features is Visual block mode, which you can enter with Ctrl+v. Visual block mode allows us to select visual blocks across rows and columns rather than a continuous line of text, which is very useful for aligning spacing and editing multiple lines at once. See [this article](https://linuxhandbook.com/vim-visual-mode/) for more.
+
+Importantly, commands in Normal and Visual modes are very much case-sensitive. Using I or Shift+i will do something completely different from i. Accidentally engaging Caps Lock while in Vim Normal mode can lead to catastrophic results. Luckily, there's always u for undo.
+
+Vim's last important mode is Ex mode, which is engaged by typing : in Normal mode. Ex mode provides a command-line interface, from which we can do things like save changes to the current file and exit Vim, as detailed at the start of this post. This mode is quite similar to the Command Palette in Sublime Text and Visual Studio Code.
+
+Ex mode has many commands, such as `help`, which brings up Vim's comprehensive documentation, and `edit`, which opens another file. One of the most useful commands is `!`, which provides direct access to the shell's command line. Test it by opening Ex mode and typing `!ls`. The Vim window will be temporarily replaced with the output of the `ls` command. This functionality is very useful for developers: When writing a Python script in Vim, we can execute it by typing `:!python myscript.py`, see the results, and then return to programming.
+
+All of the above constitutes a very brief introduction to Vim, barely scratching the surface of its capabilities. It is a feature-rich editor with a long history and a dedicated community, who've created thousands of extensions for it. While it may feel awkward and counter-intuitive to use at first, and certainly isn't for everyone, its design follows a strong internal logic, and people who take the time to learn its ways will find themselves able to perform complex editing operations in a few keystrokes that would require hours of tedious work in more immediately intuitive editors.
+
+

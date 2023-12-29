@@ -1,0 +1,33 @@
+---
+title: 'Delete all lines containing a string from a file in Bash'
+platforms: 
+  - sentry.bash
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I delete all lines containing a particular string from a text file using Bash?
+
+## The Solution
+
+We can do this using [`sed`](https://en.wikipedia.org/wiki/Sed). For example, the following command will delete all lines containing the text "NOT FOR RELEASE" from the file `info.txt`:
+
+```bash
+sed -i.bak '/NOT FOR RELEASE/d' ./info.txt
+```
+
+`sed` supports a large number of commands for editing text files. Here, we use the [`d`](https://en.wikipedia.org/wiki/Sed) command, which deletes lines. For example, `1d` would delete the first line in the file, and `2d` would delete the second line. If we provide a [regular expression](https://www.regular-expressions.info/) between `/`s instead of a line number, `sed` will delete every line that matches the expression.
+
+The `-i` flag indicates that the change should be made in place. `.bak` is the suffix to use when creating a backup file. Before making any changes, `sed` will create a copy of `info.txt` in its original state called `info.txt.bak`. If we're happy with the modified state of `info.txt`, we can delete this file. Otherwise, we can delete `info.txt` and rename `info.txt.bak` to `info.txt` to return to our initial state.
+
+Remember that the text between `/`s is a regular expression, and will thus interpret certain characters as part of that syntax. If we merely want to search for a literal string, we will need to escape the characters `$.*/[\]^` by preceding them with a backslash (`\`). For example:
+
+```bash
+sed -i.bak '/NOT FOR RELEASE\./d' ./info.txt # will delete lines containing "NOT FOR RELEASE."
+```
+
+To learn more about `sed`, consult its manual page by typing `man sed` into your terminal.

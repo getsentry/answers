@@ -1,0 +1,109 @@
+---
+title: "How do I add a column with a default value to an existing table in SQL Server?"
+platforms: 
+  - sentry.sqlserver
+people: 
+  - Richard C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to add a column to an existing table in Microsoft SQL Server. How do you do it? 
+
+If you want the column to disallow null values, the ALTER TABLE statement will fail because all the existing rows will have no values for the new column.
+
+Let's use the following table of people as an example:
+
+```sql
+CREATE TABLE Person
+(
+    Id INT PRIMARY KEY,
+    Name VARCHAR(255)
+);
+
+INSERT INTO Person(Id, Name)
+VALUES
+    (1, 'Amir'),
+    (2, 'Sofia'),
+    (3, 'Aya'),
+    (4, 'Mateo'),
+    (5, 'Leila'),
+    (6, 'Yara'),
+    (7, 'Ndidi'),
+    (8, 'Santiago');
+```
+
+How do we add a new column, `Gender`, with no null values allowed and a default value of `Unspecified`?
+
+## The Solution
+
+If no null values are allowed for a new column, the solution is to specify a default value for the column. The query below will add the new `Gender` column:
+
+```sql
+ALTER TABLE
+    Person
+ADD
+    Gender VARCHAR(20) NOT NULL DEFAULT 'Unspecified';
+```
+
+However, it is neater to name both the constraints so you can refer to them by name if you want to change them in the future:
+
+```sql
+ALTER TABLE
+    Person
+ADD
+    Gender VARCHAR(20)
+        CONSTRAINT cnstrt_not_null_gender NOT NULL
+        CONSTRAINT cnstrt_default_gender DEFAULT 'Unspecified';
+```
+
+Here are the contents of the altered table:
+
+```sql
+SELECT * FROM Person;
+```
+
+| Id | Name     | Gender       |
+|----|----------|--------------|
+| 1  | Amir     | Unspecified  |
+| 2  | Sofia    | Unspecified  |
+| 3  | Aya      | Unspecified  |
+| 4  | Mateo    | Unspecified  |
+| 5  | Leila    | Unspecified  |
+| 6  | Yara     | Unspecified  |
+| 7  | Ndidi    | Unspecified  |
+| 8  | Santiago | Unspecified  |
+
+### How To Allow Null Values
+
+If you want to add a default value of `Unspecified` to existing rows and new rows, but still want to allow entering `NULL` for gender if explicitly specified, you can do this:
+
+```sql
+ALTER TABLE
+    Person
+ADD
+   Gender VARCHAR(20)
+   CONSTRAINT cnstrt_default_gender DEFAULT 'Unspecified' WITH VALUES;
+```
+
+In this new `ALTER` statement, we no longer require `Gender` to be NOT NULL. We specify that a `DEFAULT` value is set only when no value is given, by the WITH VALUES phrase.
+
+Now if we enter the following:
+
+```sql
+INSERT INTO Person(Id, Name, Gender)
+VALUES (20, 'Bob', NULL);
+```
+
+Bob will have `NULL` gender.
+
+But if we enter:
+
+```sql
+INSERT INTO Person(Id, Name)
+VALUES (20, 'Bob');
+```
+
+Bob will have an `Unspecified` gender.

@@ -1,0 +1,41 @@
+---
+title: 'Fastest way to check if a list contains an item in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+Using Python, what is the fastest way to check if an item is present in a list?
+
+## The Solution
+
+This depends on the size of the list and the number of items to check for. When checking for a single item in a list, the fastest way is to use Python's `in` operator:
+
+```python
+my_list = [1, 2, 3, 4, 5]
+
+if 4 in my_list:
+    print("4 is present.")
+```
+
+If we're checking for multiple items in a large, unordered list, it can be faster to convert the list and the items to [`set`s](https://docs.python.org/3/tutorial/datastructures.html#sets) before performing the check.
+
+```python
+import random
+
+my_list = list(range(1,10001))      # list of number 1 to 10000
+random.shuffle(my_list)             # put my_list in a random order
+items_to_find = list(range(1,1001)) # find the numbers 1 to 1000
+
+my_list_set = set(my_list)
+items_to_find_set = set(items_to_find)
+for item in items_to_find_set.intersection(my_list_set):
+    print(f"{item} is present.")
+```
+
+Performance can vary at lower scales and for different lists. When searching for a single item in a list, `in` should be sufficient; when searching for common items between two very long lists with thousands of items, `set` conversion is probably the way to go.

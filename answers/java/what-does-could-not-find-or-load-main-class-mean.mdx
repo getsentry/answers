@@ -1,0 +1,68 @@
+---
+title: 'What does "Could not find or load main class" mean?'
+platforms: 
+  - sentry.java
+people: 
+  - Gareth D.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+After running `java Main`, you get the error message, "Could not find or load main class". What does this mean?
+
+## The Solution
+
+This error message usually means that you gave the wrong file (or no file) to `java` on the command line.
+
+If you run `java thisfiledoesnotexist` in your terminal or command prompt, you should see the same error.
+
+```
+Error: Could not find or load main class thisfiledoesnotexist
+Caused by: java.lang.ClassNotFoundException: thisfiledoesnotexist
+```
+
+A common cause of this error is passing in the `.class` file that `javac` creates by mistake. For example, let's say you have the following code in a file called `HelloWorld.java`:
+
+```java
+public class HelloWorld {
+
+    public static void main(String[] arg) {
+        System.out.println("Hello");
+    }
+}
+```
+
+When you run `javac HelloWorld.java`, the file `HelloWorld.class` is produced, which is the compiled version of the program that you can execute.
+
+But to run this program, you should use:
+
+```
+java HelloWorld
+```
+
+Output:
+
+```
+Hello
+```
+
+If you run:
+
+```
+java HelloWorld.class
+```
+
+The output will be:
+
+```
+Error: Could not find or load main class HelloWorld.class
+Caused by: java.lang.ClassNotFoundException: HelloWorld.class
+```
+
+Some other common mistakes that might give you this error include:
+
+* Using the wrong case. For example, `java helloworld` instead of `java HelloWorld`
+* Typing errors. For example `java hellowrld` instead of `java HelloWorld`
+* Using the incorrect directory. First use `cd` to get to the same directory as your `.java` and `.class` files, and then run `java HelloWorld`.

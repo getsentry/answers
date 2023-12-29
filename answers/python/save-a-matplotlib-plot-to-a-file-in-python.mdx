@@ -1,0 +1,29 @@
+---
+title: 'Save a Matplotlib plot to a file in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I save a plot created with Matplotlib to an image file instead of displaying it?
+
+## The Solution
+
+We can do this using the [`savefig`](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.savefig.html) function:
+
+```python
+from matplotlib import pyplot
+
+pyplot.savefig("myPlot.png", bbox_inches="tight")
+```
+
+This function will save the current plot as a PNG image file. By specifying a different file extension, we could instead save it as an SVG (`.svg`), PostScript file (`.ps`), or PDF (`.pdf`).
+
+The argument `bbox_inches="tight"` ensures that the image is saved without surrounding whitespace. Additional arguments can be specified to change the colors and transparency of the saved image.
+
+Note that `pyplot.show` clears the current plot, and should therefore only be called after `pyplot.savefig`, to avoid saving a blank image.

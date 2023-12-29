@@ -1,0 +1,60 @@
+---
+title: 'Print multiple times without newlines or spaces in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+Each time I call `print` in Python, a new line is created. For example:
+
+```python
+print("hello")
+print("world")
+```
+
+This code will print the following:
+
+```
+hello
+world
+```
+
+If I pass multiple strings to `print`, they will be separated by spaces. For example:
+
+```python
+print("hello", "world")
+```
+
+This code will print the following:
+
+```
+hello world
+```
+
+How do I avoid both newlines and spaces and print `helloworld`? In other words, I would like all new strings to be printed directly after the previous output, without any separators.
+
+## The Solution
+
+Python's `print` function takes two optional keyword parameters, `sep` and `end`.
+
+* `sep`: a string to print between arguments. Defaults to `' '` (space).
+* `end`: a string to print at the end. Defaults to `'\n'` (new line).
+
+To prevent these extra spaces and line breaks from being printed, we can set both `sep` and `end` to empty strings, as below:
+
+```python
+print("hello", sep="", end="")
+print("world", sep="", end="")
+print("hello", "world", sep="", end="")
+```
+
+This code will print the following:
+
+```
+helloworldhelloworld
+```

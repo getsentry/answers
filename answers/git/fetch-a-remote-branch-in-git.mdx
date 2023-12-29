@@ -1,0 +1,29 @@
+---
+title: 'Fetch a remote branch in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+In my Git repository, how do I fetch a branch from a remote to start working on locally? There is no equivalently named branch in my local repository.
+
+## The Solution
+
+We can do this using [`git fetch`](https://git-scm.com/docs/git-switch) to retrieve the remote branch and [`git switch`](https://git-scm.com/docs/git-switch) to work on it locally. First, fetch the remote branch:
+
+```bash
+git fetch remote-branch
+```
+
+Then switch to it:
+
+```bash
+git switch remote-branch
+```
+
+Under the hood, this command will create a local branch named `remote-branch`, which tracks the version of `remote-branch` on the repository's remote, and check it out. We can then make commits, push them, and pull others' commits from this branch as usual.

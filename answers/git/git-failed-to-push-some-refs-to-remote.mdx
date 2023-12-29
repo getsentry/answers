@@ -1,0 +1,38 @@
+---
+title: 'Git "failed to push some refs to remote"'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+When attempting to push local commits to a remote repository, I receive the following error:
+
+```
+! [rejected]         master -> master (non-fast-forward)
+error: failed to push some refs to 'https://github.com/REDACTED.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+```
+
+How do I resolve this error and push my changes?
+
+## The Solution
+
+This error generally occurs if new commits have been pushed to the repository since our last pull. For example, let's say that Alice and Bob both pull the repository at commit A. Alice makes changes and creates commit B, which she then pushes. Bob also makes changes, creating commit C, but when he tries to push this commit, he receives the error above because his repository history does not contain Alice's commit B. 
+
+To fix this, Bob must pull Alice's changes and integrate them into his repository's history. He can do this using the following [`git pull`](https://git-scm.com/docs/git-pull) command:
+
+```bash
+git pull --rebase
+```
+
+The [`--rebase`](https://git-scm.com/docs/git-pull#Documentation/git-pull.txt---rebasefalsetruemergesinteractive) flag will tell `git pull` to fetch the upstream version of the current branch (i.e. the one with commits A and B) and replay the changes made in commit C on top of it.
+
+Once this is done, Bob can run `git push` again.

@@ -1,0 +1,50 @@
+---
+title: 'Get key by value in dictionary Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+Retrieving the value associated with a Python dictionary key is simple:
+
+```python
+names = {"Doe": "Jane", "Smith": "John"}
+
+print(names["Doe"])  # will print Jane
+```
+
+But how do I perform the opposite operation, i.e. find the key for a given value? In this example, how would I get "Doe" from "Jane"?
+
+
+## The Solution
+
+We can do this using a [list comprehension](https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions), as below:
+
+```python
+names = {"Doe": "Jane", "Smith": "John"}
+
+result = [lastname for lastname, firstname in names.items() if firstname == "Jane"]
+
+print(result)  # will print ["Doe"]
+```
+
+Here we construct a list by looping over the output of our dictionary's [`items`](https://docs.python.org/3.10/library/stdtypes.html#dict.items) method. This method returns the contents of our dictionary as a list of tuples in the form `(key, value)`. The condition in the final part of the list comprehension ensures that only keys with the value `"Jane"` will be added to the final list.
+
+We must work with a list here because while a dictionary's keys must be unique, there is no such constraint on values, and multiple keys might correspond to the same value. For example, our dictionary could contain another key with the value `"Jane"`:
+
+```python
+names = {"Doe": "Jane", "Smith": "John", "Jones": "Jane"}
+
+result = [lastname for lastname, firstname in names.items() if firstname == "Jane"]
+
+print(result)  # will print ["Doe", "Jones"]
+```
+
+If we just want the first key, we can access it with `result[0]`.
+
+This is an unusual way of using a dictionary, but may be necessary in certain circumstances. However, if we find ourselves searching our dictionary by value more often than by key, it may make sense to swap the keys and values around in our code.

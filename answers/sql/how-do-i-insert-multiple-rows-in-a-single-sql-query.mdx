@@ -1,0 +1,96 @@
+---
+title: "How do I insert multiple rows in a single SQL query?"
+platforms: 
+  - sentry.sql
+people: 
+  - Richard C.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+If you want to insert many rows into a SQL table, you have to repeat INSERT INTO over and over in separate statements.
+
+```sql
+INSERT INTO Person VALUES (1, "Amir");
+INSERT INTO Person VALUES (2, "Sofia");
+INSERT INTO Person VALUES (3, "Aya");
+...
+```
+Is there a way to use a single statement and avoid repetition?
+
+Assume the table we are working with has just `Id` and `Name` columns. This code works on SQL Server, MySQL, and PostgreSQL.
+
+```sql
+CREATE TABLE Person
+(
+    Id INT PRIMARY KEY,
+    Name VARCHAR(255)
+);
+```
+
+## The Solution
+
+The solution depends on which database server and version you are using. They each support different syntax.
+
+### SQL Server 2008 and Later
+
+SQL Server allows you to enter up to 1000 rows in a single statement.
+
+```sql
+INSERT INTO
+    Person (Id, Name)
+VALUES
+    (1, 'Amir' ),
+    (2, 'Sofia'),
+    (3, 'Aya'),
+    (4, 'Mateo'),
+    (5, 'Leila'),
+    (6, 'Yara'),
+    (7, 'Ndidi'),
+    (8, 'Santiago');
+```
+
+After 1000 entries, performance degrades, so Microsoft wants you to split your entries into separate transactions.
+
+### Earlier SQL Server Versions
+
+If you're using an earlier version of SQL Server, you can't use this syntax. You have to use multiple INSERT statements.
+
+Some answers online suggest using UNION ALL syntax to create a SELECT statement from which you INSERT. We don't recommend this for performance reasons.
+
+```sql
+INSERT INTO
+    Person (Id, Name)
+SELECT 1, 'Amir' UNION ALL
+SELECT 2, 'Sofia' UNION ALL
+SELECT 3, 'Aya';
+```
+
+Rather investigate the Microsoft BULK INSERT tool for large inserts.
+
+```sql
+BULK INSERT Person
+FROM '\\data\people.dat';
+```
+
+### MySQL and PostgreSQL
+
+MySQL and PostgreSQL also support modern syntax. This has been available since around 2006.
+
+```sql
+INSERT INTO
+    Person (Id, Name)
+VALUES
+    (1, 'Amir' ),
+    (2, 'Sofia'),
+    (3, 'Aya'),
+    (4, 'Mateo'),
+    (5, 'Leila'),
+    (6, 'Yara'),
+    (7, 'Ndidi'),
+    (8, 'Santiago');
+```
+
+(Note that if you are trying this in SQLFiddle.com for MySQL, you need to enter this code in the schema panel, not the query panel).

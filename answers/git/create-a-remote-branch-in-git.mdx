@@ -1,0 +1,23 @@
+---
+title: 'Create a remote branch in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I push a newly created branch in my local Git repository to a remote?
+
+## The Solution
+
+We can do this by adding the [`-u`/`--set-upstream`](https://git-scm.com/docs/git-push#Documentation/git-push.txt---set-upstream) flag to our [`git push`](https://git-scm.com/docs/git-push) command:
+
+```bash
+git push -u origin new-branch
+```
+
+This command will create a new branch named `new-branch` in the remote repository at `origin` and associate it with the `new-branch` branch in our local repository. This association means that any further commits added to the branch can be pushed with a simple `git push`.

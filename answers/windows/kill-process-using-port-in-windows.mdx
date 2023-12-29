@@ -1,0 +1,54 @@
+---
+title: 'Kill process using port in Windows'
+platforms: 
+  - sentry.windows
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+On Windows, how can I find which process is listening on a given port and kill it? For example, I want to find and kill the process listening on `localhost:8080`.
+
+## The Solution
+
+We can do this using the Windows command line. Run `cmd.exe` as an administrator and enter the following command:
+
+```bat
+netstat -ano | findstr :8080
+```
+
+In the first part of this command, we invoke [`netstat`](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netstat), a utility for viewing network connections.
+
+* `-a` shows all connections and listening ports.
+* `-n` shows IP addresses and port numbers numerically.
+* `-o` shows the process ID for each connection or listening port.
+
+This will show all current TCP connections on our system. In the second part of the command, we pipe this output into [`findstr`](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/findstr) to find and display the line showing information about the process listening on TCP port 8080. Our output should resemble the following:
+
+```
+    TCP     0.0.0.0:8080    0.0.0.0:0   LISTENING   2660
+    TCP     [::]:8080       [::]:0      LISTENING   2660
+```
+
+The final number on both lines is the process ID (PID) of the process using port 8080. Using this PID, we can end the process with [`taskkill`](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/taskkill):
+
+```
+taskkill /PID 2660 /F
+```
+
+The `/PID` flag indicates that we're locating the task to kill by PID, and the `/F` flag will forcefully end the task. After running this command, we should see the following output:
+
+```
+SUCCESS: The process with PID 2660 has been terminated.
+```
+
+If we rerun the `netstat` command above, we should now get empty output.
+
+A quicker way to do this, with only a single command, is to use the NPM package [`kill-port`](https://www.npmjs.com/package/kill-port). With NPM installed, just run the following command:
+
+```bat
+npx kill-port 8080
+```

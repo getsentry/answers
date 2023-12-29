@@ -1,0 +1,31 @@
+---
+title: 'Access environment variables in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I access environment variables in Python?
+
+## The Solution
+
+The Python `os` module contains a mapping object (similar to a dictionary) called [`environ`](https://docs.python.org/3/library/os.html#os.environ) that stores all environment variables and their values.
+
+```python
+import os
+
+print(os.environ) # show all environment variables and their values.
+```
+
+One way to access environment variables is to use `os.environ` like a dictionary. For example, `os.environ['SHELL']` will contain the value of the `SHELL` environment variable. However, if the requested environment variable does not exist, trying to access it will raise a [`KeyError`](https://docs.python.org/3/library/exceptions.html#KeyError) exception. Therefore, a safer way to do this is use the `os.getenv` function, which allows us to specify a default fallback value.
+
+```python
+shell_ev = os.getenv('SHELL', '/bin/bash')
+```
+
+This code will store the value of the `SHELL` environment variable in `shell_ev`. If this environment variable does not exist, the string `/bin/bash` will be stored.

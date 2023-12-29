@@ -1,0 +1,63 @@
+---
+title: 'Split statements across multiple lines in Python code'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+When writing Python code, I sometimes need to split statements or expressions across multiple lines for readability. Considering that Python uses meaningful whitespace, how can I do this while preserving the meaning of the code? For example, I would like to turn this code:
+
+```python
+sum = 1 + 2 + 3 + 4 + 5
+```
+
+Into this:
+
+```python
+sum = 1 + 2 + 3
+        + 4 + 5
+```
+
+## The Solution
+
+Python allows code within parentheses (`()`), brackets (`[]`) or braces (`{}`) to be written across multiple lines with arbitrary indentation. For example:
+
+```python
+sum = (1 + 2 + 3
+         + 4 + 5)
+```
+
+This also applies to function calls and expressions:
+
+```python
+if (initialized == True and
+    paused == False):
+    run_job(1, False,
+            "Hello world!")
+```
+
+List definitions, which use brackets, and dictionary definitions, which use braces, can be written across multiple lines in the same way and for the same reason:
+
+```python
+products = ["Apples",
+            "Oranges"]
+
+product_prices = {"Apples": 1,
+                  "Oranges": 2}
+```
+
+Per PEP-008, using parenthesis, brackets, and braces is the [preferred way of continuing long lines](https://peps.python.org/pep-0008/#maximum-line-length). An alternative method is to use a single backslash (`\`):
+
+```python
+sum = 1 + 2 + 3 \
+        + 4 + 5
+
+if initialized == True and \
+   paused == False:
+    run_job(1, False, "Hello world!")
+```

@@ -1,0 +1,69 @@
+---
+title: 'How to create a file and write to it in Java'
+platforms: 
+  - sentry.java
+people: 
+  - Gareth D.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I create a file and write to it in Java?
+
+## The Solution
+
+There are many different ways to write data to a file in Java, but the easiest way is to use a `BufferedWriter` along with a `FileWriter`, as follows.
+
+
+```java
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class Main {
+
+    public static void main(String[] args) {
+        String stringToWrite = "Java files are easy";
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("newfile.txt"));
+            writer.write(stringToWrite);
+            writer.close();
+        } catch (IOException ioe) {
+            System.out.println("Couldn't write to file");
+        }
+    }
+}
+```
+
+This will write "Java files are easy" to a file called `newfile.txt` in the same directory as your `Main.java` file. If the file already exists, it will be overwritten.
+
+If you want to append data to an existing file, you can pass `true` as a second argument to `FileWriter`. This enables append mode, so the file will not be overwritten.
+
+```java
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class Main {
+
+    public static void main(String[]args) {
+        String stringToWrite = "\nJava files are easy";
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("newfile.txt", true));
+            writer.write(stringToWrite);
+
+            writer.close();
+        } catch (IOException ioe) {
+            System.out.println("Couldn't write to file");
+        }
+    }
+}
+```
+
+The code above will append a new line saying "Java files are easy" to the `newfile.txt` each time it is run.
+
+## Further reading
+
+* [Write to file in Java](https://sentry.io/answers/write-to-file-java/)

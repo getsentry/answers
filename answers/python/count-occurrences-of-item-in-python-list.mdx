@@ -1,0 +1,38 @@
+---
+title: 'Count occurrences of item in Python list'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I count the occurrences of an item in a Python list?
+
+## The Solution
+
+We can use the Python [`list.count`](https://docs.python.org/3/tutorial/datastructures.html#more-on-lists) method, as below:
+
+```python
+products = ["Apple", "Orange", "Banana", "Pear", "Apple", "Banana"]
+
+banana_count = products.count("Banana") # => 2
+```
+
+If we need to count the occurrences of every unique item in the list, it is more performant to use the [`Counter`](https://docs.python.org/3/library/collections.html#collections.Counter) collection from the built-in Python `collections` library than to use the `count` method in a loop.
+
+```python
+from collections import Counter
+products = ["Apple", "Orange", "Banana", "Pear", "Apple", "Banana"]
+
+element_counts = Counter(products)
+```
+
+This will produce a `Counter` object, which is a subclass of `dict`. For the code above, `element_counts` will look like this:
+
+```python
+Counter({"Apple": 2, "Orange": 1, "Banana": 2, "Pear": 1})
+```

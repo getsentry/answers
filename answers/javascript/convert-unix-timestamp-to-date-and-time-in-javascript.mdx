@@ -1,0 +1,56 @@
+---
+title: "Convert Unix timestamp to date and time in JavaScript"
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+I have a set of Unix timestamps that I would like to convert into human-readable dates and times. How can I do this in JavaScript?
+
+## The Solution
+
+The Unix timestamp is an integer that represents times according to the number of seconds since midnight on the 1st of January, 1970. For example:
+
+* 20 seconds and 13 minutes past 1 am on the 10th of August 2023 can be written as 1691622800.
+* 12 seconds and 12 minutes past 12 pm on December 12, 2012 can be written as 1355307132.
+* 11 seconds and 11 minutes past 11 am on November 11, 1918 can be written as -1613832529.
+
+To convert these into human-readable dates and times, we can use JavaScript's `Date` object. This object's constructor takes a value similar to a Unix timestamp, but in milliseconds rather than seconds. Therefore, to use a Unix timestamp, we must multiply it by 1000.
+
+```javascript
+const myUnixTimestamp = 1691622800; // start with a Unix timestamp
+
+const myDate = new Date(myUnixTimestamp * 1000); // convert timestamp to milliseconds and construct Date object
+
+console.log(myDate); // will print "Thu Aug 10 2023 01:13:20" followed by the local timezone on browser console
+```
+
+As shown above, printing out a `Date` object will show its date and time in a standard, human-readable format. [Built-in methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#other_ways_to_format_a_date) are available for formatting it in ISO-standard format (a simplified version of [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)) and according to the user's locale (e.g. showing D-M-Y for European users and M-D-Y for American users).
+
+```javascript
+console.log(myDate.toISOString()); // will print "2023-08-10T01:13:20.000Z"
+console.log(myDate.toLocaleString()); // output will vary based on system locale settings
+```
+
+We can use other methods to output only the date or only the time components:
+
+```javascript
+console.log(myDate.toDateString()); // will print "Thu Aug 10 2023"
+console.log(myDate.toTimeString()); // will print "01:13:20" followed by the local timezone
+```
+
+Finally, we can also use this `Date` object to retrieve and output individual parts of the date or time using its [instance methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#instance_methods).
+
+```javascript
+console.log(myDate.getFullYear()); // will print 2023
+console.log(myDate.getMonth()); // will print 7 (August; January would be 0)
+console.log(myDate.getDate()); // will print 10
+console.log(myDate.getHours()); // will print 1
+console.log(myDate.getMinutes()); // will print 13
+console.log(myDate.getSeconds()); // will print 20
+```

@@ -1,0 +1,33 @@
+---
+title: 'I need an unordered list without any bullets (HTML, CSS)'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have an unordered list like the following example list:
+
+```html
+<ul>
+ <li>Item 1</li>
+ <li>Item 2</li>
+ <li>Item 3</li>
+</ul>
+```
+
+By default, list items in an unordered list have bullets, how do you remove them?
+
+## The Solution
+
+To remove the bullets, you can set the [list-style-type](https://developer.mozilla.org/en-US/docs/Web/CSS/list-style-type) CSS property of the unordered list to "none".
+
+```css
+ul {
+  list-style-type: none;
+}
+```

@@ -1,0 +1,53 @@
+---
+title: 'Declare an array in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I declare an array in Python?
+
+## The Solution
+
+The default array type in Python is known as a *list*. To create a new empty list and assign it to a variable, we can use either of the following equivalent lines:
+
+```python
+my_list = []
+my_list = list()
+```
+
+We don't have to instantiate our list as empty but can add any number of items of any type to it.
+
+```python
+my_list = [1, "hello", True]
+```
+
+To create a list with many copies of the same value, we can use the multiplication operator:
+
+```python
+my_list = [0] * 10  # will create a list containing ten 0s.
+```
+Note, using this syntax for more complex types can cause issues as the list is created as a reference copy.
+
+```python
+basic = [1]
+my_list = [basic]*10
+print(my_list)    # [[1], [1], [1], [1], [1], [1], [1], [1], [1], [1]]
+basic[0] = 2
+print(my_list)    # [[2], [2], [2], [2], [2], [2], [2], [2], [2], [2]]
+```
+
+Lists in Python can contain elements of different data types and do not have a predefined length. Python provides an [`array`](https://docs.python.org/3.10/library/array.html) module that can be used to create lists that can only contain one type of element, though they can also be of arbitrary and varying lengths.
+
+```python
+from array import array
+
+my_int_array = array('i', [1, 2, 3, 4, 5])  # create an array of signed integers
+my_int_array.append(6)  # will add 6 to the end of the array
+my_int_array.append('a')  # will throw a TypeError: an integer is required (got type str)
+```

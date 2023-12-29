@@ -1,0 +1,29 @@
+---
+title: "Get the current script file's full directory path in Python"
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I access the absolute path of the directory containing the current script file in Python? For example, if my script is `/home/user/scripts/runner.py`, I would like the output `home/user/scripts`.
+
+## The Solution
+
+We can do this using the special [`__file__`](https://docs.python.org/3/reference/import.html?#file__) variable along with Python's built-in library for filesystem path operations, [`pathlib`](https://docs.python.org/3/library/pathlib.html). For example:
+
+```python
+import pathlib
+script_directory = pathlib.Path(__file__).parent.resolve()
+
+print(script_directory)
+```
+
+The `__file__` variable contains the absolute path of the currently executing script. Following the example above, this would be `/home/user/scripts/runner.py`. Our code creates a `Path` object from this value and accesses its [`parent`](https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.parent) attribute – this will be the script's containing directory. We then use the [`resolve`](https://docs.python.org/3/library/pathlib.html#pathlib.Path.resolve) method to make it an absolute path.
+
+The final call to `resolve()` is technically only necessary in Python versions prior to 3.9. Before version 3.9, the `__file__` variable could contain either an absolute or relative path to the current script, depending on how it was called. Since 3.9, `__file__` will always return an absolute path.
+

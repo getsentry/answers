@@ -1,0 +1,97 @@
+---
+title: "How do I find duplicate values in a SQL table?"
+platforms: 
+  - sentry.sql
+people: 
+  - Richard C.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+SQL tables can have rows with duplicate values. These might be:
+
+* An email address signifying duplicate contacts.
+* A product code signifying duplicate items in an online store.
+* A medical ICD code signifying that you double-billed a patient.
+
+What SQL query can we run using SELECT to find duplicates like these?
+
+Let's use the following table of people with email addresses as an example. The code will run on SQL Server, MySQL, and PostgreSQL.
+
+```sql
+CREATE TABLE Person
+(
+    Id    INT PRIMARY KEY,
+    Name  VARCHAR(255),
+    Email VARCHAR(255)
+);
+
+INSERT INTO Person(Id, Name, Email)
+VALUES (1, 'Amir', 'coolguy@example.com'),
+       (2, 'Sofia', 's.martinez@example.com'),
+       (3, 'Aya', 'aya@example.com'),
+       (4, 'Mateo', 'coolguy@example.com'),
+       (5, 'Leila', 'leila@example.com'),
+       (6, 'Yara', 'yara@example.com'),
+       (7, 'Ndidi', 'theman@example.com'),
+       (8, 'Santiago', 's.martinez@example.com');
+```
+
+## The Solution
+
+The query below returns all the duplicate emails but not the user's name. This is because you cannot return fields in the SELECT query that aren't part of the GROUP BY.
+
+```sql
+SELECT Email
+FROM Person
+GROUP BY Email
+HAVING COUNT(*) > 1;
+```
+
+To retrieve `Name` and `Id` too, we can use the above SELECT result as a subquery in the query below.
+
+```sql
+SELECT
+    p.Id, p.Name, p.Email
+FROM
+    Person AS p
+JOIN
+    (
+        SELECT Email
+        FROM Person
+        GROUP BY Email
+        HAVING COUNT(*) > 1
+    )
+    AS duplicates
+ON
+    p.Email = duplicates.Email;
+```
+
+The results of this query are:
+
+| Id | Name     | Email                  |
+|----|----------|------------------------|
+| 4  | Mateo    | coolguy@example.com    |
+| 1  | Amir     | coolguy@example.com    |
+| 8  | Santiago | s.martinez@example.com |
+| 2  | Sofia    | s.martinez@example.com |
+
+
+Our solution was to join the list of duplicate emails on the original `Person` table to include the names and IDs of the people with those emails.
+
+Since this subquery is only run once, not once per row, the query will be fast.
+
+### Using Constraints to Prevent the Problem
+
+If duplicate values are something you don't want in your table, you can prevent them from being entered by adding a UNIQUE constraint to the column.
+
+```sql
+CREATE TABLE Person
+(
+    Id    INT PRIMARY KEY,
+    Name  VARCHAR(255),
+    Email VARCHAR(255) UNIQUE
+);
+```

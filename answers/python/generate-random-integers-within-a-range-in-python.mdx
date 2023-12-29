@@ -1,0 +1,50 @@
+---
+title: 'Generate random integers within a range in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+Using Python, how do I get a random integer within a particular range, for example, between 0 and 9?
+
+## The Solution
+
+If we're using randomness for a non-security purpose, such as modeling a system or building a game, we can generate pseudorandom numbers with the built-in Python [`random`](https://docs.python.org/3/library/random.html) module. This module provides two different functions that will serve our purpose, [`randrange`](https://docs.python.org/3/library/random.html#random.randrange) and [`randint`](https://docs.python.org/3/library/random.html#random.randint). Consider the following code:
+
+```python
+import random
+
+random_one = random.randrange(0,9) # will produce one of [0,1,2,3,4,5,6,7,8]
+random_two = random.randint(0,9) # will produce one of [0,1,2,3,4,5,6,7,8,9]
+```
+
+The `randrange` function will produce an integer between the first and second arguments, exclusive of the second. The `randint` function will produce an integer inclusive of the second argument. Behind the scenes, `randint` is merely an alias for `randrange(start, stop+1)`.
+
+The `randrange` function can also take a `step` argument, allowing us to skip elements of the provided range. For example, if we wanted to select any even number between 0 and 9, we could use a `step` of 2, as below:
+
+```python
+import random
+
+random_even = random.randrange(0,9,2) # will produce one of [0,2,4,6,8]
+```
+
+As noted in a warning near the top of [the `random` module's documentation](https://docs.python.org/3/library/random.html), **values produced by its generators should not be used for security purposes**. For that, we'll need the [`secrets`](https://docs.python.org/3/library/secrets.html#module-secrets) module, which provides a [`randbelow`](https://docs.python.org/3/library/secrets.html#secrets.randbelow) method we can use to generate a random integer between 0 and the provided argument, exclusive.
+
+```python
+import secrets
+
+secure_random = secrets.randbelow(10) # will produce one of [0,1,2,3,4,5,6,7,8,9]
+```
+
+Should we want a random number with a higher starting point than 0, as is possible with `randrange`, we can add our starting point to the result, as below:
+
+```python
+import secrets
+
+secure_random = 1 + secrets.randbelow(10) # will produce one of [1,2,3,4,5,6,7,8,9,10]
+```

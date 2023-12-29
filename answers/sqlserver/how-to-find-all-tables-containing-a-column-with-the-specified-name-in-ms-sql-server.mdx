@@ -1,0 +1,32 @@
+---
+title: "How to find all tables containing a column with the specified name in MS SQL Server"
+platforms: 
+  - sentry.sqlserver
+people: 
+  - Richard C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+If your SQL Server database has numerous tables, each with many columns, you might have difficulty recalling exactly which tables contain the data you want. How can we search the column names themselves, not the data in the columns, to find which might hold what we're looking for?
+
+## The Solution
+
+In SQL Server it's easy. Run the following query, replacing the database name with yours, and the column name with what you are searching for:
+
+```sql
+SELECT
+    Table_Name,
+    Column_Name
+FROM
+    INFORMATION_SCHEMA.COLUMNS
+WHERE
+    TABLE_CATALOG = 'MyDatabase'
+    AND COLUMN_NAME LIKE '%age%'
+```
+
+The `%` signs mean SQL will return partial matches of the column name, making your search more powerful.
+
+This query will work in MySQL and PostgreSQL too, with a few small changes. This is why we don't recommend using SQL Server-specific tables, like `sys.columns`, to search for column names.

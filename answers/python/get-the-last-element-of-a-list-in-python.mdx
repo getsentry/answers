@@ -1,0 +1,26 @@
+---
+title: 'Get the last element of a list in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I get the last element of a list in Python?
+
+## The Solution
+
+In Python, we can get the last element of a list using index notation. A positive index will give us a position in the list counting from the start, whereas a negative slice index will give us a position counting from the end. The last element is at index -1.
+
+```python
+products = ["Apples", "Pears", "Oranges"]
+
+last_product = product[-1] # will be "Oranges"
+```
+
+Note that attempting to access the last element of an empty list will raise an [IndexError](https://docs.python.org/3/library/exceptions.html#IndexError) exception.
+

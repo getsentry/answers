@@ -1,0 +1,70 @@
+---
+title: 'Find object by property in JavaScript array'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - David Y.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+My JavaScript code contains an array of objects that looks like this:
+
+```javascript
+const objectList = [
+  { id: 10, name: "Jane" },
+  { id: 36, name: "Steven" }];
+```
+
+How can I find an object in this array based on the value of `'id'`? For example, I would like to write a function that returns "Steven" when given the input 36. How would I do this?
+
+## The Solution
+
+We can search an array for an object that satisfies an arbitrary condition using the [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) object's [`find`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find) method. We could therefore write the function described above as follows:
+
+```javascript
+const objectList = [
+  { id: 10, name: "Jane" },
+  { id: 36, name: "Steven" }
+];
+
+function findNameById(list, id) {
+  return list.find((obj) => obj.id === id).name;
+}
+
+console.log(findNameById(objectList, 36)); // will print "Steven"
+```
+
+The `find` method iterates through the array, executing the function provided to it as an argument for each element. The first time it encounters an element for which the function returns a [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) value, it will stop iterating and return that element. In this code, we've used JavaScript's [arrow function expression syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) to keep things concise.
+
+If we would like to get the array index of the object instead of the object itself, we can use [`findIndex`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex) instead:
+
+```javascript
+const objectList = [
+  { id: 10, name: "Jane" },
+  { id: 36, name: "Steven" }
+];
+
+function findNameById(list, id) {
+  return list[list.findIndex((obj) => obj.id === id)].name;
+}
+
+console.log(findNameById(objectList, 36)); // will print "Steven"
+```
+
+If we need to get all elements that satisfy the condition rather than just the first one, we should use the [`filter`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter) method, which returns an array of matched objects. To extract just the `name` values from this array, we must use the [`map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map) method:
+
+```javascript
+const objectList = [
+  { id: 10, name: "Jane", favoriteFood: "eggs" },
+  { id: 36, name: "Steven", favoriteFood: "bread" },
+  { id: 58, name: "Stephanie", favoriteFood: "bread" }];
+
+function findNamesByFavoriteFood(list, favoriteFood) {
+  return list.filter((obj) => obj.favoriteFood === favoriteFood).map((obj) => obj.name);
+}
+
+console.log(findNamesByFavoriteFood(objectList, "bread")); // will print ["Steven", "Stephanie"]
+```

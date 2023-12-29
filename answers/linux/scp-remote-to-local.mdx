@@ -1,0 +1,27 @@
+---
+title: 'SCP remote to local'
+platforms: 
+  - sentry.linux
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I use `scp` to copy a folder from a remote server to my local machine?
+
+## The Solution
+
+When using `scp`, the first path will be the source, and the second will be the destination. Therefore, to copy from remote to local, we specify a remote path followed by a local path, as below:
+
+```bash
+scp -r user@remote:/path/to/folder /home/user/
+```
+
+The `-r` flag is used to recursively copy all contents of the directory, similar to how you would use `-r` with the `rm` or `cp` commands locally.
+
+The `scp` command performs a copy operation over SSH. Depending on how your SSH connection to the remote server is configured, you may be asked for a password for the remote user or a passphrase for your local SSH key. If this is your first time connecting to the remote server, you will be asked whether to trust its fingerprint.
+
+To find out more about using `scp`, type `man scp` into your terminal.

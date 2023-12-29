@@ -1,0 +1,82 @@
+---
+title: 'Hide scroll bar, while still being able to scroll'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to hide a page or page element scrollbar while still allowing scrolling; how do you do this? You may want to do this to improve the UI of a page. The page may not need a scrollbar to indicate that a user can scroll down, for example, a gallery of images with a scroll-down indicator icon.
+
+**You should try to avoid hiding scrollbars if possible. Hiding a scrollbar is not a good idea in terms of accessibility. Instead of hiding a scrollbar, consider styling it.**
+
+## The Solution
+
+You can hide the scrollbar with CSS using the [`-webkit-scrollbar`](https://developer.mozilla.org/en-US/docs/Web/CSS/::-webkit-scrollbar) CSS pseudo-element:
+
+```css
+body::-webkit-scrollbar {
+  display: none;
+}
+```
+
+This will only work for [Blink](https://www.chromium.org/blink/)- and [WebKit](https://webkit.org/)-based browsers: Chrome, Edge, Opera, Safari, all browsers on iOS, and [others](https://en.wikipedia.org/wiki/List_of_web_browsers#WebKit-based).
+
+To hide the scrollbar in Firefox, set the [`scrollbar-width`](https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-width) CSS property on the `<html>` element to "none":
+
+```css
+html {
+  scrollbar-width: none;
+}
+```
+
+You can also hide the scrollbar using JavaScript. For example, you can create a button to toggle the scrollbar visibility:
+
+```html
+<button id="scrollbarToggle">
+	Toggle Scrollbar
+</button>
+```
+
+Create two different CSS classes to hide the scrollbar in [Blink](https://www.chromium.org/blink/)- and [WebKit](https://webkit.org/)-based browsers or Firefox:
+
+```css
+body.noScrollbarBlinkWebKit::-webkit-scrollbar {
+    display: none;
+}
+
+html.noScrollbarFirefox {
+    scrollbar-width: none;
+}
+```
+
+You can then add an event listener to the button and toggle the CSS class on or off. The CSS class toggled will depend on the browser:
+
+```js
+const scrollbarToggle = document.getElementById("scrollbarToggle");
+
+const { userAgent } = navigator;
+const isWebkit = /\b(iPad|iPhone|iPod)\b/.test(userAgent)
+  || /WebKit/.test(userAgent)
+  || /Chrome/.test(userAgent)
+  || /Edge/.test(userAgent)
+  || window.MSStream;
+
+function toggleScrollbar() {
+  if (!isWebkit) {
+    document.documentElement.classList.toggle("noScrollbarFirefox");
+  } else if (isWebkit) {
+    document.body.classList.toggle("noScrollbarBlinkWebKit");
+  }
+}
+
+scrollbarToggle.addEventListener("click", () => {
+  toggleScrollbar();
+});
+```
+
+The type of browser is detected using the [user agent](https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent). Browser detection is generally [not recommended](https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#considerations_before_using_browser_detection). 

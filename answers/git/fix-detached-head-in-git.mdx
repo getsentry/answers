@@ -1,0 +1,47 @@
+---
+title: 'Fix "detached HEAD" in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+My Git repository reports that it is in "detached HEAD state". I'm not sure what this means. How can I return my repository to normal?
+
+## The Solution
+
+A Git repository is in detached HEAD state when the repository's current state points to a commit not at the tip of a branch, or a commit in a remote branch that has not been fetched. For example, we might use [`git checkout`](https://git-scm.com/docs/git-checkout) to view the repository as it was at a previous commit, via a command like the following:
+
+```bash
+git checkout d809c7a # <-- shortened commit hash
+```
+
+To recover from a detached HEAD, we must return to one of our repository's locally available branches. How we do this will depend on whether or not we've made changes we would like to keep while in detached HEAD state. If so, we must first create a new branch to save our changes:
+
+```bash
+git branch detached-changes
+```
+
+We then add and commit our changes to this new branch:
+
+```bash
+git add --all .
+git commit -m "Detached HEAD changes"
+```
+
+Finally, we can return to the branch we were previously on (probably `master` or `main`) and merge in the branch with our changes:
+
+```bash
+git checkout master
+git merge detached-changes
+```
+
+If we don't want to save the changes made while in detached HEAD state, we can check out a branch directly:
+
+```bash
+git checkout master
+```

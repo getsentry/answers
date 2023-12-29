@@ -1,0 +1,41 @@
+---
+title: 'Delete a column from a DataFrame in Python Pandas'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I delete a column from a Pandas DataFrame?
+
+## The Solution
+
+We can do this using the [`DataFrame.drop`](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.drop.html) method:
+
+```python
+import pandas
+
+# DataFrame with three columns
+products = pandas.DataFrame([["apple", 1, 2], ["orange", 3, 4], ["pear", 5, 6]],
+                 columns=["product", "cost_price", "sale_price"])
+print(products)
+
+# Remove the sale_price column
+products.drop('sale_price', axis=1, inplace=True)
+
+print(products)
+```
+
+This code will print the `products` DataFrame with three columns and then with two columns. We've used the following arguments in our `drop` method call:
+
+1. `'sale_price'` is the name of the column to remove. We could also provide a column index (e.g. `2`) or a list of indices or names to delete multiple columns.
+2. `axis=1` indicates that we should remove a column (`axis=0` will attempt to remove a row).
+3. `inplace=True` tells the method to modify the current `products` DataFrame rather than returning a new one with the column removed. Without this argument, we would have to reassign `products` as below:
+
+```python
+products = products.drop('sale_price', axis=1)
+```

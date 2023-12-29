@@ -1,0 +1,35 @@
+---
+title: 'Install Python packages from a local package index'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I use PIP to install packages from a local index on my hard drive instead of downloading them from [PyPI.org](https://pypi.org/)?
+
+## The Solution
+
+Assuming we want to install the `requests` package from a local package index stored in `/opt/pythonpackages`, we can run this command:
+
+```bash
+pip install requests --no-index --find-links file:///opt/pythonpackages
+```
+
+The [`--no-index`](https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-no-index) flag will prevent PIP from accessing PIP, forcing it to search for the `requests` package in the URL provided to the [`--find-links`](https://pip.pypa.io/en/stable/cli/pip_install/#cmdoption-f) flag – our local index at `/opt/pythonpackages`.
+
+We can use these flags with any `pip install` command, including one to install from `requirements.txt`.
+
+```bash
+pip install -r requirements.txt --no-index --find-links file:///opt/pythonpackages
+```
+
+If we want to install packages from PyPI or our local index instead of excluding PyPI entirely, we can remove the `--no-index` flag. PIP will install the latest version it finds.
+
+```bash
+pip install -r requirements.txt --find-links file:///opt/pythonpackages
+```

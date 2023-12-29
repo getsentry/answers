@@ -1,0 +1,25 @@
+---
+title: 'Abort a merge in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I abort a merge in Git and return my repository to its previous state?
+
+## The Solution
+
+We can use the [`git merge`](https://git-scm.com/docs/git-merge) command to abort a merge:
+
+```bash
+git merge --abort
+```
+
+Alternatively, we can use [`git reset --hard HEAD`](https://git-scm.com/docs/git-reset#Documentation/git-reset.txt---hard) or [`git reset --merge`](https://git-scm.com/docs/git-reset#Documentation/git-reset.txt---merge), which will achieve the same thing.
+
+Note that the presence of merge conflicts does not mean that we have to abort the merge. To successfully resolve the conflicts and complete the merge, see [our answer about merge conflicts in Git](https://sentry.io/answers/resolve-merge-conflicts-in-git).

@@ -1,0 +1,70 @@
+---
+title: 'JavaScript check if variable exists (is defined/initialized)'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I check whether a variable is defined in JavaScript? I am considering the following options:
+
+```javascript
+if (myVariable)
+```
+
+```javascript
+if (myVariable != null)
+```
+
+```javascript
+if (typeof myVariable !== "undefined")
+```
+
+Assuming the variable is of any type, which of these is the most accurate way of checking it is defined? Is there another, better way?
+
+## The Solution
+
+To check that a variable is defined, avoiding false positives and false negatives, we must check that its type is not [`undefined`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined), using the [`typeof`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof) operator and [strict inequality](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Strict_inequality):
+
+```javascript
+let myVariable;
+
+if (typeof myVariable !== "undefined") {
+  console.log("myVariable is defined!");
+} else {
+  console.log("myVariable is not defined!"); // this line will be printed
+}
+
+```
+
+The expression `if (myVariable)` will produce false negatives, as it fails for [`falsy`](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) values of `myVariable`. For example, if `myVariable` is defined as `0` or `false`, this check will fail.
+
+```javascript
+const myVariable = 0;
+
+if (myVariable) {
+  console.log("myVariable is defined!");
+} else {
+  console.log("myVariable is not defined!"); // this line will be printed, even though myVariable is defined above
+}
+```
+
+The expression `if (myVariable != null)` will produce false positives, as a variable can be defined with the value `null`.
+
+```javascript
+const myVariable = null;
+
+if (myVariable !== null) {
+  console.log("myVariable is defined!");
+} else {
+  console.log("myVariable is not defined!"); // this line will be printed, even though myVariable is defined above
+}
+```
+
+`if (typeof myVariable !== 'undefined')` works best as it is highly specific and eliminates both false positives and false negatives.
+
+For more about the difference between `undefined` and `null`, see [this answer](https://sentry.io/answers/undefined-versus-null-in-javascript/).

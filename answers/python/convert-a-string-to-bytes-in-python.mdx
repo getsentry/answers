@@ -1,0 +1,39 @@
+---
+title: 'Convert a string to bytes in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I convert a string to bytes in Python 3?
+
+## The Solution
+
+We can do this using [`str.encode`](https://docs.python.org/3/library/stdtypes.html#str.encode):
+
+```python
+my_string = "A string to turn into bytes."
+print(type(my_string))  # will print "<class 'str'>"
+
+my_bytes = my_string.encode()
+print(type(my_bytes))  # will print "<class 'bytes'>"
+```
+
+UTF-8 is the default encoding and will be used if we do not specify [a different one](https://docs.python.org/3/library/codecs.html#standard-encodings).
+
+An alternative way to do this would be to cast our string to the `bytes` type using its constructor. This uses `str.encode` under the hood and produces the same result:
+
+```python
+my_string = "A string to turn into bytes."
+print(type(my_string))  # will print "<class 'str'>"
+
+my_bytes = bytes(my_string, "utf-8")
+print(type(my_bytes))  # will print "<class 'bytes'>"
+```
+
+The first method can be considered superior, as it is more direct and allows us to leave out the encoding if we're using UTF-8.

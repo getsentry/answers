@@ -1,0 +1,56 @@
+---
+title: "How do you INSERT INTO VALUES from a SELECT FROM in every database in SQL?"
+platforms: 
+  - sentry.sql
+people: 
+  - Richard C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+Although SQL has a series of standards, managed by ISO, all the database servers differ slightly in their support and implementation. If you want to insert rows into one table from another, what syntax should you use that will work in any implementation of SQL, such as MySQL, PostgreSQL, and SQL Server?
+
+Assume you have the following two tables in your database:
+
+```sql
+CREATE TABLE Person1
+(
+    Id    INT PRIMARY KEY,
+    Name  VARCHAR(255)
+);
+
+CREATE TABLE Person2
+(
+    Id    INT PRIMARY KEY,
+    Name  VARCHAR(255)
+);
+
+INSERT INTO Person1(Id, Name)
+VALUES (1, 'Amir'),
+       (2, 'Sofia'),
+       (3, 'Aya'),
+       (4, 'Mateo');
+
+INSERT INTO Person2(Id, Name)
+VALUES (5, 'Leila'),
+       (6, 'Yara'),
+       (7, 'Ndidi'),
+       (8, 'Santiago');
+```
+
+## The Solution
+
+The most universal syntax to import rows from Person2 into Person1 is the following:
+
+```sql
+INSERT INTO
+    Person1 (Id, Name)
+SELECT
+    Id, Name
+FROM
+    Person2
+WHERE
+    Person2.Id > 6
+```

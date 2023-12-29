@@ -1,0 +1,23 @@
+---
+title: 'How to change the cursor into a hand when a user hovers over a list item (CSS)'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have a list where items can be moved by clicking and dragging. How do you change the cursor to look like a hand to indicate that the items can be grabbed?
+
+## The Solution
+
+Set the [`cursor`](https://developer.mozilla.org/en-US/docs/Web/CSS/cursor) CSS property of the list items to "grab" using the `:hover` pseudo class selector:
+
+```css
+li:hover {
+  cursor: grab;
+}
+```

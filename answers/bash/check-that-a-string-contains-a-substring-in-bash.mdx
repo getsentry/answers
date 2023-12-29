@@ -1,0 +1,52 @@
+---
+title: 'Check that a string contains a substring in Bash'
+platforms: 
+  - sentry.bash
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I check whether a string contains a substring using a Bash script?
+
+## The Solution
+
+We can do this in two ways. First, we can use Bash's regular expression matching operator (`=~`):
+
+```bash
+string='Hello world!';
+
+if [[ $string =~ "world" ]]; then
+  echo "Found 'world' in string."
+fi
+```
+
+Alternatively, we can use wildcard matching:
+
+```bash
+string='Hello world!'
+
+if [[ $string == *"world"* ]]; then
+  echo "Found 'world' in string."
+fi
+```
+
+While either method will work equally well for this simple case, the regular expression method is more powerful, as we can replace "world" with any regular expression. For example, the code below uses the same regular expression to check the string for an exclamation point or a question mark:
+
+```bash
+exclamation='Hello world!';
+question='Hello world?';
+
+if [[ $exclamation =~ !|\? ]]; then
+  echo "The string matches!"
+fi
+
+if [[ $question =~ !|\? ]]; then
+  echo "The string matches!"
+fi
+```
+
+You can learn more about how to use regular expressions at [Regular-Expressions.info](https://www.regular-expressions.info/).

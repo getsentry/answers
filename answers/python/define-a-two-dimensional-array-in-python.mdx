@@ -1,0 +1,44 @@
+---
+title: 'Define a two-dimensional array in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I create an empty two-dimensional array in Python, e.g. for matrix operations?
+
+## The Solution
+
+The best way to create two-dimensional (2D) arrays or matrices is by using Python's `numpy` module, which provides comprehensive and performant functionality for manipulating multidimensional arrays. We can create a 2D array by passing a tuple to the [`zeros`](https://numpy.org/doc/stable/reference/generated/numpy.zeros.html#numpy.zeros) function. The following code will create a 3-by-3 2D array with all values set to zero:
+
+```python
+import numpy
+
+matrix = numpy.zeros((3,3))
+
+# array([[0., 0., 0.],
+#        [0., 0., 0.],
+#        [0., 0., 0.]])
+```
+
+Note that [`numpy.matrix`](https://numpy.org/doc/stable/reference/generated/numpy.matrix.html) is deprecated and should not be used for this operation.
+
+To create a 2D array without using `numpy`, we can initialize a list of lists using a list comprehension. This will be slower and deprive us of the use of `numpy`'s matrix operations, but may be desirable in cases where we don't want to add the dependency. We can use code similar to the following:
+
+```python
+matrix = [[0 for x in range(3)] for y in range(3)] # x = width, y = height
+# [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+```
+
+In both of these structures, we can read and write individual elements with the following syntax:
+
+```python
+matrix[0][0] = 1 # set top-left corner to 1
+
+print(matrix[2][2]) # print value of bottom-right corner
+```

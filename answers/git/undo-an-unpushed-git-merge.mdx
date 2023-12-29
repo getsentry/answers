@@ -1,0 +1,37 @@
+---
+title: 'Undo an unpushed Git merge'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+In a local repository, I have accidentally merged two branches. How do I undo this? I have not yet pushed the changes.
+
+## The Solution
+
+If the merge has not yet been committed – i.e. `git merge` was not run with the `--commit` flag and `git commit` has not been run since the merge – then we can [abort the merge](https://git-scm.com/docs/git-merge#Documentation/git-merge.txt---abort) with the following command:
+
+```bash
+git merge --abort
+```
+
+If the merge has been committed, we must use [`git reset`](https://git-scm.com/docs/git-reset) instead:
+
+```bash
+git reset --merge ORIG_HEAD
+```
+
+`git reset` is used to return the current branch to a previous state. The [`--merge`](https://git-scm.com/docs/git-reset#Documentation/git-reset.txt---merge) flag will ensure that changes made to files by the merge are reverted, but will preserve changes that have not yet been included in any commit, preventing us from losing uncommitted work.
+
+`ORIG_HEAD` refers to the state of the repository before the merge operation. [Per the documentation](https://git-scm.com/docs/gitrevisions), this reference is created when running commands that make drastic changes to a repository's state, such as `git merge`, to provide an easy way for the user to undo them.
+
+Even if the merge we've just undone has been pushed to a branch on any of our repository's remotes, we can use the [`--force`](https://git-scm.com/docs/git-push#Documentation/git-push.txt---force) flag the next time we push to rewrite its history:
+
+```bash
+git push origin my-branch --force
+```

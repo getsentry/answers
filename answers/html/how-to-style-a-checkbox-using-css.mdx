@@ -1,0 +1,94 @@
+---
+title: 'How to style a checkbox using CSS'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+You have a checkbox or checkboxes that you want to style, such as the following checkbox inputs:
+
+```html
+<label>
+  <input type="checkbox" name="business" />
+  Business
+</label>
+
+<label>
+  <input type="checkbox" name="economy" checked />
+  Economy
+</label>
+```
+
+How do you style the checkboxes using CSS?
+
+## The Solution
+
+ You can change the height, width, and color of a checkbox as follows:
+
+```css
+input[type="checkbox"] {
+  width: 3em;
+  height: 3rem;
+  accent-color: green;
+}
+```
+
+However, this does not work with Safari, and styling the checkbox directly is limited. To have full control of the styling of a checkbox, you can hide the checkbox input and use the input's [`::before` pseudo element](https://developer.mozilla.org/en-US/docs/Web/CSS/::before) to create a custom-styled checkbox.
+
+First, hide the checkbox element:
+
+```css
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  font-size: 2rem;
+  padding: 0.1rem;
+  border: 0.25rem solid green;
+  border-radius: 0.5rem;
+}
+```
+
+Setting the CSS [`appearance`](https://developer.mozilla.org/en-US/docs/Web/CSS/appearance) property to "none" hides the checkbox input. The input is made into a flexbox with its contents centered within the set border. This will cause the `::before` pseudo-element to be centered within the input container.
+
+Next, create the `::before` pseudo-element, which will be the check in the checkbox:
+
+```css
+input[type="checkbox"]::before {
+  content: "";
+  width: 1.4rem;
+  height: 1.4rem;
+  clip-path: polygon(20% 0%, 0% 20%, 30% 50%, 0% 80%, 20% 100%, 50% 70%, 80% 100%, 100% 80%, 70% 50%, 100% 20%, 80% 0%, 50% 30%);
+  transform: scale(0);
+  background-color: green;
+}
+```
+
+The width, height, and background color are set. We use a [`clip-path`](https://developer.mozilla.org/en-US/docs/Web/CSS/clip-path) to set which parts of the element should be shown. In this example code, it is shaped as a cross. To make your own `clip-path` shape, you can use [Clippy](https://bennettfeely.com/clippy/), which is a clip-path maker.
+
+The cross shape is hidden using the [`transform`](https://developer.mozilla.org/en-US/docs/Web/CSS/transform) CSS property. We scale the size of the pseudo-element to zero to hide it.
+
+To style the checked state, use the [`:checked`](https://developer.mozilla.org/en-US/docs/Web/CSS/:checked) CSS [pseudo-class](https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes) selector. When the checkbox is checked, scale the size of the pseudo-element to show it:
+
+```css
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+```
+
+You can also use the CSS [`transition`](https://developer.mozilla.org/en-US/docs/Web/CSS/transition) property to animate the transform.
+
+To style the hover state, use the [`:hover`](https://developer.mozilla.org/en-US/docs/Web/CSS/:hover) CSS pseudo-class:
+
+```css
+input[type="checkbox"]:hover {
+  color: black;
+}
+```

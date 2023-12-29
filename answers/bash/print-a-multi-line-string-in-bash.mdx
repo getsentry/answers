@@ -1,0 +1,53 @@
+---
+title: 'Print a multi-line string in Bash'
+platforms: 
+  - sentry.bash
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I print a string with multiple lines in Bash?
+
+```bash
+echo "Hello\nworld"
+```
+
+produces:
+
+```
+Hello\nworld
+```
+
+## The Solution
+
+On some systems, `echo` includes a `-e` parameter, which will enable escape sequences like `\n`. So this:
+
+```bash
+echo -e "Hello\nworld"
+```
+
+should produce:
+
+```
+Hello
+world
+```
+
+However, not all versions of `echo` support this flag. A more reliable and portable alternative is to use `printf` instead of `echo`:
+
+```bash
+printf "Hello\nworld"
+```
+
+will produce:
+
+```
+Hello
+world
+```
+
+You can read more about `printf` by typing `man printf` into your terminal.

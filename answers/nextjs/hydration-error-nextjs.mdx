@@ -1,0 +1,52 @@
+---
+title: 'Fixing Hydration Errors in server-rendered Components'
+platforms:
+  - sentry.nextjs
+  - sentry.react
+people:
+  - Scott Cooper
+date: 2023-12-19T11:00:00-07:00
+---
+
+## What are Hydration Errors?
+Hydration errors are emitted by react-dom when the server-rendered HTML does not match the HTML that is rendered on the client. This could be the text content of an element, the attributes of an element, or the structure of the DOM.
+
+Sometimes, they are caused by browser extensions or 3rd party scripts that modify the DOM before react can hydrate it.
+
+## How to fix Load Failed Errors? 
+The first step is to identify the component that is causing the error. This can be challenging if there are many components on the page or if there is no visual change when the page loads. Reproducing the error locally with a react development build can identify the text that was mismatched between the server and client and nextjs displays an error with some of the elements that were mismatched.
+
+Once the component is identified, the next step is to determine why the server and client rendered different HTML.
+
+### 1. Using `useEffect` to display something different on the client
+If you are using `typeof window !== 'undefined'` in your component to change what the component is rendering based on whether it is server-side or client-side, you may need to use `useEffect` to change the component after it has been hydrated. Its possible the user will momentairly see the server-rendered HTML before it is changed by the client.
+
+```javascript
+import { useState, useEffect } from 'react'
+ 
+export default function App() {
+  const [isClient, setIsClient] = useState(false)
+ 
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+ 
+  return <div>{isClient ? 'isClient true' : 'isClient false'}</div>
+}
+```
+
+### 2. Using `suppressHydrationWarning`
+`suppressHydrationWarning` is part of the react-dom package and can be used to suppress hydration errors. Dates often cause hydration errors because the server and client exist in different timezones or the relative time has changed since the server rendered the page. 
+
+To silence hydration warnings on an element, add suppressHydrationWarning={true}:
+
+```javascript
+<time datetime="2024-01-01" suppressHydrationWarning>{new Date().toLocaleDateString()}</time>
+```
+
+## Filter these errors out
+If these errors are caused by 3rd party scripts or browser extensions, you can filter them out by enabling your Sentry project's `Inbound Filters`. [Learn more about Inbound Filters](https://docs.sentry.io/product/data-management-settings/filtering/)
+
+## Additional Reading
+- [Next.js Docs on Hydration Errors](https://nextjs.org/docs/messages/react-hydration-error)
+- [React Docs on Suppressing Hydration Errors](https://react.dev/reference/react-dom/client/hydrateRoot#suppressing-unavoidable-hydration-mismatch-errors)

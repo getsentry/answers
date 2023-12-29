@@ -1,0 +1,58 @@
+---
+title: 'Write one or more lines to a file in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+What is the correct way to write lines to a file in Python?
+
+## The Solution
+
+The standard way to write a single line to a file in Python 3 is as follows:
+
+```python
+with open('my_file.txt', 'a') as f:
+    f.write('A new line.\n')
+```
+
+First, we use a [`with`](https://docs.python.org/3/reference/compound_stmts.html#the-with-statement) statement to wrap our write actions between the file's opening and closing. This is a more succinct and Pythonic way of writing the following:
+
+```python
+f = open('my_file.txt', 'a')
+f.write('A new line.\n')
+f.close()
+```
+
+Using `with` means we don't have to remember to close the file after writing to it.
+
+We use Python's [`open()`](https://docs.python.org/3/library/functions.html#open) function to open the file and create a corresponding [file object](https://docs.python.org/3/glossary.html#term-file-object), `f`. The second argument specifies the opening *mode*. Files can be opened in a number of different modes, most commonly `'r'` for reading and `'w'` for writing. The mode we've used here, `'a'`, is short for *append*. It is similar to opening the file for writing, but will ensure that any lines we write are appended to the end of the file. Standard `'w'` writing mode, by contrast, would cause us to overwrite the file from the first line.
+
+With the file open, we call [`f.write()`](https://docs.python.org/3/library/io.html#io.TextIOBase.write) with the line to write. We conclude the line with a newline character, `\n`. You may have heard that line terminators differ between operating systems – Unix-based systems use `\n`, whereas Microsoft Windows uses `\r\n`. Fortunately, Python [abstracts this detail](https://docs.python.org/3/library/os.html#os.linesep) and we can just use `\n` regardless of our operating system.
+
+If we want to write more than one line to our file, there are a few ways to go about it. First, if we know exactly what lines to write, we can use a string with multiple `\n`s, or a multi-line triple-quoted string.
+
+```python
+with open('my_file.txt', 'a') as f:
+    f.write('A new line.\nA second new line.')
+```
+
+```python
+with open('my_file.txt', 'a') as f:
+    f.write("""A new line
+A second new line.""")
+```
+
+If we want to write lines from a list, we can use [`f.writelines()`](https://docs.python.org/3/library/io.html#io.IOBase.writelines):
+
+```python
+lines = ['A new line.', 'A second new line.']
+
+with open('my_file.txt', 'a') as f:
+    f.writelines(lines)
+```

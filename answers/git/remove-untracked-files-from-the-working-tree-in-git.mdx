@@ -1,0 +1,31 @@
+---
+title: 'Remove untracked files from the working tree in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I remove untracked local files from my Git repository's working tree?
+
+## The Solution
+
+We can accomplish this with [`git clean`](https://git-scm.com/docs/git-clean). As this is a destructive operation, we should do a dry run first:
+
+```bash
+git clean -n
+```
+
+The [`-n`](https://git-scm.com/docs/git-clean#Documentation/git-clean.txt--n) flag will print the names of the files and directories to be removed without actually deleting them. If we're happy with the output of this command, we can run it again with the [`-f`](https://git-scm.com/docs/git-clean#Documentation/git-clean.txt--f) flag in place of `-n`:
+
+```bash
+git clean -f
+```
+
+To remove untracked directories as well as untracked files, we can add the [`-d`](https://git-scm.com/docs/git-clean#Documentation/git-clean.txt--d) flag.
+
+To remove untracked files as well as ignored files (i.e. files matched by rules in `.gitignore`), we can add [`-x`](https://git-scm.com/docs/git-clean#Documentation/git-clean.txt--x). To remove only ignored files, we can use [`-X`](https://git-scm.com/docs/git-clean#Documentation/git-clean.txt--X).

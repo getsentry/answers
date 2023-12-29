@@ -1,0 +1,42 @@
+---
+title: 'How to remove focus border (outline) around text/input boxes'
+platforms: 
+  - sentry.html
+people: 
+  - Matthew C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+You want to remove the focus outline around an input element. You may want to do this because you don't like the outline styling, which may also differ between browsers. How do you do this?
+
+## The Solution
+
+You can set the [`outline`](https://developer.mozilla.org/en-US/docs/Web/CSS/outline) CSS shorthand property to "none":
+
+```css
+input:focus {
+  outline: none;
+}
+```
+
+The problem with this solution is that users who navigate websites using their keyboard will not know which input is in focus.
+
+Instead of removing the outline, [you can give it a specific style](https://www.a11yproject.com/posts/never-remove-css-outlines/), which will normalize the style across different browsers. 
+
+If you remove the outline, style the input when it's focused. For example:
+
+```css
+input:focus {
+  outline: none;
+  color: blue;
+  border: 1px solid black;
+  text-decoration: underline;
+  box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.5);
+  border-radius: 0.5rem;
+}
+```
+
+Note that you should not only use color to indicate that the input is focused as colorblind people may not be able to distinguish between the focused and non-focused state.

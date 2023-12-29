@@ -1,0 +1,42 @@
+---
+title: 'Check if a variable is a string in JavaScript'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I check whether a variable is a string in JavaScript?
+
+## The Solution
+
+We can do this using JavaScript's [`typeof`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/typeof) operator along with its [strict equality](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/Strict_equality) operator. We can test this with the following code:
+
+```javascript
+// Function to test if variable is a string
+function isString(variable) {
+  return typeof variable === "string";
+}
+
+// Variables of different types
+let myBool = false;
+let myNum = 12;
+let myArray = [1, 2, 3]
+let myObject = { a: 1, b: 2, c: 3}
+let myString = "Hello world!"
+
+// Tests
+console.log(isString(myBool)); // will print "false"
+console.log(isString(myNum)); // will print "false"
+console.log(isString(myArray)); // will print "false"
+console.log(isString(myObject)); // will print "false"
+console.log(isString(myString)); // will print "true"
+```
+
+To check whether a variable is one of JavaScript's other built-in types, we can replace the value on the right-hand side of the `===` with the appropriate string from the Result column of [this table](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/typeof#description). Note that [`null` is considered to be of type `"object"`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/typeof#typeof_null). Additional caveats regarding uninitialized variables and other special cases are detailed in the linked page of the MDN documentation.
+
+To check whether a variable is an instance of a custom-defined class, we must use [`instanceof`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Operators/instanceof) instead.

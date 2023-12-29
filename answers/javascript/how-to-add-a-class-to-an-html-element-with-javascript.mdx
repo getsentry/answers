@@ -1,0 +1,55 @@
+---
+title: 'How to add a class to an HTML element with JavaScript'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - David Y.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I add one or more additional classes to an HTML element that already has a class defined? For example, I want to transform this:
+
+```html
+<p class="article-content" id="target">
+  This is the first paragraph of my article.
+</p>
+```
+
+Into this:
+
+```html
+<p class="article-content highlighted" id="target">
+  This is the first paragraph of my article.
+</p>
+```
+
+## The Solution
+
+The preferred way to do this in modern JavaScript is by using the [`add()`](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/add) method on the element's [`classList`](https://developer.mozilla.org/en-US/docs/Web/API/Element/classList) property. For example, using the HTML `p` element defined above:
+
+```javascript
+const myParagraph = document.getElementById("target");
+
+myParagraph.classList.add("highlighted");
+```
+
+To undo this change, we can use the [`remove`](https://developer.mozilla.org/en-US/docs/Web/API/DOMTokenList/remove) method:
+
+```javascript
+myParagraph.classList.remove("highlighted");
+```
+
+Note that if the class to be removed is not present in the element's `classList`, this method will do nothing.
+
+An alternative, more brittle method for achieving this is by directly editing `className`, which contains the string assigned to the element's `class` attribute. We could do this as follows:
+
+```javascript
+myParagraph.className += " highlighted"
+```
+
+Note that we've placed a space in front of our additional class to separate it from the element's existing classes.
+
+Using `className` like this does not allow us to easily remove classes as we can with `classList`. This approach was more common in older versions of JavaScript, before `classList` was introduced, and should be avoided in modern code.

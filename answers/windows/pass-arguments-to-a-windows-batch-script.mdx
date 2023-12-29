@@ -1,0 +1,87 @@
+---
+title: 'Pass arguments to a Windows batch script'
+platforms: 
+  - sentry.windows
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I write a batch script that takes arguments from the command line?
+
+## The Solution
+
+Batch scripts can access up to nine arguments from the command line using the syntax `%1` to `%9`. For example, the script below will print out three provided arguments, each on their own line:
+
+```bat
+@echo off
+
+echo %1
+echo %2
+echo %3
+```
+
+If we save this script as `echothree.bat`, we can execute it as follows:
+
+```bat
+echothree.bat One Two Three
+```
+
+This will produce the following output:
+
+```
+One
+Two
+Three
+```
+
+`%0` contains the name of the script and `%*` contains all specified arguments – this is useful if we want to allow a variable number of arguments, or if we want to pass all of the arguments to another script or program. For example, this script would produce the command used to execute it:
+
+```bat
+@echo off
+
+echo %0 %*
+```
+
+For longer scripts, we can create variables containing our argument values as follows:
+
+```bat
+@echo off
+
+set name=%1
+set type=%2
+
+echo Processing %name% of %type% ...
+```
+
+When dealing with numeric values rather than strings, we need to pass the `/A` flag to `set`:
+
+```bat
+@echo off
+
+set /A a = %1
+set /A b = %2
+set /A sum = %a% + %b%
+
+echo %sum%
+```
+
+If we need to handle more than nine arguments, we can use the `shift` command. This command moves all argument values back by one – `%1` is moved to `%0`, `%2` is moved to `%1`, and the previously inaccessible tenth argument is moved to `%9`. We could also use this method to consume all arguments as `%1`, which may be useful when creating scripts that take arguments in any order (e.g. arguments with flags like `-a` and `-b`).
+
+We could use `shift` to rewrite `echothree.bat` as follows:
+
+```bat
+@echo off
+
+echo %1
+shift
+echo %1
+shift
+echo %1
+shift
+```
+
+Note that calling `shift` will not affect the value of `%*`.

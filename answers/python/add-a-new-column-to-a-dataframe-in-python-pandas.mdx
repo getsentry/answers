@@ -1,0 +1,41 @@
+---
+title: 'Add a new column to a DataFrame in Python Pandas'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I add a new column to an existing Pandas DataFrame? The new column should have the same number of rows as existing columns.
+
+## The Solution
+
+We can do this using the [`DataFrame.assign`](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.assign.html) method. When called on a given DataFrame, this method creates a copy of that DataFrame with one or more additional columns added.
+
+The new columns can contain manually specified values, or values can be computed for each row based on other columns. Look at the following example code:
+
+```python
+import pandas
+
+# Create a dataframe with products and their cost prices
+products = pandas.DataFrame([["apple", 2.0], ["orange", 3.0], ["pear", 4.0]],
+                 columns=["product", "cost_price"])
+
+print(products)
+
+# Add a stock count column with manual data
+products = products.assign(stock_count=[50, 40, 30])
+
+print(products)
+
+# Add a sale price column that calculates a 50% markup
+products = products.assign(sale_price=lambda row: row.cost_price * 1.5)
+
+print(products)
+```
+
+This code will print the `products` DataFrame with two, three and then four columns. Note the use of a [lambda expression](https://docs.python.org/3/reference/expressions.html#lambda) in the creation of the `sale_price` column – the values for this column are created by running the function on each row.

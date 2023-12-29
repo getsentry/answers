@@ -1,0 +1,45 @@
+---
+title: 'How can I set a custom HTTP header using cURL'
+platforms: 
+  - sentry.bash
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I set a custom HTTP header on a request sent using [cURL](https://curl.se/)?
+
+## The Solution
+
+We can do this using cURL's `-H/--header` flag, which allows us to specify an HTTP header to be included in the request we're sending.
+
+```bash
+curl --header "X-MyCustomHeader: HeaderValue" sentry.io
+```
+
+If we need to add multiple custom headers to the request, we can do this with multiple `--header` flags:
+
+```bash
+curl --header "X-MyCustomHeader: HeaderValue" --header "X-AnotherHeader: Value" sentry.io
+```
+
+To confirm that our request looks as we expect it to, we can have cURL print it out by providing the `-v/--verbose` flag as well:
+
+```bash
+curl --header "X-MyCustomHeader: HeaderValue" -v sentry.io
+```
+
+The above command will show an HTTP request resembling the following:
+
+```
+> GET / HTTP/1.1
+> Host: sentry.io
+> User-Agent: curl/8.1.2
+> Accept: */*
+> X-MyCustomHeader: HeaderValue
+```
+
+More information about cURL can be found by perusing its manual page, which is accessible on [the cURL website](https://curl.se/docs/manpage.html) or through the command `man curl`.

@@ -1,0 +1,63 @@
+---
+title: 'Delete element from a dictionary in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I delete an element from a dictionary in Python?
+
+## The Solution
+
+To delete an element from a dictionary, we can use the [`del` keyword](https://docs.python.org/3/reference/simple_stmts.html#the-del-statement). For example:
+
+```python
+products = {"apples": 1, "oranges": 3, "pears": 2}
+print(products)  # will print the dictionary defined above
+
+del products["oranges"]
+print(products)  # will print { "apples": 1, "pears": 2 }
+```
+
+We can also do this with the [`dict.pop`](https://docs.python.org/3/library/stdtypes.html#dict.pop) method. The main difference between this and `del` is that `dict.pop` will return the value of the removed dictionary element.
+
+```python
+products = {"apples": 1, "oranges": 3, "pears": 2}
+
+print(products)  # will print the dictionary defined above
+print(products.pop("oranges"))  # will print 3
+print(products)  # will print { "apples": 1, "pears": 2 }
+```
+
+Both of these methods will mutate the existing dictionary. If we instead want to create a copy of the dictionary with one element removed, we must first make a copy:
+
+```python
+products = {"apples": 1, "oranges": 3, "pears": 2}
+print(products)  # will print the dictionary defined above
+
+products_copy = dict(products)
+del products_copy["oranges"]
+
+print(products)  # will print the dictionary defined above
+print(products_copy)  # will print { "apples": 1, "pears": 2 }
+```
+
+Note that this will only make a shallow copy of the dictionary. For simple dictionaries like the one in the example, this is sufficient. However, if our dictionary contains lists, dictionaries, or custom class instances, copying it in this way will not make copies of those inner objects. Instead, our copy will contain references to the objects inside the original dictionary. To avoid this and create a deep copy of our dictionary, we need to use the [`deepcopy()`](https://docs.python.org/3/library/copy.html#copy.deepcopy) function from Python's built-in [`copy`](https://docs.python.org/3/library/copy.html) module.
+
+```python
+import copy
+
+products = {"apples": [1, 2, 3], "oranges": [3, 2, 1], "pears": [2, 1, 3]}
+print(products)  # will print the dictionary defined above
+
+products_copy = copy.deepcopy(products)
+del products_copy["oranges"]
+
+print(products)  # will print the dictionary defined above
+print(products_copy)  # will print { "apples": [1, 2, 3], "pears": [2, 1, 3] }
+```

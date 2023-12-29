@@ -1,0 +1,99 @@
+---
+title: "How to return only the date from a SQL Server DateTime datatype"
+platforms: 
+  - sentry.sqlserver
+people: 
+  - Richard C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+SQL Server returns a date with time information included.
+
+```sql
+SELECT GETDATE();
+
+-- 2023-08-09T11:33:38.513Z
+```
+
+```sql
+SELECT * from Person;
+
+-- Id	  Name	  CreatedAt
+-- --   ----    ---------
+-- 1	  Amir	  2023-08-09T11:37:03.32Z
+```
+
+So how do you return or display just the date part of the `datetime`? For example, `2023-08-09`.
+
+## The Solution
+
+The simplest solution is to use `CAST`. This code works in SQL Server 2008 and later versions.
+
+```sql
+SELECT CAST(GETDATE() AS DATE);
+
+-- 2023-08-09
+```
+
+You can further format this date in your application's code to look however you prefer.
+
+### Specifying a Custom Date Format
+
+If you want to specify a custom date format in SQL itself, such as "month-day-year" used in the United States of America, you can use the FORMAT function.
+
+```sql
+SELECT FORMAT (GETDATE(), 'MM-dd-yy');
+
+-- 08-09-23
+```
+
+### SQL Server 2008 and Earlier
+
+If you are using an old version of SQL Server then the `date` type isn't available since only `datetime` is supported. You have to use the following code to remove the time portion from the date:
+
+```sql
+SELECT DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE()));
+
+-- 2023-08-09T00:00:00Z
+```
+
+This uses days (`dd`) to create a new date with zero hours, in other words, midnight. To strip the time portion away completely, use the following `CONVERT` function:
+
+```sql
+SELECT CONVERT(VARCHAR, DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE())), 112);
+
+-- 20230809
+```
+
+Unlike `CAST`, `CONVERT` allows you to specify a date format. Here we use `112`.
+
+You can't use a custom format with `CONVERT`, but there are many formats to choose from. Pick one from the first two columns in the table below.
+
+| Without century (yy) | With century (yyyy) | Standard | Input/output |
+|----------------------|---------------------|----------|--------------|
+| -                    | 0 or 100            | Default for `datetime` and `smalldatetime`     |  mon dd yyyy hh:miAM (or PM) |
+| 1                    | 101                 | U.S.     | 1 = mm/dd/yy, 101 = mm/dd/yyyy |
+| 2                    | 102                 | ANSI     | 2 = yy.mm.dd, 102 = yyyy.mm.dd |
+| 3                    | 103                 | British/French | 3 = dd/mm/yy, 103 = dd/mm/yyyy |
+| 4                    | 104                 | German   | 4 = dd.mm.yy, 104 = dd.mm.yyyy |
+| 5                    | 105                 | Italian  | 5 = dd-mm-yy, 105 = dd-mm-yyyy |
+| 6                    | 106                 | -        | 6 = dd mon yy, 106 = dd mon yyyy |
+| 7                    | 107                 | -        | 7 = Mon dd, yy, 107 = Mon dd, yyyy |
+| 8 or 24              | 108                 | -        | hh:mi:ss |
+| -                    | 9 or 109            | Default + milliseconds     |  mon dd yyyy hh:mi:ss:mmmAM (or PM) |
+| 10                   | 110                 | USA      | 10 = mm-dd-yy, 110 = mm-dd-yyyy |
+| 11                   | 111                 | JAPAN    | 11 = yy/mm/dd, 111 = yyyy/mm/dd |
+| 12                   | 112                 | ISO      | 12 = yymmdd, 112 = yyyymmdd |
+| -                    | 13 or 113           | Europe default + milliseconds     |  dd mon yyyy hh:mi:ss:mmm (24-hour) |
+| 14                   | 114                 | -        | hh:mi:ss:mmm (24-hour) |
+| -                    | 20 or 120            | ODBC canonical        |  yyyy-mm-dd hh:mi:ss (24-hour) |
+| -                    | 21 or 25 or 121     | ODBC canonical (with milliseconds) default for `time`, `date`, `datetime2`, and `datetimeoffset`        |  yyyy-mm-dd hh:mi:ss.mmm (24-hour) |
+| 22                   | -                   | U.S.     | mm/dd/yy hh:mi:ss AM (or PM) |
+| -                    | 23                  | ISO8601  | yyyy-mm-dd |
+|                   | 126                   | ISO8601  | yyyy-mm-ddThh:mi:ss.mmm (no spaces)  |
+|                   | 127                | ISO8601 with time zone Z | yyyy-MM-ddThh:mm:ss.fffZ (no spaces)  |
+| -                    | 130                 | Hijri     |  dd mon yyyy hh:mi:ss:mmmAM |
+| -                    | 131                 | Hijri        |  dd/mm/yyyy hh:mi:ss:mmmAM |

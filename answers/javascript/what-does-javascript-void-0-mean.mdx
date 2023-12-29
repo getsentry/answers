@@ -1,0 +1,19 @@
+---
+title: 'What does "javascript:void(0)" mean?'
+platforms: 
+  - sentry.javascript.browser
+people: 
+  - Matthew C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+You may have come across a website page where the `href` value of an `<a>` tag has a value of javascript:void(0). What does this mean?
+
+## The Solution
+
+A `javascript:` URL prefix indicates to the browser that the JavaScript code following the prefix should be executed, instead of navigating to the URL. The [void operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/void) evaluates an expression and returns `undefined`. By running `void(0)` in the URL JavaScript code, nothing is evaluated or returned.
+
+A link that does not navigate to a new page or section of a page may be used to define empty links during development, but using an `href` value of "#" is a better option due to potential XSS vulnerabilities with the use of `javascript:` URL prefixes. This is further explained in the following article: [Which href value should I use for empty JavaScript links, "#" or "javascript:void(0)"?](https://sentry.io/answers/which-href-value-should-i-use-for-empty-javascript-links/).

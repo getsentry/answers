@@ -1,0 +1,101 @@
+---
+title: "How do I import a SQL file using the command line in MySQL?"
+platforms: 
+  - sentry.sql
+people: 
+  - Richard C.
+date: 
+  2023-09-15T11:30:00+02:00
+---
+
+## The Problem
+
+We frequently need to run SQL statements from a file in MySQL. This allows you to do tasks like:
+
+* Import a database backup.
+* Run a database upgrade script.
+* Insert new data from a file into an existing table.
+
+Since the files for the tasks mentioned above contain normal SQL statements, you could copy and paste the text into your favorite SQL database manager and run the query. But this would not allow you to automate the tasks — for instance, to schedule them to run at midnight daily.
+
+So let's discuss exactly how to import a SQL file using the command line (also called the terminal) and how to avoid any of the common errors that can occur.
+
+## The Solution
+
+Open a terminal and `cd` to the folder containing the file that you want to import. Let's assume the file name is `update.sql`, and has some commands to alter tables in a database called `mydb`.
+
+Run your SQL commands by using the input redirection operator, `<`, to send the contents of your file to MySQL (this works on Windows, MacOS, and Linux). Here we assume your username is `me` and your password is `letmein`.
+
+```bash
+mysql mydb -u me -pletmein < update.sql
+```
+
+Notice that there is no space between the `-p` flag to specify the password, and the password itself. There is a space between the `-u` user flag and the username.
+
+If you don't specify in the terminal the database on which you want the commands to execute, you'll get the error `No database selected`. To fix this, specify the database in `update.sql`, by adding this line to the top of your file:
+
+```sql
+USE mydb;
+```
+
+### Ensure User Privileges
+
+If you encounter an error that your user does not have permission to edit the database, you will need to run the following SQL:
+
+```sql
+GRANT ALTER, INSERT ON mydb.* TO 'me'@'%';
+FLUSH PRIVILEGES;
+```
+
+You can also grant all permissions to the user with the following command:
+
+```sql
+GRANT ALL PRIVILEGES ON mydb.* TO 'me'@'%';
+```
+
+### Restore a Database Backup
+
+If the file you import into MySQL is intended to recreate a database you backed up, there are some potential problems to be aware of.
+
+Below is the command to back up your database to a file. (If you use Windows, you need to change the file path at the end.)
+
+```bash
+mysqldump mydb -u me -pletmein --triggers --routines > /home/me/backup.sql
+```
+
+We include `--triggers` and `--routines` to ensure that we export any stored procedures and stored functions that might not be backed up by default.
+
+When you import this file on a new database server, you will get the error `Unknown database 'mydb'`. To fix this, add the following lines to the top of your file:
+
+```sql
+CREATE DATABASE IF NOT EXISTS mydb;
+USE mydb;
+```
+
+### Increasing Speed
+
+If your file is large and the imports take a long time to run, consider disabling the default transaction handling.
+
+Add this line to the top of your file:
+
+```sql
+SET autocommit=0;
+```
+
+Add this line to the bottom of the file:
+
+```sql
+COMMIT;
+```
+
+This will instruct MySQL to commit your changes only once, when the file has finished running, and will increase performance.
+
+### Importing a File From Within MySQL
+
+If you are already in a MySQL session, you can run commands from a file with the following statement:
+
+```sql
+source update.sql
+```
+
+There is no advantage to doing this instead of using the terminal. We mention it just in case you encounter it in the future.

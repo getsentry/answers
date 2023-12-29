@@ -1,0 +1,86 @@
+---
+title: 'How to initialize an array in one line in Java'
+platforms: 
+  - sentry.java
+people: 
+  - Gareth D.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+In Java, you can declare an array and then add items to specific elements as follows: 
+
+```java
+public class Main {
+
+    public static void main(String[] args) {
+        String[] words = new String[4];
+        words[0] = "java";
+        words[1] = "arrays";
+        words[2] = "are";
+        words[3] = "easy";
+        System.out.println(words[0]);
+        System.out.println(words[1]);
+    }
+}
+```
+
+However, sometimes you have all the data you need when you initialize the array, and you want to initialize the array using less code.
+
+How can you initialize an array in one line in Java?
+
+
+## The Solution
+
+You can specify the initial values for each item in an array using braces`{...}`.  The code sample below is equivalent to the previous one.
+
+```java
+public class Main {
+
+    public static void main(String[] args) {
+        String[] words = {"java", "arrays", "are", "easy"};
+        System.out.println(words[0]);
+        System.out.println(words[1]);
+    }
+}
+```
+
+Output:
+
+```
+java
+arrays
+```
+
+Note that with this syntax, you do not specify the array length, as you usually do when creating an array in Java. The compiler will count the elements and create an array of the correct size for you.
+
+```java
+// this will throw an error
+String[4] words = {"java", "arrays", "are", "easy"};
+```
+
+If you want to use an `ArrayList` collection instead of an array, you cannot use the `{...}` initialization syntax. Instead, you can achieve the same in one line using `Arrays.asList`, as in the following example:
+
+```java
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Main {
+
+    public static void main(String[] args) {
+        ArrayList<String> words = new ArrayList<>(Arrays.asList("java", "arrays", "are", "easy"));
+        System.out.println(words.get(0));
+        System.out.println(words.get(1));
+    }
+}
+```
+
+Output:
+
+```
+java
+arrays
+```
+

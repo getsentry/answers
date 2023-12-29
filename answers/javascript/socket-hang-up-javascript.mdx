@@ -1,0 +1,28 @@
+---
+title: 'Fixing Socket Hang Up errors'
+platforms:
+  - sentry.javascript.browser
+  - sentry.nextjs
+people:
+  - Richard Roggenkemper
+date: 2023-12-19T11:00:00-07:00
+---
+## What are Socket Hang Up Errors?
+There are two scenarios where socket hang up errors can occur. First, if there is no timely response from a server, then the error is thrown. Second, if the server has begun acting on a request, but the request is cancelled, then the error can also be thrown. 
+
+For example, a user refreshing their page after waiting for a response, might trigger a socket hang up error because the original request is aborted. However, in this scenario, the error would not be critical because it is an expected action. 
+
+## How to fix Socket Hang Up Errors? 
+Because there are a lot of causes of socket hang up errors, there are a lot of potential solutions to fixing this errors which include: 
+- Using the wrong HTTP/HTTPS server. Sometimes, having `require(http)` when consuming `https` can cause socket hang up errors. To fix this, change `require(http)` to `require(https)`.
+- Ensuring you have an end to the request. For some requests, not having `request.end()` will also cause this error.
+- Ensure your URL is correct. Having the wrong URL path could mean a mismatch which causes a socket hang up error. Make sure all the URL paths are correct.
+
+### Framework-Specific Reasons
+#### Next.js: Version
+Some versions of Next.js and Prisma may be causing socket hang up errors. Updrading/downgraing to certain versions of Next.js and Prisma can help stop these errors. See the following [GitHub discussion](https://github.com/vercel/next.js/issues/51605) for more information.
+
+Some versions of the Sentry Next.js SDK might also cause socket hang up errors. [Upgrading to `7.87.0`](https://github.com/orgs/vercel/discussions/3248#discussioncomment-7851868) should help solve these problems. 
+
+
+

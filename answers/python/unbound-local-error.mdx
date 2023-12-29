@@ -28,13 +28,13 @@ Because index is defined globally as well as inside the `foo()` function, Python
 
 ## The Solution
 
-In this case either move the index declaration up higher in the `foo` function, or rename the variable to avoid the conflict.
+In this case, we want to rename the variable to avoid the conflict.
 
 ```python
 index = 0
 
 def foo():
-    if findex == 0:
+    if index == 0:
         print("ZERO")
 
     findex = 1

@@ -1,0 +1,52 @@
+---
+title: 'Check for NaN values in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-07-15T11:30:00+02:00
+---
+
+## The Problem
+
+I sometimes see the value NaN (Not a Number) when working with floats in Python. How can I check whether a given value is NaN?
+
+## The Solution
+
+The best way to do this is by using the [`isnan()`](https://docs.python.org/3/library/math.html#math.isnan) function from Python's built-in [`math`](https://docs.python.org/3/library/math.html) library:
+
+```python
+import math
+
+nan = float('nan')
+zero = 0
+one = 1
+
+print(math.isnan(nan))  # will print True
+print(math.isnan(zero))  # will print False
+print(math.isnan(one))  # will print False
+```
+
+Note that `isnan()` will throw a `TypeError` if given a non-numeric value. Thus, a more robust implementation might look like this:
+
+```python
+import math
+
+def is_nan(value):
+    try:
+        return math.isnan(value)
+    except TypeError:
+        return False
+
+nan = float('nan')
+zero = 0
+one = 1
+hello = "Hello!"
+
+print(is_nan(nan))  # will print True
+print(is_nan(zero))  # will print False
+print(is_nan(one))  # will print False
+print(is_nan(hello))  # will print False
+```
+

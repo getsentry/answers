@@ -1,0 +1,161 @@
+---
+title: 'How to compare strings in Java'
+platforms: 
+  - sentry.java
+people: 
+  - Gareth D.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I compare strings in Java?
+
+
+## The Solution
+
+To compare strings in Java for equality, you should use `String.equals()`.
+
+```java
+public class Main {
+
+    public static void main(String[] arg) {
+        String str1 = "java";
+        String str2 = "java";
+        System.out.println(str1.equals(str2));
+    }
+}
+```
+
+Output:
+
+```
+true
+```
+
+If uppercase and lowercase difference isn't important, you can use `String.equalsIgnoreCase()`.
+
+```java
+public class Main {
+
+    public static void main(String[] arg) {
+        String str1 = "java";
+        String str2 = "Java";
+        System.out.println(str1.equalsIgnoreCase(str2));
+    }
+}
+```
+
+
+Output:
+
+```
+true
+```
+
+If you want to find out if a String is "bigger" or "smaller" than another string (that is, whether it comes before or after alphabetically), use `String.compareTo()`.
+
+```java
+public class Main {
+
+    public static void main(String[] arg) {
+        String str1 = "aaa";
+        String str2 = "bbb";
+        String str3 = "ccc";
+        String str4 = "bbb";
+        System.out.println(str2.compareTo(str3));
+        System.out.println(str2.compareTo(str1));
+        System.out.println(str2.compareTo(str4));
+    }
+}
+```
+
+Output:
+
+```
+-1
+1
+0
+```
+
+The first output is `-1`, indicating that `str2` (`"bbb"`) comes **before** `str3` (`"ccc"`).
+
+The second output is `1`, indicating that `str2` (`"bbb"`) comes **after** `str1` (`"aaa"`).
+
+The third output is `0`, indicating that `str2` (`"bbb"`) is equal to `str4` (`"bbb"`).
+
+
+### Why you shouldn't use `==` for string comparison
+
+Strings in Java are stored on the heap, and the variable only stores a **reference** to where the real string value can be found.
+
+If you use `==` to compare strings, you might get unexpected results.
+
+```java
+public class Main {
+
+    public static void main(String[] arg) {
+        String str1 = new String("java");
+        String str2 = new String("java");
+        System.out.println(str1 == str2);
+    }
+}
+```
+
+Output:
+
+```
+false
+```
+
+Here, the two strings have equal values but these values are not stored in the variables `str1` and `str2`.
+
+When dealing with primitive types like `int`, any variables with the same value will also have the same identity code. But when dealing with non-primitive types like String, this is not the case.
+
+```java
+public class Main {
+
+    public static void main(String[] arg) {
+        String str1 = new String("java");
+        String str2 = new String("java");
+        int int1 = 1;
+        int int2 = 1;
+
+        System.out.println(System.identityHashCode(int1));
+        System.out.println(System.identityHashCode(int2));
+
+        System.out.println(System.identityHashCode(str1));
+        System.out.println(System.identityHashCode(str2));
+    }
+}
+```
+
+Output:
+
+```
+808993268
+808993268
+1229416514
+2016447921
+```
+
+What makes this confusing is that often `==` will return `true` if you compare two strings with the same value. In the code above we used `new String("java")` to create two separate strings, but if we create the strings without the explicit `new` keyword, Java will do some optimization in the background and only store the string once.
+
+```java
+public class Main {
+
+    public static void main(String[] arg) {
+        String str1 = "java";
+        String str2 = "java";
+
+        System.out.println(System.identityHashCode(str1));
+        System.out.println(System.identityHashCode(str2));
+
+        // do not do this
+        System.out.println(str1 == str2);
+    }
+}
+```
+
+Here, the two strings have the same hashcode, and `==` will tell you that they are the same string. This is a side effect of Java's memory optimization and shouldn't be relied on, as it may not always behave consistently.

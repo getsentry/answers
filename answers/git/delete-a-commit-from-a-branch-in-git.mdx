@@ -1,0 +1,23 @@
+---
+title: 'Delete a commit from a branch in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I delete a commit from my branch history in Git?
+
+## The Solution
+
+We can delete one or more recent commits on the current branch in a local repository by following the instructions in [this answer about undoing local commits](https://sentry.io/answers/undo-the-most-recent-local-git-commits). [`git reset`](https://git-scm.com/docs/git-reset) is the main command used for this operation.
+
+If the deleted commit has already been pushed to a branch on any of our repository's remotes, we will need use the [`--force`](https://git-scm.com/docs/git-push#Documentation/git-push.txt---force) flag the next time we push to rewrite its history:
+
+```bash
+git push origin my-branch --force
+```

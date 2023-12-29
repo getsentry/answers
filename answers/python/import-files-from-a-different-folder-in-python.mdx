@@ -1,0 +1,136 @@
+---
+title: 'Import files from a different folder in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-08-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I import local Python scripts in different folders?
+
+## The Solution
+
+How we import Python scripts will depend on the directory structure we're working with. There are different methods for importing scripts in child directories, parent directories, or sibling directories.
+
+Let's say we have the following directory structure:
+
+```
+/project
+    main.py
+    /lib
+        /special
+            specialfunctions.py
+        libfunctions.py
+    /app
+        appfunctions.py
+```
+
+We should be able to import functions from any one of these scripts to any other. As we'll see below, importing from child directories is quite straightforward whereas importing from parent or sibling directories is more complex.
+
+### Importing From Child Directories
+
+To import functions from `libfunctions.py` into `main.py`, we can use the following import statement:
+
+```python
+from lib.libfunctions import *
+```
+
+Similar syntax can be used to import from `appfunctions.py`:
+
+```python
+from app.appfunctions import *
+```
+
+To import from `specialfunctions.py`, we add its containing subdirectory to our import path:
+
+```python
+from lib.special.specialfunctions import *
+```
+
+### Importing From Parent or Sibling Directories With Package Relative Imports
+
+To import scripts from parent or sibling directories, we can use [package relative imports](https://docs.python.org/3/reference/import.html#package-relative-imports). First, we must ensure that our directories are recognized as packages by Python, which we can do by creating an empty file named `__init__.py` in each of them.
+
+```
+/project
+    main.py
+    __init__.py
+    /lib
+        /special
+            specialfunctions.py
+            __init__.py
+        libfunctions.py
+        __init__.py
+    /app
+        appfunctions.py
+        __init__.py
+```
+
+To import functions in `main.py` into `appfunctions.py` (import from parent directory), we can use the following syntax:
+
+```python
+from ..main import *
+```
+
+Due to [how relative imports are resolved in Python](https://peps.python.org/pep-0328/#relative-imports-and-name), executing `appfunctions.py` in the normal way (i.e. running `python appfunctions.py`) will fail with the following error:
+
+```
+ImportError: attempted relative import with no known parent package
+```
+
+This happens because Python will assume that `appfunctions.py` is at the top of the module hierarchy when executed directly. To provide Python with the correct context for `appfunctions.py`, we must call it using the `-m` (module) syntax. Run the following command from the parent directory of `project`:
+
+```bash
+python -m project.app.appfunctions
+```
+
+To import functions in `libfunctions.py` into `appfunctions.py` (import from sibling directory), we can use the following syntax in `appfunctions.py`:
+
+```python
+from ..lib.libfunctions import *
+```
+
+As with imports from parent directories, we must use `-m` syntax to execute `appfunctions.py`, or execution will fail due to an `ImportError`.
+
+### Importing From Parent or Sibling Directories by Changing PYTHONPATH
+
+As we've seen, package relative imports can be quite brittle and will prevent us from executing Python scripts in the normal way. An alternative method for importing scripts from parent or sibling directories is to add the directory to the system path before importing it. This avoids the issues with relative imports.
+
+For example, to import `main.py` into `appfunctions.py` (import from parent directory), we can write the following:
+
+```python
+import os, sys
+
+sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]))
+
+import main
+```
+
+Here we're creating the path to `main.py` by taking the full path of `appfunctions.py` and [slicing](https://sentry.io/answers/slicing-in-python/) the last two segments (`"app/appfunctions.py"`) from it. We insert it into the system path at index 1 to ensure that it resolves after the main script but before anything else. Once this is done, we can import `main.py` or any other files in `project` using their names, as we would with installed modules.
+
+To import functions from `libfunctions.py` in `appfunctions.py` (import from sibling directory), we can write the following:
+
+```python
+import os, sys
+
+sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]) + "/lib")
+
+import libfunctions
+```
+
+To import both, we can add `main.py`'s directory to the path and import `libfunctions.py` as if it were in a child directory.
+
+```python
+import os, sys
+
+sys.path.insert(1, "/".join(os.path.realpath(__file__).split("/")[0:-2]))
+
+import main
+from lib.libfunctions import *
+```
+
+Altering the system path is a convenient hack for importing files in this way, but can cause problems if we have files with the same names in different directories.

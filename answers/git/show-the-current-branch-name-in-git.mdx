@@ -1,0 +1,29 @@
+---
+title: 'Show the current branch name in Git'
+platforms: 
+  - sentry.git
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I view the name of the current branch in my Git repository?
+
+## The Solution
+
+We can use [`git branch`](https://git-scm.com/docs/git-branch):
+
+```bash
+git branch --show-current
+```
+
+The [`--show-current`](https://git-scm.com/docs/git-branch#Documentation/git-branch.txt---show-current) flag was added in Git 2.2. For older versions of Git, we must use the following command instead:
+
+```bash
+git rev-parse --abbrev-ref HEAD
+```
+
+Note that neither of these commands will work if the repository is in [detached HEAD state](https://git-scm.com/docs/git-checkout#_detached_head), i.e. if you've previously checked out a commit that is not on the tip of any branch.

@@ -1,0 +1,51 @@
+---
+title: 'Invalid literal for int error in Python'
+platforms: 
+  - sentry.python
+people: 
+  - David Y.
+date: 
+  2023-06-15T11:30:00+02:00
+---
+
+## The Problem
+
+My Python script fails with this error:
+
+```
+ValueError: invalid literal for int() with base 10: ''.
+```
+
+What causes this and how do I fix it?
+
+## The Solution
+
+This error message arises from a failure to convert an empty string (`''`) to an integer. This might arise in the following script if the user presses Enter without providing any input:
+
+```python
+user_input = input("Enter a whole number: ")
+
+print(f"Your number is 1 smaller than {1 + int(user_input)}")
+```
+
+To prevent this error, we should check that our string is not empty before passing it to `int()` for conversion:
+
+```python
+user_input = input("Enter a whole number: ")
+
+try:
+    print(f"Your number is 1 smaller than {1 + int(user_input)}")
+except ValueError:
+    print("Please provide a valid number.")
+```
+
+A similar error might arise if the user provides a number with decimal places, such as `1.0`. We can avoid this error by converting the string to a float before converting it to an integer:
+
+```python
+user_input = input("Enter a whole number (non-whole numbers will be rounded down): ")
+
+try:
+    print(f"Your number is 1 smaller than {1 + int(float(user_input))}")
+except ValueError:
+    print("Please provide a valid number.")
+```

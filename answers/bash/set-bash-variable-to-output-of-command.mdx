@@ -1,0 +1,49 @@
+---
+title: 'Set Bash variable to output of command'
+platforms: 
+  - sentry.bash
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How do I store the output of a command in a Bash variable?
+
+## The Solution
+
+Bash provides two alternate syntaxes for [command substitution](https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Command-Substitution): ``` `` ``` and `$()`. Therefore, the following two Bash scripts are equivalent:
+
+```bash
+#!/bin/bash
+
+OUTPUT=`ls`
+echo "$OUTPUT"
+```
+
+```bash
+#!/bin/bash
+
+OUTPUT=$(ls)
+echo "$OUTPUT"
+```
+
+Note that omitting the double quotes from the argument to `echo` in the above scripts will remove line breaks from the output.
+
+Both methods of command substitution allow for command nesting, but the ``` `` ``` method requires nested backticks to be escaped with `\`, whereas the `$()` method does not. Thus the second method may be considered easier to read, especially for substitutions with more than one layer of nesting. The following two Bash scripts with nested commands are equivalent:
+
+```bash
+#!/bin/bash
+
+OUTPUT=`echo ls output: \`ls \`pwd\`\`` # two layers of nesting
+echo $OUTPUT # no linebreaks in content, so no need for ""s
+```
+
+```bash
+#!/bin/bash
+
+OUTPUT=$(echo ls output: $(ls $(pwd))) # two layers of nesting
+echo $OUTPUT # no linebreaks in content, so no need for ""s
+```

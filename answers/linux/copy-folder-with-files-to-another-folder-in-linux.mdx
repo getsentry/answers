@@ -1,0 +1,32 @@
+---
+title: 'Copy folder with files to another folder in Linux'
+platforms: 
+  - sentry.linux
+people: 
+  - David Y.
+date: 
+  2023-05-15T11:30:00+02:00
+---
+
+## The Problem
+
+How can I copy a folder containing files to another folder in Linux or another Unix-based operating system using the command line?
+
+## The Solution
+
+The `cp` command takes a source followed by a destination argument. To copy a folder with its contents, we must perform a recursive copy. We can do the following:
+
+```bash
+cp -a source/. destination/
+```
+
+The `-a` flag is equivalent to `-dr --preserve=all`. This does the following:
+
+* `-r` will copy all folder contents recursively.
+* `-d` will preserve symlinks.
+* `--preserve=all` will preserve all file attributes, such as ownership, permissions, and timestamps.
+
+In the command, we use `source/.` instead of `source` to take advantage of [Bash globbing](https://tldp.org/LDP/abs/html/globbingref.html) and ensure we copy any hidden files or folders, which would be missed if we just used `source`.
+
+To read more about `cp`, type `man cp` into your terminal.
+
