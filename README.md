@@ -19,7 +19,7 @@ want to help some folks out, we welcome your `Answers`.
 To get started:
 1. Choose your question from the [issues](https://github.com/getsentry/answers/issues) on this repository, or come up with your own question.
 2. Using the [answer-template.mdx](https://github.com/getsentry/answers/blob/main/answer-template.mdx) template. Include code examples when appropriate.
-3. Make sure your name matches your name in your Author page. If you don't have an Author page yet, create one using the [autho-template.mdx]() and include that in your PR.
+3. Make sure your name matches your name in your Author page. If you don't have an Author page yet, create one using the [autho-template.mdx](https://github.com/getsentry/answers/blob/main/author-template.mdx) and include that in your PR.
 4. Open a PR with your `Answer` and make sure to include:
 ` Resolved #ISSUENUM` 
 Where `ISSUENUM` is the issue that you are adding an `Answer` for if there was an associated issue.
